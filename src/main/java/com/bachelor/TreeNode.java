@@ -34,8 +34,8 @@ public class TreeNode {
     private final int outDegree;
 
     //  an array containing n + 1 elements, where n is the outdegree of the
-//  current node in the tree.
-    public SubNode[] tour;
+    //  current node in the tree. Needs initialization
+    public final SubNode[] tour;
 
     TreeNode(int outDegree, boolean isRoot, ReadWriteLock lock) {
         this.outDegree = outDegree;
@@ -49,6 +49,7 @@ public class TreeNode {
         return outDegree;
     }
 
+    //Father probably does not need synchronization. Should be final. Will change it later
     public int getFather() {
         try {
             readLock.lock();

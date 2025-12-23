@@ -1,6 +1,6 @@
 package com.bachelor;
 
-enum NodeType {
+public enum NodeType {
     FIRST,
     DUMMY,
     LAST,

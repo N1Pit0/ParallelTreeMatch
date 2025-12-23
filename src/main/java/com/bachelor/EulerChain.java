@@ -1,13 +1,10 @@
 package com.bachelor;
 
-class EulerChain {
+import static com.bachelor.InputArray.T;
 
-    volatile SubNode[] chain;
-    InputArray inputArray;
+public class EulerChain {
 
-    public EulerChain(InputArray inputArray) {
-        this.inputArray = inputArray;
-        this.chain = new SubNode[inputArray.T.length];
-    }
+    //CHAIN needs some kind of synchronization.
+    public static final SubNode[] CHAIN = new SubNode[T.length];
 
 }

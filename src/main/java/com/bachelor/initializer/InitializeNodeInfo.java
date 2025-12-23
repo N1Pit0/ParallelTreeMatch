@@ -12,9 +12,9 @@ public class InitializeNodeInfo implements Runnable{
     @Override
     public void run() {
         int iFather = T[index].getFather();
+        if (iFather == -1) return;
+
         int edgeLabel = T[index].getEdge_label();
-        if(iFather != -1){
-            T[iFather].tour[edgeLabel].setNodeInfo(iFather);
-        }
+        T[iFather].tour[edgeLabel].setNodeInfo(iFather);
     }
 }

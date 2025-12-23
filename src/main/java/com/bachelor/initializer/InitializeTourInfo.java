@@ -14,12 +14,11 @@ public class InitializeTourInfo implements Runnable{
     @Override
     public void run() {
         int iFather = T[index].getFather();
+        if (iFather == -1) return;
 
-        if(iFather != -1 ){
-            int edgeLabel = T[index].getEdge_label();
-            T[iFather].tour[edgeLabel].setTourInfo(T[index].tour[0]);
-            SubNode subNode = T[iFather].tour[T[index].getEdge_label() + 1]; // Change the name of the variable to something else
-            T[index].tour[T[index].arity() + 1].setTourInfo(subNode);
-        }
+        int edgeLabel = T[index].getEdge_label();
+        T[iFather].tour[edgeLabel].setTourInfo(T[index].tour[0]);
+        SubNode subNode = T[iFather].tour[T[index].getEdge_label() + 1]; // Change the name of the variable to something else
+        T[index].tour[T[index].arity() + 1].setTourInfo(subNode);
     }
 }

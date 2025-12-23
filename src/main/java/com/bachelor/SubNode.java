@@ -15,7 +15,7 @@ public class SubNode {
     private int subtree; // used for storing the last occurrence of node i in the Euler chain.
 
     //specifies whether the j_th occurrence of i is the first or last occurrence of i in the Euler chain.
-    private NodeType type; // Used to indicate whether i is a leaf node. In case i is not a leaf then this field
+    private NodeType type; // Used to indicate whether "i" is a leaf node. In case "i" is not a leaf then this field
 
     //    cost is used in the prefix computation to compute the rank (position)
 //    of each entry in the tour field. At the end, each entry of T [i].tour will
@@ -64,27 +64,57 @@ public class SubNode {
         }
     }
 
-    int getSubtree() {
-        return subtree;
+    public int getSubtree() {
+        try {
+            readLock.lock();
+            return subtree;
+        } finally {
+            readLock.unlock();
+        }
     }
 
-    void setSubtree(int subtree) {
-        this.subtree = subtree;
+    public void setSubtree(int subtree) {
+        try {
+            writeLock.lock();
+            this.subtree = subtree;
+        } finally {
+            writeLock.lock();
+        }
     }
 
-    NodeType getType() {
-        return type;
+    public NodeType getType() {
+        try {
+            readLock.lock();
+            return type;
+        } finally {
+            readLock.unlock();
+        }
     }
 
-    void setType(NodeType type) {
-        this.type = type;
+    public void setType(NodeType type) {
+        try {
+            writeLock.lock();
+            this.type = type;
+        } finally {
+            writeLock.lock();
+        }
     }
 
-    int getCost() {
-        return cost;
+    public int getCost() {
+        try{
+            readLock.lock();
+            return cost;
+        } finally {
+            readLock.unlock();
+        }
     }
 
-    void setCost(int cost) {
-        this.cost = cost;
+    public void setCost(int cost) {
+        try{
+            writeLock.lock();
+            this.cost = cost;
+        } finally {
+            writeLock.unlock();
+        }
     }
 }
