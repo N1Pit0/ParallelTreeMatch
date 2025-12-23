@@ -1,13 +1,14 @@
 package com.bachelor;
 
-class SubNode {
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+
+public class SubNode {
+    private final Lock readLock;
+    private final Lock writeLock;
 
     // -> T[i] where i is the index of the node in the Euler chain.
-    private volatile int nodeInfo; // reference to the corresponding TreeNode inside the T array.
-
-    int getNodeInfo() {
-        return nodeInfo;
-    }
+    private int nodeInfo; // reference to the corresponding TreeNode inside the T array.
 
     private SubNode tourInfo; // a reference to the next element (used to form the linked list) in the Euler chain.
 
@@ -22,16 +23,45 @@ class SubNode {
 //    field
     private int cost;
 
-    void setNodeInfo(int nodeInfo) {
-        this.nodeInfo = nodeInfo;
+    public SubNode(ReadWriteLock lock) {
+        this.readLock = lock.readLock();
+        this.writeLock = lock.writeLock();
     }
 
-    SubNode getTourInfo() {
-        return tourInfo;
+    public int getNodeInfo() {
+        try {
+            readLock.lock();
+            return nodeInfo;
+        } finally {
+            readLock.unlock();
+        }
     }
 
-    void setTourInfo(SubNode tourInfo) {
-        this.tourInfo = tourInfo;
+    public void setNodeInfo(int nodeInfo) {
+        try {
+            writeLock.lock();
+            this.nodeInfo = nodeInfo;
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    public SubNode getTourInfo() {
+        try {
+            readLock.lock();
+            return tourInfo;
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    public void setTourInfo(SubNode tourInfo) {
+        try {
+            writeLock.lock();
+            this.tourInfo = tourInfo;
+        } finally {
+            writeLock.lock();
+        }
     }
 
     int getSubtree() {

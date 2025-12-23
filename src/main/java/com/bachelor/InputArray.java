@@ -1,6 +1,6 @@
 package com.bachelor;
 
-class InputArray {
+public class InputArray {
 
-    TreeNode[] T;
+    public static TreeNode[] T;
 }
