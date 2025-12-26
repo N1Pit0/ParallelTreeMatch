@@ -1,6 +1,4 @@
-package com.bachelor.initializer;
-
-import com.bachelor.SubNode;
+package com.bachelor;
 
 import static com.bachelor.InputArray.T;
 import static com.bachelor.NodeType.LEAF;

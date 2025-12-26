@@ -3,9 +3,11 @@ package com.bachelor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import static com.bachelor.Coordinator.LOCK;
+
 public class SubNode {
-    private final Lock readLock;
-    private final Lock writeLock;
+    private final Lock readLock = LOCK.readLock();
+    private final Lock writeLock = LOCK.writeLock();
 
     // -> T[i] where i is the index of the node in the Euler chain.
     private int nodeInfo; // reference to the corresponding TreeNode inside the T array.
@@ -22,11 +24,6 @@ public class SubNode {
 //    be placed in an array E at a position given by the respective cost
 //    field
     private int cost;
-
-    public SubNode(ReadWriteLock lock) {
-        this.readLock = lock.readLock();
-        this.writeLock = lock.writeLock();
-    }
 
     public int getNodeInfo() {
         try {

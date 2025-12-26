@@ -3,15 +3,17 @@ package com.bachelor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import static com.bachelor.Coordinator.LOCK;
+
 public class TreeNode {
 
     private final boolean isRoot;
-    private final Lock readLock;
-    private final Lock writeLock;
+    private final Lock readLock = LOCK.readLock();
+    private final Lock writeLock = LOCK.writeLock();
 
     //contains either a function symbol or a variable associated with the
     //node
-    String label;
+    private String label;
 
     //contains a pointer to the parent of the node.
     private int father;
@@ -20,29 +22,27 @@ public class TreeNode {
 //  its sibling, i.e., which argument of its parent the current node is.
     private int edge_label;
 
-    public int getEdge_label(){
-        try{
-            readLock.lock();
-            return this.edge_label;
-        }finally {
-            readLock.unlock();
-        }
-    }
-
     //  contains the outdegree (the number of outgoing edges) of the
 //  node.
     private final int outDegree;
 
     //  an array containing n + 1 elements, where n is the outdegree of the
     //  current node in the tree. Needs initialization
-    public final SubNode[] tour;
+    final SubNode[] tour;
 
     TreeNode(int outDegree, boolean isRoot, ReadWriteLock lock) {
         this.outDegree = outDegree;
         this.isRoot = isRoot;
         tour = new SubNode[outDegree + 1];
-        this.readLock = lock.readLock();
-        this.writeLock = lock.writeLock();
+    }
+
+    public int getEdge_label() {
+        try {
+            readLock.lock();
+            return this.edge_label;
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public int arity(){

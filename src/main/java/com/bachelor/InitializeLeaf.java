@@ -1,4 +1,4 @@
-package com.bachelor.initializer;
+package com.bachelor;
 
 import static com.bachelor.InputArray.T;
 import static com.bachelor.NodeType.*;
