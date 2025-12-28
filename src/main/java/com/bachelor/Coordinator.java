@@ -10,10 +10,28 @@ public class Coordinator {
     private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
     private static final Phaser phaser = new Phaser();
 
+    private static TreeNode[] initializeTArray(){
+        return new TreeNode[]{
+                new TreeNode(5),
+                new TreeNode(5),
+                new TreeNode(5),
+                new TreeNode(5),
+                new TreeNode(5),
+                new TreeNode(5),
+                new TreeNode(5),
+                new TreeNode(5),
+                new TreeNode(5),
+                new TreeNode(5),
+        };
+    }
+
     public static void main(String[] args) throws InterruptedException, TimeoutException {
 
         int inputPatternLength = 10;
         try (ExecutorService executor = Executors.newFixedThreadPool(inputPatternLength)) {
+
+            TreeNode[] T = initializeTArray();
+            InputArray inputArray = new InputArray(T);
 
             phaser.bulkRegister(inputPatternLength);
             for (int i = 0; i < inputPatternLength; i++) {
@@ -21,7 +39,7 @@ public class Coordinator {
 
                 executor.submit(() -> {
                     logger.info("Inside the thread");
-                    new InitializeNodeInfo(index).run();
+                    new InitializeNodeInfo(index, inputArray).run();
                     phaser.arriveAndDeregister();
                     logger.debug("Called the arriveAndDeregister");
                 });
@@ -36,7 +54,7 @@ public class Coordinator {
                 final int index = i;
 
                 executor.submit(() -> {
-                    new InitializeTourInfo(index).run();
+                    new InitializeTourInfo(index, inputArray).run();
                     phaser.arriveAndDeregister();
                 });
             }

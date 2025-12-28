@@ -3,16 +3,13 @@ package com.bachelor;
 public class InputArray {
 
     //Needs initialization
-    public static TreeNode[] T = new TreeNode[]{
-            new TreeNode(5),
-            new TreeNode(5),
-            new TreeNode(5),
-            new TreeNode(5),
-            new TreeNode(5),
-            new TreeNode(5),
-            new TreeNode(5),
-            new TreeNode(5),
-            new TreeNode(5),
-            new TreeNode(5)
-    };
+    private final TreeNode[] T;
+
+    public InputArray(TreeNode[] T){
+        this.T = T;
+    }
+
+    public TreeNode[] getT(){
+        return this.T;
+    }
 }

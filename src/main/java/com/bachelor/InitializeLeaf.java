@@ -1,13 +1,14 @@
 package com.bachelor;
 
-import static com.bachelor.InputArray.T;
 import static com.bachelor.NodeType.*;
 
 public class InitializeLeaf implements Runnable {
     private final int index;
+    private final TreeNode[] T;
 
-    public InitializeLeaf(int index) {
+    public InitializeLeaf(int index, InputArray inputArray) {
         this.index = index;
+        this.T = inputArray.getT();
     }
 
     @Override

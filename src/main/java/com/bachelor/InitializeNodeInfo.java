@@ -3,14 +3,14 @@ package com.bachelor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.bachelor.InputArray.T;
-
 public class InitializeNodeInfo implements Runnable{
     private static final Logger logger = LoggerFactory.getLogger(InitializeNodeInfo.class);
     private final int index;
+    private final TreeNode[] T;
 
-    public InitializeNodeInfo(int index){
+    public InitializeNodeInfo(int index, InputArray inputArray){
         this.index = index;
+        this.T = inputArray.getT();
     }
 
     @Override

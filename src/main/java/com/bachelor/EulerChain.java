@@ -4,17 +4,19 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static com.bachelor.InputArray.T;
-
 public class EulerChain {
 
     //CHAIN needs some kind of synchronization.
-    private static final SubNode[] CHAIN = new SubNode[T.length];
-    private static final ReadWriteLock LOCK = new ReentrantReadWriteLock();
-    private static final Lock readLock = LOCK.readLock();
-    private static final Lock writeLock = LOCK.writeLock();
+    private final SubNode[] CHAIN;
+    private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
+    private final Lock readLock = LOCK.readLock();
+    private final Lock writeLock = LOCK.writeLock();
 
-    public static void setAtIndex(int index, SubNode subNode){
+    public EulerChain(InputArray inputArray){
+        this.CHAIN = new SubNode[inputArray.getT().length];
+    }
+
+    public void setAtIndex(int index, SubNode subNode){
         try{
             writeLock.lock();
             CHAIN[index] = subNode;
@@ -23,7 +25,7 @@ public class EulerChain {
         }
     }
 
-    public static SubNode getFromIndex(int index){
+    public SubNode getFromIndex(int index){
         try{
             readLock.lock();
             return CHAIN[index];

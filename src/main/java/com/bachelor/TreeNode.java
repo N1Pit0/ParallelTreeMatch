@@ -20,7 +20,7 @@ public class TreeNode {
     private String label;
 
     //contains a pointer to the parent of the node.
-    private int father = 0;
+    private int father;
 
     //  contains an integer specifying the node’s ordering relative to
 //  its sibling, i.e., which argument of its parent the current node is.
