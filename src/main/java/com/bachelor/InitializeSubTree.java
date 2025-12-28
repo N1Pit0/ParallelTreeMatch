@@ -14,10 +14,10 @@ public class InitializeSubTree implements Runnable{
     public void run() {
         int iFather = T[index].getFather();
 
-        if(iFather == -1) return;
+        if(iFather <= 0) return;
 
         int edgeLabel = T[index].getEdge_label();
-        int subTree = T[iFather].tour[T[iFather].arity() + 1].getCost();
+        int subTree = T[iFather].tour[T[iFather].arity()].getCost();
         T[iFather].tour[edgeLabel].setSubtree(subTree);
 
         SubNode firstSubNode = T[index].tour[0];

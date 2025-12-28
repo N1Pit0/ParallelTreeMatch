@@ -12,7 +12,7 @@ public class InitializeEulerChain implements Runnable{
     @Override
     public void run() {
         int iFather = T[index].getFather();
-        if(iFather == -1) return;
+        if(iFather <= 0) return;
 
         int edgeLabel = T[index].getEdge_label();
         EulerChain.setAtIndex(T[iFather].tour[edgeLabel + 1].getCost(), T[iFather].tour[edgeLabel + 1]);

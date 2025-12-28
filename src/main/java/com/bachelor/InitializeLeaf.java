@@ -14,7 +14,7 @@ public class InitializeLeaf implements Runnable {
     public void run() {
         int iFather = T[index].getFather();
 
-        if (iFather == -1) return;
+        if (iFather <= 0) return;
 
         int edgeLabel = T[index].getEdge_label();
         T[iFather].tour[edgeLabel].setType(DUMMY);

@@ -1,15 +1,51 @@
 package com.bachelor;
 
-import java.util.concurrent.Phaser;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.*;
 
 public class Coordinator {
-    static final ReadWriteLock LOCK = new ReentrantReadWriteLock();
+    private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
     private static final Phaser phaser = new Phaser();
-    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, TimeoutException {
+
+        int inputPatternLength = 10;
+        try (ExecutorService executor = Executors.newFixedThreadPool(inputPatternLength)) {
+
+            phaser.bulkRegister(inputPatternLength);
+            for (int i = 0; i < inputPatternLength; i++) {
+                final int index = i;
+
+                executor.submit(() -> {
+                    logger.info("Inside the thread");
+                    new InitializeNodeInfo(index).run();
+                    phaser.arriveAndDeregister();
+                    logger.debug("Called the arriveAndDeregister");
+                });
+            }
+
+//            phaser.awaitAdvance(phaser.getPhase());
+
+            phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 5, TimeUnit.SECONDS);
+
+            phaser.bulkRegister(inputPatternLength);
+            for (int i = 0; i < inputPatternLength; i++) {
+                final int index = i;
+
+                executor.submit(() -> {
+                    new InitializeTourInfo(index).run();
+                    phaser.arriveAndDeregister();
+                });
+            }
+
+//            phaser.awaitAdvance(phaser.getPhase());
+
+            phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 5, TimeUnit.SECONDS);
+
+        }
     }
 
 }

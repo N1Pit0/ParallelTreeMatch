@@ -1,13 +1,17 @@
 package com.bachelor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static com.bachelor.Coordinator.LOCK;
 
 public class TreeNode {
 
-    private final boolean isRoot;
+    private static final Logger logger = LoggerFactory.getLogger(TreeNode.class);
+    private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final Lock readLock = LOCK.readLock();
     private final Lock writeLock = LOCK.writeLock();
 
@@ -16,7 +20,7 @@ public class TreeNode {
     private String label;
 
     //contains a pointer to the parent of the node.
-    private int father;
+    private int father = 0;
 
     //  contains an integer specifying the node’s ordering relative to
 //  its sibling, i.e., which argument of its parent the current node is.
@@ -30,9 +34,8 @@ public class TreeNode {
     //  current node in the tree. Needs initialization
     final SubNode[] tour;
 
-    TreeNode(int outDegree, boolean isRoot, ReadWriteLock lock) {
+    TreeNode(int outDegree) {
         this.outDegree = outDegree;
-        this.isRoot = isRoot;
         tour = new SubNode[outDegree + 1];
     }
 
@@ -51,13 +54,8 @@ public class TreeNode {
 
     //Father probably does not need synchronization. Should be final. Will change it later
     public int getFather() {
-        try {
-            readLock.lock();
-            if (this.isRoot) return -1; // Signals the Thread to stop the process since root does not have a father
-            return this.father;
-        }finally {
-            readLock.unlock();
-        }
+        logger.debug("Inside the TreeNode for father {}", this.father);
+        return this.father;
     }
 
 }

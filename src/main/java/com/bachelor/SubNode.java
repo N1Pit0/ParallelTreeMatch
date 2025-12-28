@@ -2,10 +2,10 @@ package com.bachelor;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-
-import static com.bachelor.Coordinator.LOCK;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SubNode {
+    private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final Lock readLock = LOCK.readLock();
     private final Lock writeLock = LOCK.writeLock();
 
@@ -57,7 +57,7 @@ public class SubNode {
             writeLock.lock();
             this.tourInfo = tourInfo;
         } finally {
-            writeLock.lock();
+            writeLock.unlock();
         }
     }
 
@@ -75,7 +75,7 @@ public class SubNode {
             writeLock.lock();
             this.subtree = subtree;
         } finally {
-            writeLock.lock();
+            writeLock.unlock();
         }
     }
 
@@ -93,7 +93,7 @@ public class SubNode {
             writeLock.lock();
             this.type = type;
         } finally {
-            writeLock.lock();
+            writeLock.unlock();
         }
     }
 
