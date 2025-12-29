@@ -1,14 +1,15 @@
 package com.bachelor;
 
 
+import com.bachelor.initializer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
+import java.util.stream.IntStream;
 
 public class Coordinator {
     private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
-    private static final Phaser phaser = new Phaser();
 
     private static TreeNode[] initializeTArray(){
         return new TreeNode[]{
@@ -25,44 +26,65 @@ public class Coordinator {
         };
     }
 
-    public static void main(String[] args) throws InterruptedException, TimeoutException {
+    private static void runPhase(ExecutorService executor, Phaser phaser, Initializer[] initializers, int timeoutSeconds) throws InterruptedException, TimeoutException {
+        int phaseSize = initializers.length;
+        phaser.bulkRegister(phaseSize);
+        for (int i = 0; i < phaseSize; i++) {
+            final int index = i;
+            executor.submit(() -> {
+                Coordinator.logger.info("Phase {}: Task {} started", phaser.getPhase(), index);
+                try {
+                    initializers[index].initialize();
+                } catch (Exception e) {
+                    Coordinator.logger.error("Phase {}: Task {} exception", phaser.getPhase(), index, e);
+                } finally {
+                    phaser.arriveAndDeregister();
+                    Coordinator.logger.debug("Phase {}: Task {} finished and deregistered", phaser.getPhase(), index);
+                }
+            });
+        }
+        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), timeoutSeconds, TimeUnit.SECONDS);
+    }
 
+    public static void main(String[] args) throws InterruptedException, TimeoutException {
+        Phaser phaser = new Phaser();
         int inputPatternLength = 10;
+
         try (ExecutorService executor = Executors.newFixedThreadPool(inputPatternLength)) {
 
             TreeNode[] T = initializeTArray();
             InputArray inputArray = new InputArray(T);
+            EulerChain eulerChain = new EulerChain(inputArray);
 
-            phaser.bulkRegister(inputPatternLength);
-            for (int i = 0; i < inputPatternLength; i++) {
-                final int index = i;
+            // Phase 1: NodeInfo
+            Initializer[] initializers = IntStream.range(0, inputPatternLength)
+                    .mapToObj(i -> new InitializeNodeInfo(i, inputArray))
+                    .toArray(Initializer[]::new);
+            runPhase(executor, phaser, initializers, 10);
 
-                executor.submit(() -> {
-                    logger.info("Inside the thread");
-                    new InitializeNodeInfo(index, inputArray).run();
-                    phaser.arriveAndDeregister();
-                    logger.debug("Called the arriveAndDeregister");
-                });
-            }
+            // Phase 2: TourInfo
+            initializers = IntStream.range(0, inputPatternLength)
+                    .mapToObj(i -> new InitializeTourInfo(i, inputArray))
+                    .toArray(Initializer[]::new);
+            runPhase(executor, phaser, initializers, 10);
 
-//            phaser.awaitAdvance(phaser.getPhase());
+            // Phase 3: Leaf
+            initializers = IntStream.range(0, inputPatternLength)
+                    .mapToObj(i -> new InitializeLeaf(i, inputArray))
+                    .toArray(Initializer[]::new);
+            runPhase(executor, phaser, initializers, 10);
 
-            phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 5, TimeUnit.SECONDS);
+            // Phase 4: SubTree
+            initializers = IntStream.range(0, inputPatternLength)
+                    .mapToObj(i -> new InitializeSubTree(i, inputArray))
+                    .toArray(Initializer[]::new);
+            runPhase(executor, phaser, initializers, 10);
 
-            phaser.bulkRegister(inputPatternLength);
-            for (int i = 0; i < inputPatternLength; i++) {
-                final int index = i;
-
-                executor.submit(() -> {
-                    new InitializeTourInfo(index, inputArray).run();
-                    phaser.arriveAndDeregister();
-                });
-            }
-
-//            phaser.awaitAdvance(phaser.getPhase());
-
-            phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 5, TimeUnit.SECONDS);
-
+            // Phase 5: EulerChain
+            initializers = IntStream.range(0, inputPatternLength)
+                    .mapToObj(i -> new InitializeEulerChain(i, eulerChain, inputArray))
+                    .toArray(Initializer[]::new);
+            runPhase(executor, phaser, initializers, 10);
         }
     }
 

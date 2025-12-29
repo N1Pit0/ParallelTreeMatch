@@ -1,9 +1,12 @@
-package com.bachelor;
+package com.bachelor.initializer;
 
+import com.bachelor.Initializer;
+import com.bachelor.InputArray;
+import com.bachelor.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InitializeNodeInfo implements Runnable{
+public class InitializeNodeInfo implements Initializer {
     private static final Logger logger = LoggerFactory.getLogger(InitializeNodeInfo.class);
     private final int index;
     private final TreeNode[] T;
@@ -14,7 +17,7 @@ public class InitializeNodeInfo implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void initialize() {
         logger.info("Inside run");
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);

@@ -32,7 +32,7 @@ public class TreeNode {
 
     //  an array containing n + 1 elements, where n is the outdegree of the
     //  current node in the tree. Needs initialization
-    final SubNode[] tour;
+    public final SubNode[] tour;
 
     TreeNode(int outDegree) {
         this.outDegree = outDegree;

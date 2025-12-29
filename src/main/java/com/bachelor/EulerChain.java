@@ -13,7 +13,7 @@ public class EulerChain {
     private final Lock writeLock = LOCK.writeLock();
 
     public EulerChain(InputArray inputArray){
-        this.CHAIN = new SubNode[inputArray.getT().length];
+        this.CHAIN = new SubNode[inputArray.getT().length]; //It needs different Length
     }
 
     public void setAtIndex(int index, SubNode subNode){

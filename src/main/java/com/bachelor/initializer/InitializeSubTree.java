@@ -1,8 +1,13 @@
-package com.bachelor;
+package com.bachelor.initializer;
+
+import com.bachelor.Initializer;
+import com.bachelor.InputArray;
+import com.bachelor.SubNode;
+import com.bachelor.TreeNode;
 
 import static com.bachelor.NodeType.LEAF;
 
-public class InitializeSubTree implements Runnable{
+public class InitializeSubTree implements Initializer {
     private final int index;
     private final TreeNode[] T;
 
@@ -12,7 +17,7 @@ public class InitializeSubTree implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void initialize() {
         int iFather = T[index].getFather();
 
         if(iFather <= 0) return;

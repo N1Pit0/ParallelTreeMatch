@@ -1,6 +1,11 @@
-package com.bachelor;
+package com.bachelor.initializer;
 
-public class InitializeEulerChain implements Runnable{
+import com.bachelor.EulerChain;
+import com.bachelor.Initializer;
+import com.bachelor.InputArray;
+import com.bachelor.TreeNode;
+
+public class InitializeEulerChain implements Initializer {
     private final int index;
     private final EulerChain eulerChain;
     private final TreeNode[] T;
@@ -12,7 +17,7 @@ public class InitializeEulerChain implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void initialize() {
         int iFather = T[index].getFather();
         if(iFather <= 0) return;
 
