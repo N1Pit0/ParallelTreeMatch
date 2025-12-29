@@ -54,7 +54,7 @@ public class Coordinator {
 
             TreeNode[] T = initializeTArray();
             InputArray inputArray = new InputArray(T);
-            EulerChain eulerChain = new EulerChain(inputArray);
+            EulerChain eulerChain = new EulerChain();
 
             // Phase 1: NodeInfo
             Initializer[] initializers = IntStream.range(0, inputPatternLength)
