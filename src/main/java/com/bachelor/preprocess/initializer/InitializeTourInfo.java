@@ -1,9 +1,9 @@
-package com.bachelor.initializer;
+package com.bachelor.preprocess.initializer;
 
-import com.bachelor.Initializer;
-import com.bachelor.InputArray;
-import com.bachelor.SubNode;
-import com.bachelor.TreeNode;
+import com.bachelor.preprocess.Initializer;
+import com.bachelor.preprocess.InputArray;
+import com.bachelor.preprocess.SubNode;
+import com.bachelor.preprocess.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

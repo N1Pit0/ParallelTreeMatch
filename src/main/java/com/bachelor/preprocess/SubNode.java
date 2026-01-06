@@ -1,4 +1,4 @@
-package com.bachelor;
+package com.bachelor.preprocess;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;

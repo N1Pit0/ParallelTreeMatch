@@ -1,10 +1,10 @@
-package com.bachelor.initializer;
+package com.bachelor.preprocess.initializer;
 
-import com.bachelor.Initializer;
-import com.bachelor.InputArray;
-import com.bachelor.TreeNode;
+import com.bachelor.preprocess.Initializer;
+import com.bachelor.preprocess.InputArray;
+import com.bachelor.preprocess.TreeNode;
 
-import static com.bachelor.NodeType.*;
+import static com.bachelor.preprocess.NodeType.*;
 
 public class InitializeLeaf implements Initializer {
     private final int index;

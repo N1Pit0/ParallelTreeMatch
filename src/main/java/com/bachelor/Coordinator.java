@@ -1,7 +1,11 @@
 package com.bachelor;
 
 
-import com.bachelor.initializer.*;
+import com.bachelor.preprocess.EulerChain;
+import com.bachelor.preprocess.Initializer;
+import com.bachelor.preprocess.InputArray;
+import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.initializer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

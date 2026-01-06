@@ -1,4 +1,4 @@
-package com.bachelor;
+package com.bachelor.preprocess;
 
 @FunctionalInterface
 public interface Initializer {

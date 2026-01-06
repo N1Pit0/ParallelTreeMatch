@@ -1,4 +1,4 @@
-package com.bachelor;
+package com.bachelor.preprocess;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class TreeNode {
     //  current node in the tree. Needs initialization
     public final SubNode[] tour;
 
-    TreeNode(int outDegree) {
+    public TreeNode(int outDegree) {
         this.outDegree = outDegree;
         tour = new SubNode[outDegree + 1];
     }

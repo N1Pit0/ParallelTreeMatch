@@ -1,4 +1,4 @@
-package com.bachelor;
+package com.bachelor.preprocess;
 
 public enum NodeType {
     FIRST,
