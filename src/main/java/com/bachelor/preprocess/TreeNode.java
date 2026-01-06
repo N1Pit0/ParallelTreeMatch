@@ -3,28 +3,22 @@ package com.bachelor.preprocess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-
 public class TreeNode {
 
     private static final Logger logger = LoggerFactory.getLogger(TreeNode.class);
-    private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
-    private final Lock readLock = LOCK.readLock();
-    private final Lock writeLock = LOCK.writeLock();
 
     //contains either a function symbol or a variable associated with the
     //node
-    private String label;
+    private final String label;
+
+    private final boolean isVariable;
 
     //contains a pointer to the parent of the node.
-    private int father;
+    private final int father;
 
     //  contains an integer specifying the node’s ordering relative to
 //  its sibling, i.e., which argument of its parent the current node is.
-    private int edge_label;
+    private final int edge_label;
 
     //  contains the outdegree (the number of outgoing edges) of the
 //  node.
@@ -34,18 +28,60 @@ public class TreeNode {
     //  current node in the tree. Needs initialization
     public final SubNode[] tour;
 
-    public TreeNode(int outDegree) {
-        this.outDegree = outDegree;
-        tour = new SubNode[outDegree + 1];
+    private TreeNode(Builder builder) {
+        this.outDegree = builder.outDegree;
+        this.isVariable = builder.isVariable;
+        this.label = builder.label;
+        this.tour = builder.tour;
+        this.father = builder.father;
+        this.edge_label = builder.edgeLabel;
+//        tour = new SubNode[outDegree + 1];//prolly does not need + 1 here
+    }
+
+    public static class Builder {
+        private final String label;
+        private int father;
+        private boolean isVariable;
+        private int outDegree;
+        private int edgeLabel;
+        private SubNode[] tour;
+
+        public Builder(String label) {
+            this.label = label;
+        }
+
+        public Builder father(int father) {
+            this.father = father;
+            return this;
+        }
+
+        public Builder isVariable(boolean answer) {
+            this.isVariable = answer;
+            return this;
+        }
+
+        public Builder outDegree(int outDegree) {
+            this.outDegree = outDegree;
+            return this;
+        }
+
+        public Builder edgeLabel(int edgeLabel) {
+            this.edgeLabel = edgeLabel;
+            return this;
+        }
+
+        public Builder tour(SubNode[] tour) {
+            this.tour = tour;
+            return this;
+        }
+
+        public TreeNode build(){
+            return new TreeNode(this);
+        }
     }
 
     public int getEdge_label() {
-        try {
-            readLock.lock();
-            return this.edge_label;
-        } finally {
-            readLock.unlock();
-        }
+        return this.edge_label;
     }
 
     public int arity(){
@@ -58,4 +94,7 @@ public class TreeNode {
         return this.father;
     }
 
+    public boolean isVariable() {
+        return isVariable;
+    }
 }

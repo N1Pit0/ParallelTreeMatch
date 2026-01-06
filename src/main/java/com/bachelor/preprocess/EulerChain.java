@@ -9,12 +9,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class EulerChain {
 
     private final List<SubNode> CHAIN;
+    private int chainSize;
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final Lock readLock = LOCK.readLock();
     private final Lock writeLock = LOCK.writeLock();
+    private final TreeNode[] T;
 
-    public EulerChain(){
+    public EulerChain(InputArray inputArray){
         this.CHAIN = new ArrayList<>();
+        this.T = inputArray.getT();
     }
 
     public void setAtIndex(int index, SubNode subNode){
@@ -24,6 +27,7 @@ public class EulerChain {
                 CHAIN.add(null);
             }
             CHAIN.set(index, subNode);
+            chainSize++;
         }finally {
             writeLock.unlock();
         }
@@ -38,4 +42,11 @@ public class EulerChain {
         }
     }
 
+    public int getChainSize() {
+        return chainSize;
+    }
+
+    public TreeNode[] getT() {
+        return T;
+    }
 }

@@ -17,16 +17,16 @@ public class Coordinator {
 
     private static TreeNode[] initializeTArray(){
         return new TreeNode[]{
-                new TreeNode(5),
-                new TreeNode(5),
-                new TreeNode(5),
-                new TreeNode(5),
-                new TreeNode(5),
-                new TreeNode(5),
-                new TreeNode(5),
-                new TreeNode(5),
-                new TreeNode(5),
-                new TreeNode(5),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
+//                new TreeNode(5, true),
         };
     }
 
@@ -58,7 +58,7 @@ public class Coordinator {
 
             TreeNode[] T = initializeTArray();
             InputArray inputArray = new InputArray(T);
-            EulerChain eulerChain = new EulerChain();
+            EulerChain eulerChain = new EulerChain(inputArray);
 
             // Phase 1: NodeInfo
             Initializer[] initializers = IntStream.range(0, inputPatternLength)
@@ -86,7 +86,7 @@ public class Coordinator {
 
             // Phase 5: EulerChain
             initializers = IntStream.range(0, inputPatternLength)
-                    .mapToObj(i -> new InitializeEulerChain(i, eulerChain, inputArray))
+                    .mapToObj(i -> new InitializeEulerChain(i, eulerChain))
                     .toArray(Initializer[]::new);
             runPhase(executor, phaser, initializers, 10);
         }
