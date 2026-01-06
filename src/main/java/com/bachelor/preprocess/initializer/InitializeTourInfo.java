@@ -22,8 +22,8 @@ public class InitializeTourInfo implements Initializer {
         logger.info("Inside run of InitializeTourInfo");
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
-        if (iFather <= 0) {
-            logger.debug("Returned With father <=0");
+        if (iFather < 0) {
+            logger.debug("Returned With father <0");
             return;
         }
 
@@ -32,6 +32,6 @@ public class InitializeTourInfo implements Initializer {
         // + 1 might be problem here since the paper has 1-indexing not 0
         SubNode subNode = T[iFather].tour[T[index].getEdge_label() + 1]; // Change the name of the variable to something else
         T[index].tour[T[index].arity()].setTourInfo(subNode);
-        logger.debug("Completed the task");
+        logger.debug("Completed the task of InitializeTourInfo");
     }
 }

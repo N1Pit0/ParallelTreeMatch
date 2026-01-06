@@ -1,10 +1,6 @@
 package com.bachelor;
 
-
-import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.Initializer;
-import com.bachelor.preprocess.InputArray;
-import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.*;
 import com.bachelor.preprocess.initializer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,19 +11,82 @@ import java.util.stream.IntStream;
 public class Coordinator {
     private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
 
-    private static TreeNode[] initializeTArray(){
-        return new TreeNode[]{
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-//                new TreeNode(5, true),
-        };
+    private static TreeNode[] initializeTArray(int length){
+        TreeNode[] treeNodes = new TreeNode[length];
+
+        int outdegree0 = 2;
+        SubNode[] tour = new SubNode[outdegree0+1];
+//        for (var elem : tour) elem = new SubNode(5);
+        for (int i = 0; i < tour.length; i++) {
+            tour[i] = new SubNode(5);
+        }
+        TreeNode treeNode0 = new TreeNode.Builder("f(f(a,X),Y)")
+                .father(-1)
+                .isVariable(false)
+                .outDegree(outdegree0)
+                .edgeLabel(0)
+                .tour(tour)
+                .build();
+
+        int outdegree1 = 2;
+        tour = new SubNode[outdegree1+1];
+        for (int i = 0; i < tour.length; i++) {
+            tour[i] = new SubNode(5);
+        }
+        TreeNode treeNode1 = new TreeNode.Builder("f(a,X)")
+                .father(0)
+                .isVariable(false)
+                .outDegree(outdegree1)
+                .edgeLabel(0)
+                .tour(tour)
+                .build();
+
+        int outdegree2 = 0;
+        tour = new SubNode[outdegree2+1]; //Do we need here outdegree + 1?
+        for (int i = 0; i < tour.length; i++) {
+            tour[i] = new SubNode(5);
+        }
+        TreeNode treeNode2 = new TreeNode.Builder("Y")
+                .father(0)
+                .isVariable(true)
+                .outDegree(outdegree2)
+                .edgeLabel(1)
+                .tour(tour)
+                .build();
+
+        int outdegree3 = 0;
+        tour = new SubNode[outdegree3+1];
+        for (int i = 0; i < tour.length; i++) {
+            tour[i] = new SubNode(5);
+        }
+        TreeNode treeNode3 = new TreeNode.Builder("a")
+                .father(1)
+                .isVariable(false)
+                .outDegree(outdegree3)
+                .edgeLabel(0)
+                .tour(tour)
+                .build();
+
+        int outdegree4 = 0;
+        tour = new SubNode[outdegree4+1];
+        for (int i = 0; i < tour.length; i++) {
+            tour[i] = new SubNode(5);
+        }
+        TreeNode treeNode4 = new TreeNode.Builder("X")
+                .father(1)
+                .isVariable(true)
+                .outDegree(outdegree4)
+                .edgeLabel(1)
+                .tour(tour)
+                .build();
+
+        treeNodes[0] = treeNode0;
+        treeNodes[1] = treeNode1;
+        treeNodes[2] = treeNode2;
+        treeNodes[3] = treeNode3;
+        treeNodes[4] = treeNode4;
+
+        return treeNodes;
     }
 
     private static void runPhase(ExecutorService executor, Phaser phaser, Initializer[] initializers, int timeoutSeconds) throws InterruptedException, TimeoutException {
@@ -52,11 +111,11 @@ public class Coordinator {
 
     public static void main(String[] args) throws InterruptedException, TimeoutException {
         Phaser phaser = new Phaser();
-        int inputPatternLength = 10;
+        int inputPatternLength = 5;
 
         try (ExecutorService executor = Executors.newFixedThreadPool(inputPatternLength)) {
 
-            TreeNode[] T = initializeTArray();
+            TreeNode[] T = initializeTArray(inputPatternLength);
             InputArray inputArray = new InputArray(T);
             EulerChain eulerChain = new EulerChain(inputArray);
 

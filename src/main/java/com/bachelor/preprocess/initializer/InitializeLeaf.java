@@ -24,8 +24,8 @@ public class InitializeLeaf implements Initializer {
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
 
-        if (iFather <= 0) {
-            logger.debug("Returned With father <=0");
+        if (iFather < 0) {
+            logger.debug("Returned With father <0");
             return;
         }
 
@@ -37,8 +37,8 @@ public class InitializeLeaf implements Initializer {
             T[index].tour[0].setType(LEAF);
         } else {
             T[index].tour[0].setType(FIRST);
-            T[index].tour[currentOutDegree + 1].setType(LAST);
+            T[index].tour[currentOutDegree].setType(LAST); // I removed + 1 from here inside tour array
         }
-        logger.debug("Completed the task");
+        logger.debug("Completed the task of InitializeLeaf");
     }
 }

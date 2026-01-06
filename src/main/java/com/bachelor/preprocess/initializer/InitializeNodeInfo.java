@@ -21,13 +21,13 @@ public class InitializeNodeInfo implements Initializer {
         logger.debug("Inside run of InitializeNodeInfo");
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
-        if (iFather <= 0) {
-            logger.debug("Returned With father <=0");
+        if (iFather < 0) {
+            logger.debug("Returned With father <0");
             return;
         }
 
         int edgeLabel = T[index].getEdge_label();
         T[iFather].tour[edgeLabel].setNodeInfo(iFather);
-        logger.debug("Completed the task");
+        logger.debug("Completed the task InitializeNodeInfo");
     }
 }

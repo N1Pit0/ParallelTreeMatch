@@ -25,8 +25,8 @@ public class InitializeSubTree implements Initializer {
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
 
-        if (iFather <= 0) {
-            logger.debug("Returned With father <=0");
+        if (iFather < 0) {
+            logger.debug("Returned With father <0");
             return;
         }
 
@@ -38,6 +38,6 @@ public class InitializeSubTree implements Initializer {
         if(firstSubNode.getType().equals(LEAF)){
             firstSubNode.setSubtree(firstSubNode.getCost());
         }
-        logger.debug("Completed the task");
+        logger.debug("Completed the task of InitializeSubTree");
     }
 }

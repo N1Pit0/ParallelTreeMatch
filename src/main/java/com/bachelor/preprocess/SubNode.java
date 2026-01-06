@@ -25,6 +25,10 @@ public class SubNode {
 //    field
     private int cost;
 
+    public SubNode(int cost){
+        this.cost = cost;
+    }
+
     public int getNodeInfo() {
         try {
             readLock.lock();
