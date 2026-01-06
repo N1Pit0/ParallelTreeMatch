@@ -18,7 +18,7 @@ public class InitializeNodeInfo implements Initializer {
 
     @Override
     public void initialize() {
-        logger.info("Inside run");
+        logger.debug("Inside run of InitializeNodeInfo");
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
         if (iFather <= 0) {
@@ -28,5 +28,6 @@ public class InitializeNodeInfo implements Initializer {
 
         int edgeLabel = T[index].getEdge_label();
         T[iFather].tour[edgeLabel].setNodeInfo(iFather);
+        logger.debug("Completed the task");
     }
 }

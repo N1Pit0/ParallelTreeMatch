@@ -3,12 +3,15 @@ package com.bachelor.preprocess.initializer;
 import com.bachelor.preprocess.Initializer;
 import com.bachelor.preprocess.InputArray;
 import com.bachelor.preprocess.TreeNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.bachelor.preprocess.NodeType.*;
 
 public class InitializeLeaf implements Initializer {
     private final int index;
     private final TreeNode[] T;
+    private final Logger logger = LoggerFactory.getLogger(InitializeLeaf.class);
 
     public InitializeLeaf(int index, InputArray inputArray) {
         this.index = index;
@@ -17,9 +20,14 @@ public class InitializeLeaf implements Initializer {
 
     @Override
     public void initialize() {
+        logger.info("Inside run of InitializeLeaf");
         int iFather = T[index].getFather();
+        logger.debug("got the father {}", iFather);
 
-        if (iFather <= 0) return;
+        if (iFather <= 0) {
+            logger.debug("Returned With father <=0");
+            return;
+        }
 
         int edgeLabel = T[index].getEdge_label();
         T[iFather].tour[edgeLabel].setType(DUMMY);
@@ -31,5 +39,6 @@ public class InitializeLeaf implements Initializer {
             T[index].tour[0].setType(FIRST);
             T[index].tour[currentOutDegree + 1].setType(LAST);
         }
+        logger.debug("Completed the task");
     }
 }

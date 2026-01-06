@@ -88,7 +88,6 @@ public class TreeNode {
         return outDegree;
     }
 
-    //Father probably does not need synchronization. Should be final. Will change it later
     public int getFather() {
         logger.debug("Inside the TreeNode for father {}", this.father);
         return this.father;
