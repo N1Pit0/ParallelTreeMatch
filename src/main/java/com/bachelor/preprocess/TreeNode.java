@@ -2,8 +2,11 @@ package com.bachelor.preprocess;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
 
 public class TreeNode {
+    private final CountDownLatch[] latches;
 
     private static final Logger logger = LoggerFactory.getLogger(TreeNode.class);
 
@@ -28,6 +31,11 @@ public class TreeNode {
     //  current node in the tree. Needs initialization
     public final SubNode[] tour;
 
+    // latches[0] for InitializeNodeInfo
+    // latches[1] for InitializeTourInfo
+    // latches[2] for InitializeType
+    // latches[3] for InitializeSubtree
+    // latches[5] for InitializeEulerChain
     private TreeNode(Builder builder) {
         this.outDegree = builder.outDegree;
         this.isVariable = builder.isVariable;
@@ -35,7 +43,10 @@ public class TreeNode {
         this.tour = builder.tour;
         this.father = builder.father;
         this.edge_label = builder.edgeLabel;
-//        tour = new SubNode[outDegree + 1];//prolly does not need + 1 here
+        this.latches = new CountDownLatch[5]; // 5 Here is number of steps/initializers required for algorithm
+        for (int i = 0; i < this.outDegree; i++) {
+            this.latches[i] = new CountDownLatch(this.outDegree);
+        }
     }
 
     public static class Builder {
@@ -93,7 +104,23 @@ public class TreeNode {
         return this.father;
     }
 
+    public CountDownLatch[] getLatches(){
+        return this.latches;
+    }
+
     public boolean isVariable() {
         return isVariable;
+    }
+
+    @Override
+    public String toString() {
+        return "TreeNode{" +
+                "label='" + label + '\'' +
+                ", isVariable=" + isVariable +
+                ", father=" + father +
+                ", edge_label=" + edge_label +
+                ", outDegree=" + outDegree +
+                ", tour=" + Arrays.toString(tour) +
+                '}';
     }
 }

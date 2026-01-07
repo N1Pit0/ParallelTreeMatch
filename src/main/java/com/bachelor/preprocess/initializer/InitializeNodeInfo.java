@@ -27,7 +27,7 @@ public class InitializeNodeInfo implements Initializer {
         }
 
         int edgeLabel = T[index].getEdge_label();
-        T[iFather].tour[edgeLabel].setNodeInfo(iFather);
+        T[iFather].tour[edgeLabel].setNodeInfo(iFather); // +1 here? for tour array
         logger.debug("Completed the task InitializeNodeInfo");
     }
 }

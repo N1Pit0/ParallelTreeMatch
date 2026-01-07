@@ -147,6 +147,12 @@ public class Coordinator {
                     .mapToObj(i -> new InitializeEulerChain(i, eulerChain))
                     .toArray(Initializer[]::new);
             runPhase(executor, phaser, initializers, 10);
+
+            for (int i = 0; i < T.length; i++) {
+                for (var subNode : T[i].tour){
+                    System.out.println("T[" + i +"]" + subNode + " SubNode@" + Integer.toHexString(System.identityHashCode(subNode)));
+                }
+            }
         }
     }
 

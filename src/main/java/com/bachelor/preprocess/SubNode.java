@@ -118,4 +118,34 @@ public class SubNode {
             writeLock.unlock();
         }
     }
+
+    @Override
+    public String toString() {
+        // copy fields under read lock to avoid holding the lock while building the string
+        int nodeInfoCopy;
+        SubNode tourInfoCopy;
+        int subtreeCopy;
+        NodeType typeCopy;
+        int costCopy;
+        try {
+            readLock.lock();
+            nodeInfoCopy = this.nodeInfo;
+            tourInfoCopy = this.tourInfo;
+            subtreeCopy = this.subtree;
+            typeCopy = this.type;
+            costCopy = this.cost;
+        } finally {
+            readLock.unlock();
+        }
+
+        String tourInfoStr = (tourInfoCopy == null) ? "null" : "SubNode@" + Integer.toHexString(System.identityHashCode(tourInfoCopy));
+
+        return "SubNode{" +
+                "nodeInfo=" + nodeInfoCopy +
+                ", tourInfo=" + tourInfoStr +
+                ", subtree=" + subtreeCopy +
+                ", type=" + typeCopy +
+                ", cost=" + costCopy +
+                '}';
+    }
 }
