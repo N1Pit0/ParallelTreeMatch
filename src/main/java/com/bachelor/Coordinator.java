@@ -132,7 +132,7 @@ public class Coordinator {
 
             // Phase 3: Leaf
             initializers = IntStream.range(0, inputPatternLength)
-                    .mapToObj(i -> new InitializeLeaf(i, inputArray))
+                    .mapToObj(i -> new InitializeType(i, inputArray))
                     .toArray(Initializer[]::new);
             runPhase(executor, phaser, initializers, 10);
 

@@ -8,19 +8,19 @@ import org.slf4j.LoggerFactory;
 
 import static com.bachelor.preprocess.NodeType.*;
 
-public class InitializeLeaf implements Initializer {
+public class InitializeType implements Initializer {
     private final int index;
     private final TreeNode[] T;
-    private final Logger logger = LoggerFactory.getLogger(InitializeLeaf.class);
+    private final Logger logger = LoggerFactory.getLogger(InitializeType.class);
 
-    public InitializeLeaf(int index, InputArray inputArray) {
+    public InitializeType(int index, InputArray inputArray) {
         this.index = index;
         this.T = inputArray.getT();
     }
 
     @Override
     public void initialize() {
-        logger.info("Inside run of InitializeLeaf");
+        logger.info("Inside run of InitializeType");
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
 
@@ -39,6 +39,6 @@ public class InitializeLeaf implements Initializer {
             T[index].tour[0].setType(FIRST);
             T[index].tour[currentOutDegree].setType(LAST); // I removed + 1 from here inside tour array
         }
-        logger.debug("Completed the task of InitializeLeaf");
+        logger.debug("Completed the task of InitializeType");
     }
 }
