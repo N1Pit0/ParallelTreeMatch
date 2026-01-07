@@ -16,7 +16,6 @@ public class Coordinator {
 
         int outdegree0 = 2;
         SubNode[] tour = new SubNode[outdegree0+1];
-//        for (var elem : tour) elem = new SubNode(5);
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode(5);
         }
@@ -116,7 +115,7 @@ public class Coordinator {
         try (ExecutorService executor = Executors.newFixedThreadPool(inputPatternLength)) {
 
             TreeNode[] T = initializeTArray(inputPatternLength);
-            InputArray inputArray = new InputArray(T);
+            InputArray inputArray = new InputArray(T,2);
             EulerChain eulerChain = new EulerChain(inputArray);
 
             // Phase 1: NodeInfo
