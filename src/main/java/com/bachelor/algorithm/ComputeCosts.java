@@ -31,6 +31,16 @@ public class ComputeCosts {
     }
 
     private void doStepTwo(){
+        for (int i = 0; i < eulerChain.getChainSize(); i++) {
+            int sum = 0;
+            for (int j = 0; j < i; j++) {
+                sum += eulerChain.getFromIndex(j).getCost();
+            }
+            eulerChain.getFromIndex(i).setCost(sum);
+        }
+    }
+
+    private void doStepThree(){
 
     }
 
