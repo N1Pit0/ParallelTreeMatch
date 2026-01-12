@@ -149,8 +149,15 @@ public class Coordinator {
             runPhase(executor, phaser, initializers, 10);
 
             for (int i = 0; i < T.length; i++) {
-                for (var subNode : T[i].tour){
-                    System.out.println("T[" + i +"]" + subNode + " SubNode@" + Integer.toHexString(System.identityHashCode(subNode)));
+//                for (var subNode : T[i].tour){
+//                    System.out.println("T[" + i +"]" + subNode + " SubNode@" + Integer.toHexString(System.identityHashCode(subNode)));
+//                }
+
+//                System.out.println("Length of T[" + i +"].tour: " + T[i].tour.length);
+                for (int j = 0; j < T[i].tour.length; j++) {
+
+                    System.out.println(T[i].tour[j]
+                            + " T["+ i +"].tour[" + j + "] SubNode@" + Integer.toHexString(System.identityHashCode(T[i].tour[j])));
                 }
             }
         }

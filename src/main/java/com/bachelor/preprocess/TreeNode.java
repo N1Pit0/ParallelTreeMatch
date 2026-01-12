@@ -31,11 +31,10 @@ public class TreeNode {
     //  current node in the tree. Needs initialization
     public final SubNode[] tour;
 
-    // latches[0] for InitializeNodeInfo
-    // latches[1] for InitializeTourInfo
-    // latches[2] for InitializeType
-    // latches[3] for InitializeSubtree
-    // latches[5] for InitializeEulerChain
+    // latches[0] for InitializeTourInfo
+    // latches[1] for InitializeType
+    // latches[2] for InitializeSubtree
+    // latches[3] for InitializeEulerChain
     private TreeNode(Builder builder) {
         this.outDegree = builder.outDegree;
         this.isVariable = builder.isVariable;

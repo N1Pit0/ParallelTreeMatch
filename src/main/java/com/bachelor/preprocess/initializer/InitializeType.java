@@ -32,13 +32,11 @@ public class InitializeType implements Initializer {
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
 
-        if (iFather < 0) {
+        if (iFather >= 0) {
             logger.debug("Returned With father <0");
-            return;
+            int edgeLabel = T[index].getEdge_label();
+            T[iFather].tour[edgeLabel].setType(DUMMY);
         }
-
-        int edgeLabel = T[index].getEdge_label();
-        T[iFather].tour[edgeLabel].setType(DUMMY);
 
         int currentOutDegree = T[index].arity();
         if (currentOutDegree == 0) {
@@ -48,7 +46,9 @@ public class InitializeType implements Initializer {
             T[index].tour[currentOutDegree].setType(LAST); // I removed + 1 from here inside tour array
         }
 
-        T[iFather].getLatches()[Step.INITIALIZE_TYPE.ordinal()].countDown();
+        if(iFather >= 0){
+            T[iFather].getLatches()[Step.INITIALIZE_TYPE.ordinal()].countDown();
+        }
 
         logger.debug("Completed the task of InitializeType");
     }
