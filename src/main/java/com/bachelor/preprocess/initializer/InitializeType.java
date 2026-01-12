@@ -2,6 +2,7 @@ package com.bachelor.preprocess.initializer;
 
 import com.bachelor.preprocess.Initializer;
 import com.bachelor.preprocess.InputArray;
+import com.bachelor.preprocess.Step;
 import com.bachelor.preprocess.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,13 @@ public class InitializeType implements Initializer {
     @Override
     public void initialize() {
         logger.info("Inside run of InitializeType");
+
+        try {
+            T[index].getLatches()[Step.INITIALIZE_TYPE.ordinal()].await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
 
@@ -39,6 +47,9 @@ public class InitializeType implements Initializer {
             T[index].tour[0].setType(FIRST);
             T[index].tour[currentOutDegree].setType(LAST); // I removed + 1 from here inside tour array
         }
+
+        T[iFather].getLatches()[Step.INITIALIZE_TYPE.ordinal()].countDown();
+
         logger.debug("Completed the task of InitializeType");
     }
 }

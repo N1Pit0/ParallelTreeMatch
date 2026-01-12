@@ -43,9 +43,9 @@ public class TreeNode {
         this.tour = builder.tour;
         this.father = builder.father;
         this.edge_label = builder.edgeLabel;
-        this.latches = new CountDownLatch[5]; // 5 Here is number of steps/initializers required for algorithm
-        for (int i = 0; i < this.outDegree; i++) {
-            this.latches[i] = new CountDownLatch(this.outDegree);
+        this.latches = new CountDownLatch[Step.values().length]; // 5 Here is number of steps/initializers required for algorithm
+        for (Step step : Step.values()) {
+            this.latches[step.ordinal()] = new CountDownLatch(this.outDegree);
         }
     }
 
