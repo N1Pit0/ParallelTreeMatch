@@ -156,8 +156,8 @@ public class Coordinator {
 //                System.out.println("Length of T[" + i +"].tour: " + T[i].tour.length);
                 for (int j = 0; j < T[i].tour.length; j++) {
 
-                    System.out.println(T[i].tour[j]
-                            + " T["+ i +"].tour[" + j + "] SubNode@" + Integer.toHexString(System.identityHashCode(T[i].tour[j])));
+                    System.out.println(" T["+ i +"].tour[" + j + "]" + T[i].tour[j]
+                            + " SubNode@" + Integer.toHexString(System.identityHashCode(T[i].tour[j])));
                 }
             }
         }
