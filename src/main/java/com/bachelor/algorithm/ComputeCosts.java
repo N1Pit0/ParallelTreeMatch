@@ -10,11 +10,19 @@ public class ComputeCosts {
     private final EulerChain eulerChain;
     private final ExecutorService executor;
     private final TreeNode[] T;
+    private final Splices splices;
 
-    public ComputeCosts(EulerChain eulerChain, ExecutorService executor) {
+    public ComputeCosts(EulerChain eulerChain, Splices splices,ExecutorService executor) {
         this.eulerChain = eulerChain;
         this.executor = executor;
         this.T = eulerChain.getT();
+        this.splices = splices;
+    }
+
+    public void createSplices(){
+        doStepOne();
+        doStepTwo();
+        doStepThree();
     }
 
     private void doStepOne(){
@@ -41,7 +49,18 @@ public class ComputeCosts {
     }
 
     private void doStepThree(){
-
+        for(int i = 1; i < eulerChain.getChainSize(); i++) {
+            final int index = i;
+            int [][] spliceArray = splices.getSplices();
+            executor.submit(() -> {
+                synchronized (spliceArray){
+                    //This array indexing need to take into account that paper uses 1-based indexing
+                    spliceArray[eulerChain.getFromIndex(index).getCost()][2] = index - 1;
+                    spliceArray[eulerChain.getFromIndex(index).getCost() + 1][1] = index + 1;
+                }
+            });
+            spliceArray[0][0] = 0;
+        }
     }
 
 }
