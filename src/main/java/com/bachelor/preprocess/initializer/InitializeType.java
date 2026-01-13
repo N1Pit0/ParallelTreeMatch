@@ -33,7 +33,7 @@ public class InitializeType implements Initializer {
         logger.debug("got the father {}", iFather);
 
         if (iFather >= 0) {
-            logger.debug("Returned With father <0");
+//            logger.debug("Returned With father <0");
             int edgeLabel = T[index].getEdge_label();
             T[iFather].tour[edgeLabel].setType(DUMMY);
         }

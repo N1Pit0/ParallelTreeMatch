@@ -67,12 +67,16 @@ public class ComputeCosts {
     private void doStepThree(){
         phaser.bulkRegister(eulerChain.getChainSize());
 
-        for(int i = 1; i < eulerChain.getChainSize(); i++) {
+        //Should we start from i = 0 or i = 1???
+        for(int i = 0; i < eulerChain.getChainSize(); i++) {
             final int index = i;
             executor.submit(() -> {
+                SubNode currentSubNode = eulerChain.getFromIndex(index);
+                if(T[currentSubNode.getNodeInfo()].isVariable()){
                     //This array indexing need to take into account that paper uses 1-based indexing
-                splices.writeAtIndex(eulerChain.getFromIndex(index).getCost(),1, index - 1);
-                splices.writeAtIndex(eulerChain.getFromIndex(index).getCost() + 1, 0 ,index + 1);
+                    splices.writeAtIndex(currentSubNode.getCost(),1, index - 1);
+                    splices.writeAtIndex(currentSubNode.getCost() + 1, 0 ,index + 1);
+                }
                 phaser.arriveAndDeregister();
             });
             splices.writeAtIndex(0,0,0);
