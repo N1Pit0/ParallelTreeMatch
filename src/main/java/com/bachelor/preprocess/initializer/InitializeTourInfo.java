@@ -29,9 +29,9 @@ public class InitializeTourInfo implements Initializer {
 
         int edgeLabel = T[index].getEdge_label();
         T[iFather].tour[edgeLabel].setTourInfo(T[index].tour[0]);
-        // + 1 might be problem here since the paper has 1-indexing not 0
-        SubNode subNode = T[iFather].tour[T[index].getEdge_label() + 1]; // Change the name of the variable to something else
-        T[index].tour[T[index].arity()].setTourInfo(subNode);
+
+        SubNode next = T[iFather].tour[T[index].getEdge_label() + 1];
+        T[index].tour[T[index].arity()].setTourInfo(next);
         logger.debug("Completed the task of InitializeTourInfo");
     }
 }

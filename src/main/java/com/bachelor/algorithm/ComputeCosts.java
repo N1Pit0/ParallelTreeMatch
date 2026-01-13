@@ -79,8 +79,8 @@ public class ComputeCosts {
                 }
                 phaser.arriveAndDeregister();
             });
-            splices.writeAtIndex(0,0,0);
         }
+        splices.writeAtIndex(0,0,0);
     }
 
 }

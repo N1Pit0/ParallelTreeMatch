@@ -14,7 +14,7 @@ public class Splices {
 
     public Splices(EulerChain eulerChain){
         int size = eulerChain.getInputArray().getVariableCount();
-        splices = new int[size][2];
+        splices = new int[size+1][2];
     }
 
 

@@ -7,11 +7,147 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
+import java.util.function.Supplier;
 
+
+//This class need huge refactoring. It is just for testing now.
 public class Coordinator {
     private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
 
-    private static TreeNode[] initializeTArray(int length){
+    private static TreeNode[] initializeSubjectTArray(int length){
+        TreeNode[] treeNodes = new TreeNode[length];
+
+        int outdegree = 2;
+        SubNode[] tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode0 = new TreeNode.Builder("f(f(a,b), f(f(a,a),a))")
+                .father(-1)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(0)
+                .tour(tour)
+                .build();
+
+        outdegree = 2;
+        tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode1 = new TreeNode.Builder("f(a,b)")
+                .father(0)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(0)
+                .tour(tour)
+                .build();
+
+        outdegree = 2;
+        tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode2 = new TreeNode.Builder("f(f(a,a),a)")
+                .father(0)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(1)
+                .tour(tour)
+                .build();
+
+        outdegree = 0;
+        tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode3 = new TreeNode.Builder("a")
+                .father(1)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(0)
+                .tour(tour)
+                .build();
+
+        outdegree = 0;
+        tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode4 = new TreeNode.Builder("b")
+                .father(1)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(1)
+                .tour(tour)
+                .build();
+
+        outdegree = 2;
+        tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode5 = new TreeNode.Builder("f(a,a)")
+                .father(2)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(0)
+                .tour(tour)
+                .build();
+
+        outdegree = 0;
+        tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode6 = new TreeNode.Builder("a")
+                .father(2)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(1)
+                .tour(tour)
+                .build();
+
+        outdegree = 0;
+        tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode7 = new TreeNode.Builder("a")
+                .father(5)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(0)
+                .tour(tour)
+                .build();
+
+        outdegree = 0;
+        tour = new SubNode[outdegree + 1];
+        for(int i = 0; i < tour.length; i ++){
+            tour[i] = new SubNode(6);
+        }
+        TreeNode treeNode8 = new TreeNode.Builder("a")
+                .father(5)
+                .isVariable(false)
+                .outDegree(outdegree)
+                .edgeLabel(1)
+                .tour(tour)
+                .build();
+
+        treeNodes[0] = treeNode0;
+        treeNodes[1] = treeNode1;
+        treeNodes[2] = treeNode2;
+        treeNodes[3] = treeNode3;
+        treeNodes[4] = treeNode4;
+        treeNodes[5] = treeNode5;
+        treeNodes[6] = treeNode6;
+        treeNodes[7] = treeNode7;
+        treeNodes[8] = treeNode8;
+
+        return treeNodes;
+    }
+
+    private static TreeNode[] initializePatternTArray(int length){
         TreeNode[] treeNodes = new TreeNode[length];
 
         int outdegree0 = 2;
@@ -110,56 +246,84 @@ public class Coordinator {
 
     public static void main(String[] args) throws InterruptedException, TimeoutException {
         Phaser phaser = new Phaser();
-        int inputPatternLength = 5;
+        final int patternLength = 5;
+        final int subjectLength = 9;
 
-        try (ExecutorService executor = Executors.newFixedThreadPool(inputPatternLength)) {
+        try (ExecutorService executor = Executors.newFixedThreadPool(9)) {
 
-            TreeNode[] T = initializeTArray(inputPatternLength);
-            InputArray inputArray = new InputArray(T,2);
-            EulerChain eulerChain = new EulerChain(inputArray);
+            // Preprocess pattern
+            TreeNode[] patternT = buildAndPreprocess(executor, phaser, () -> initializePatternTArray(patternLength), 2, 10);
 
-            // Phase 1: NodeInfo
-            Initializer[] initializers = IntStream.range(0, inputPatternLength)
-                    .mapToObj(i -> new InitializeNodeInfo(i, inputArray))
-                    .toArray(Initializer[]::new);
-            runPhase(executor, phaser, initializers, 10);
+            // Preprocess subject
+            TreeNode[] subjectT = buildAndPreprocess(executor, phaser, () -> initializeSubjectTArray(subjectLength), 0, 10);
 
-            // Phase 2: TourInfo
-            initializers = IntStream.range(0, inputPatternLength)
-                    .mapToObj(i -> new InitializeTourInfo(i, inputArray))
-                    .toArray(Initializer[]::new);
-            runPhase(executor, phaser, initializers, 10);
+            // print pattern tours
+            printTreeTours(patternT, "Pattern tours:");
 
-            // Phase 3: Leaf
-            initializers = IntStream.range(0, inputPatternLength)
-                    .mapToObj(i -> new InitializeType(i, inputArray))
-                    .toArray(Initializer[]::new);
-            runPhase(executor, phaser, initializers, 10);
+            // print subject tours
+            printTreeTours(subjectT, "Subject tours:");
+        }
+    }
 
-            // Phase 4: SubTree
-            initializers = IntStream.range(0, inputPatternLength)
-                    .mapToObj(i -> new InitializeSubTree(i, inputArray))
-                    .toArray(Initializer[]::new);
-            runPhase(executor, phaser, initializers, 10);
+    private static TreeNode[] buildAndPreprocess(ExecutorService executor, Phaser phaser, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds) throws InterruptedException, TimeoutException {
+        TreeNode[] treeNodes = treeSupplier.get();
+        InputArray inputArray = new InputArray(treeNodes, variableCount);
+        EulerChain eulerChain = new EulerChain(inputArray);
+        preprocessTree(executor, phaser, inputArray, eulerChain, treeNodes.length, timeoutSeconds);
+        return treeNodes;
+    }
 
-            // Phase 5: EulerChain
-            initializers = IntStream.range(0, inputPatternLength)
+    /**
+     * Prints tours for each TreeNode in the array. Safe to call with null arrays or null tours.
+     */
+    private static void printTreeTours(TreeNode[] treeNodes, String title) {
+        if (title != null && !title.isEmpty()) {
+            System.out.println(title);
+        }
+        if (treeNodes == null) return;
+        for (int i = 0; i < treeNodes.length; i++) {
+            TreeNode node = treeNodes[i];
+            if (node == null || node.tour == null) continue;
+            for (int j = 0; j < node.tour.length; j++) {
+                System.out.println(" T[" + i + "].tour[" + j + "]" + node.tour[j]
+                        + " SubNode@" + Integer.toHexString(System.identityHashCode(node.tour[j])));
+            }
+        }
+    }
+
+    private static void preprocessTree(ExecutorService executor, Phaser phaser, InputArray inputArray, EulerChain eulerChain, int length, int timeoutSeconds) throws InterruptedException, TimeoutException {
+        Initializer[] initializers;
+
+        // Phase 1: NodeInfo
+        initializers = IntStream.range(0, length)
+                .mapToObj(i -> new InitializeNodeInfo(i, inputArray))
+                .toArray(Initializer[]::new);
+        runPhase(executor, phaser, initializers, timeoutSeconds);
+
+        // Phase 2: TourInfo
+        initializers = IntStream.range(0, length)
+                .mapToObj(i -> new InitializeTourInfo(i, inputArray))
+                .toArray(Initializer[]::new);
+        runPhase(executor, phaser, initializers, timeoutSeconds);
+
+        // Phase 3: Leaf/Type
+        initializers = IntStream.range(0, length)
+                .mapToObj(i -> new InitializeType(i, inputArray))
+                .toArray(Initializer[]::new);
+        runPhase(executor, phaser, initializers, timeoutSeconds);
+
+        // Phase 4: SubTree
+        initializers = IntStream.range(0, length)
+                .mapToObj(i -> new InitializeSubTree(i, inputArray))
+                .toArray(Initializer[]::new);
+        runPhase(executor, phaser, initializers, timeoutSeconds);
+
+        // Phase 5: EulerChain
+        if (eulerChain != null) {
+            initializers = IntStream.range(0, length)
                     .mapToObj(i -> new InitializeEulerChain(i, eulerChain))
                     .toArray(Initializer[]::new);
-            runPhase(executor, phaser, initializers, 10);
-
-            for (int i = 0; i < T.length; i++) {
-//                for (var subNode : T[i].tour){
-//                    System.out.println("T[" + i +"]" + subNode + " SubNode@" + Integer.toHexString(System.identityHashCode(subNode)));
-//                }
-
-//                System.out.println("Length of T[" + i +"].tour: " + T[i].tour.length);
-                for (int j = 0; j < T[i].tour.length; j++) {
-
-                    System.out.println(" T["+ i +"].tour[" + j + "]" + T[i].tour[j]
-                            + " SubNode@" + Integer.toHexString(System.identityHashCode(T[i].tour[j])));
-                }
-            }
+            runPhase(executor, phaser, initializers, timeoutSeconds);
         }
     }
 

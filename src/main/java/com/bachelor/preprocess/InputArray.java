@@ -2,7 +2,6 @@ package com.bachelor.preprocess;
 
 public class InputArray {
 
-    //Needs initialization
     private final TreeNode[] T;
     private final int variableCount;
 
