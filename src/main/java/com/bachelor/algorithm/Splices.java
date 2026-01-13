@@ -13,7 +13,7 @@ public class Splices {
     private final Lock writeLock = LOCK.writeLock();
 
     public Splices(EulerChain eulerChain){
-        int size = eulerChain.getChainSize();
+        int size = eulerChain.getInputArray().getVariableCount();
         splices = new int[size][2];
     }
 

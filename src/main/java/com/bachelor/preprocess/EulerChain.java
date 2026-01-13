@@ -10,9 +10,11 @@ public class EulerChain {
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final Lock readLock = LOCK.readLock();
     private final Lock writeLock = LOCK.writeLock();
+    private final InputArray inputArray;
     private final TreeNode[] T;
 
     public EulerChain(InputArray inputArray){
+        this.inputArray = inputArray;
         this.T = inputArray.getT();
         int size = 0;
         for (var elem : T){
@@ -45,5 +47,9 @@ public class EulerChain {
 
     public TreeNode[] getT() {
         return T;
+    }
+
+    public InputArray getInputArray(){
+        return this.inputArray;
     }
 }

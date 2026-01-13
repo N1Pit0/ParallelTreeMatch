@@ -14,4 +14,8 @@ public class InputArray {
     public TreeNode[] getT(){
         return this.T;
     }
+
+    public int getVariableCount(){
+        return this.variableCount;
+    }
 }
