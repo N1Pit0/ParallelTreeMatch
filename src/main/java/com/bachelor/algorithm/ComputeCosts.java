@@ -9,6 +9,10 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+
+//This class does more than one thing.
+// It is subject to decomposition according
+// to Single Responsibility principle
 public class ComputeCosts {
     private final EulerChain eulerChain;
     private final ExecutorService executor;
@@ -65,16 +69,13 @@ public class ComputeCosts {
 
         for(int i = 1; i < eulerChain.getChainSize(); i++) {
             final int index = i;
-            int [][] spliceArray = splices.getSplices();
             executor.submit(() -> {
-                synchronized (spliceArray){
                     //This array indexing need to take into account that paper uses 1-based indexing
-                    spliceArray[eulerChain.getFromIndex(index).getCost()][2] = index - 1;
-                    spliceArray[eulerChain.getFromIndex(index).getCost() + 1][1] = index + 1;
-                }
+                splices.writeAtIndex(eulerChain.getFromIndex(index).getCost(),1, index - 1);
+                splices.writeAtIndex(eulerChain.getFromIndex(index).getCost() + 1, 0 ,index + 1);
                 phaser.arriveAndDeregister();
             });
-            spliceArray[0][0] = 0;
+            splices.writeAtIndex(0,0,0);
         }
     }
 
