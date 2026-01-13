@@ -33,6 +33,7 @@ public class InitializeSubTree implements Initializer {
         int edgeLabel = T[index].getEdge_label();
         int subTree = T[iFather].tour[T[iFather].arity()].getCost();
         T[iFather].tour[edgeLabel].setSubtree(subTree);
+        T[iFather].tour[T[iFather].arity()].setSubtree(subTree);
 
         SubNode firstSubNode = T[index].tour[0];
         if(firstSubNode.getType().equals(LEAF)){

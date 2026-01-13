@@ -28,6 +28,8 @@ public class InitializeNodeInfo implements Initializer {
 
         int edgeLabel = T[index].getEdge_label();
         T[iFather].tour[edgeLabel].setNodeInfo(iFather); // +1 here? for tour array
+        T[iFather].tour[T[iFather].arity()].setNodeInfo(iFather);
+        T[index].tour[0].setNodeInfo(index);
         logger.debug("Completed the task InitializeNodeInfo");
     }
 }
