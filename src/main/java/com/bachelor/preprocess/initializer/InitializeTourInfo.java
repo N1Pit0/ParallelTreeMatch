@@ -29,9 +29,12 @@ public class InitializeTourInfo implements Initializer {
 
         int edgeLabel = T[index].getEdge_label();
         T[iFather].tour[edgeLabel].setTourInfo(T[index].tour[0]);
+        T[iFather].tour[edgeLabel].setNext(T[index].tour[0]);
 
         SubNode next = T[iFather].tour[T[index].getEdge_label() + 1];
         T[index].tour[T[index].arity()].setTourInfo(next);
+        T[index].tour[T[index].arity()].setNext(next);
+
         logger.debug("Completed the task of InitializeTourInfo");
     }
 }

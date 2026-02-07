@@ -1,5 +1,6 @@
 package com.bachelor.preprocess;
 
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -12,6 +13,12 @@ public class EulerChain {
     private final Lock writeLock = LOCK.writeLock();
     private final InputArray inputArray;
     private final TreeNode[] T;
+    private final int chainSize;
+
+    @Override
+    public String toString(){
+        return Arrays.toString(CHAIN);
+    }
 
     public EulerChain(InputArray inputArray){
         this.inputArray = inputArray;
@@ -20,7 +27,8 @@ public class EulerChain {
         for (var elem : T){
             size += elem.arity() + 1;
         }
-        this.CHAIN = new SubNode[size];
+        this.chainSize = size;
+        this.CHAIN = new SubNode[chainSize];
     }
 
     public void setAtIndex(int index, SubNode subNode){
@@ -43,6 +51,10 @@ public class EulerChain {
 
     public int getChainSize() {
         return CHAIN.length;
+    }
+
+    public SubNode[] getChain(){
+        return CHAIN;
     }
 
     public TreeNode[] getT() {

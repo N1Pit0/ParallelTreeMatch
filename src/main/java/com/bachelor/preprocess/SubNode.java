@@ -1,10 +1,11 @@
 package com.bachelor.preprocess;
 
+import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class SubNode {
+public class SubNode implements Iterable<SubNode>{
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final Lock readLock = LOCK.readLock();
     private final Lock writeLock = LOCK.writeLock();
@@ -13,6 +14,8 @@ public class SubNode {
     private int nodeInfo; // reference to the corresponding TreeNode inside the T array.
 
     private SubNode tourInfo; // a reference to the next element (used to form the linked list) in the Euler chain.
+
+    private SubNode next;
 
     private int subtree; // used for storing the last occurrence of node i in the Euler chain.
 
@@ -25,8 +28,7 @@ public class SubNode {
 //    field
     private int cost;
 
-    public SubNode(int cost){
-        this.cost = cost;
+    public SubNode(){
     }
 
     public int getNodeInfo() {
@@ -147,5 +149,48 @@ public class SubNode {
                 ", type=" + typeCopy +
                 ", cost=" + costCopy +
                 '}';
+    }
+
+    public SubNode getNext() {
+        try{
+            readLock.lock();
+            return next;
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    public void setNext(SubNode next) {
+        try{
+            writeLock.lock();
+            this.next = next;
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    private static class Itr implements Iterator<SubNode>{
+        private SubNode current;
+
+        Itr(SubNode head){
+            this.current = head;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public SubNode next() {
+            SubNode node = current;
+            current = current.getTourInfo();
+            return node;
+        }
+    }
+
+    @Override
+    public Iterator<SubNode> iterator() {
+        return new Itr(this);
     }
 }
