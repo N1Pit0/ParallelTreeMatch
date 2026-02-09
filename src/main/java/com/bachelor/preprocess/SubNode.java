@@ -121,6 +121,14 @@ public class SubNode implements Iterable<SubNode>{
         }
     }
 
+    public int getCostWithoutLock() {
+        return cost;
+    }
+
+    public void setCostWithoutLock(int cost) {
+        this.cost = cost;
+    }
+
     @Override
     public String toString() {
         // copy fields under read lock to avoid holding the lock while building the string
@@ -167,6 +175,21 @@ public class SubNode implements Iterable<SubNode>{
         } finally {
             writeLock.unlock();
         }
+    }
+
+    public SubNode getNextWithoutLock() {
+        readLock.lock();
+        return next;
+
+    }
+
+    public void setNextWithoutLock(SubNode next) {
+        writeLock.lock();
+        this.next = next;
+    }
+
+    public Lock getWriteLock(){
+        return this.writeLock;
     }
 
     private static class Itr implements Iterator<SubNode>{

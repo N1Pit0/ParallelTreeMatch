@@ -49,24 +49,31 @@ public class InitializeCost {
         final int eulerChainSize = eulerChain.getChainSize();
         int rounds = (int) Math.ceil(Math.log(eulerChainSize) / Math.log(2));
 
-        CountDownLatch barrier = new CountDownLatch(eulerChainSize); // +1 for the main thread
-        for (int i = 0; i < rounds; i++) {
+        CyclicBarrier barrier = new CyclicBarrier(eulerChainSize + 1); // +1 for main thread
 
-            // Submit a task for each node
+        for (int i = 0; i < rounds; i++) {
             for (SubNode current : head) {
                 executor.submit(() -> {
+                    current.getWriteLock().lock();
+                    SubNode next = current.getNextWithoutLock();
                     try {
-                        if (current.getNext() != null) {
-                            current.setCost(current.getCost() + current.getNext().getCost());
-                            current.setNext(current.getNext().getNext());
+                        if (next != null) {
+                            next.getWriteLock().lock();
+                            try {
+                                current.setCostWithoutLock(current.getCostWithoutLock() + next.getCostWithoutLock());
+                                current.setNextWithoutLock(next.getNextWithoutLock());
+                            } finally {
+                                next.getWriteLock().unlock();
+                            }
                         }
                     } finally {
-                        try {
-                            barrier.countDown(); // Wait for all tasks in this round
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                            throw new RuntimeException(e);
-                        }
+                        current.getWriteLock().unlock();
+                    }
+                    // Wait for all tasks in this round
+                    try {
+                        barrier.await();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 });
             }
@@ -75,7 +82,6 @@ public class InitializeCost {
             try {
                 barrier.await();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
                 throw new RuntimeException(e);
             }
         }
