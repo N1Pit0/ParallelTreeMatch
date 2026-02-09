@@ -24,13 +24,11 @@ public class InitializeEulerChain implements Initializer {
         logger.debug("Inside run of InitializeEulerChain");
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
-        if (iFather < 0) {
-            logger.debug("Returned With father <0");
-            return;
-        }
 
         int edgeLabel = T[index].getEdge_label();
-        eulerChain.setAtIndex(T[iFather].tour[edgeLabel + 1].getCost(), T[iFather].tour[edgeLabel + 1]);
+        if (iFather >= 0) {
+            eulerChain.setAtIndex(T[iFather].tour[edgeLabel + 1].getCost(), T[iFather].tour[edgeLabel + 1]);
+        }
         eulerChain.setAtIndex(T[index].tour[0].getCost(), T[index].tour[0]);
         logger.debug("Completed the task of InitializeEulerChain");
     }

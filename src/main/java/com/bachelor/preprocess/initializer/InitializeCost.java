@@ -4,6 +4,7 @@ import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -35,23 +36,47 @@ public class InitializeCost {
             });
         }
         try {
-            latch.await(5, TimeUnit.SECONDS);
+            latch.await(3, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
-    public void doWork(){
-        initialize();
+    public void doWork() {
+        initialize(); // Initial cost setup
+
         final int eulerChainSize = eulerChain.getChainSize();
-        for (int i = 0; i < (int) Math.ceil(Math.log(eulerChainSize)); i ++){
-            for (var current : head){
+        int rounds = (int) Math.ceil(Math.log(eulerChainSize) / Math.log(2));
+
+        CountDownLatch barrier = new CountDownLatch(eulerChainSize); // +1 for the main thread
+        for (int i = 0; i < rounds; i++) {
+
+            // Submit a task for each node
+            for (SubNode current : head) {
                 executor.submit(() -> {
-                    if (current.getNext() != null){
-                        current.setCost((current.getCost() + current.getNext().getCost()));
-                        current.setNext(current.getNext().getNext());
+                    try {
+                        if (current.getNext() != null) {
+                            current.setCost(current.getCost() + current.getNext().getCost());
+                            current.setNext(current.getNext().getNext());
+                        }
+                    } finally {
+                        try {
+                            barrier.countDown(); // Wait for all tasks in this round
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
+            }
+
+            // Main thread waits for all tasks to reach the barrier
+            try {
+                barrier.await();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException(e);
             }
         }
     }

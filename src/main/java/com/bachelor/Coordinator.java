@@ -253,22 +253,28 @@ public class Coordinator {
         try (ExecutorService executor = Executors.newFixedThreadPool(17)){ // Problems with number of nodes and available processors {
 
 //             Preprocess pattern
-            Object[] patternT = buildAndPreprocess(executor, phaser, () -> initializePatternTArray(patternLength), 2, 10);
+//            Object[] patternT = buildAndPreprocess(executor, phaser, () -> initializePatternTArray(patternLength), 2, 10);
 
             // Preprocess subject
             Object[] subjectT = buildAndPreprocess(executor, phaser, () -> initializeSubjectTArray(subjectLength), 0, 10);
 
 //             print pattern tours
-            printTreeTours((TreeNode[]) patternT[0], "Pattern tours:");
+//            printTreeTours((TreeNode[]) patternT[0], "Pattern tours:");
+//
+//            EulerChain chain = (EulerChain) patternT[1];
+//            for (var elem : chain.getChain()){
+//                if(elem == null) continue;
+//                System.out.println(elem.getNodeInfo());
+//            }
 
-            EulerChain chain = (EulerChain) patternT[1];
+            // print subject tours
+            printTreeTours((TreeNode[]) subjectT[0], "Subject tours:");
+
+           EulerChain chain = (EulerChain) subjectT[1];
             for (var elem : chain.getChain()){
                 if(elem == null) continue;
                 System.out.println(elem.getNodeInfo());
             }
-
-            // print subject tours
-            printTreeTours((TreeNode[]) subjectT[0], "Subject tours:");
         }
     }
 
