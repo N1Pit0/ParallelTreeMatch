@@ -3,9 +3,11 @@ package com.bachelor.preprocess;
 import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SubNode implements Iterable<SubNode>{
+    private final ReentrantLock lock = new ReentrantLock();
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final Lock readLock = LOCK.readLock();
     private final Lock writeLock = LOCK.writeLock();
@@ -31,9 +33,12 @@ public class SubNode implements Iterable<SubNode>{
     public SubNode(){
     }
 
+    public void lock() { lock.lock(); }
+    public void unlock() { lock.unlock(); }
+
     public int getNodeInfo() {
+        readLock.lock();
         try {
-            readLock.lock();
             return nodeInfo;
         } finally {
             readLock.unlock();
@@ -41,8 +46,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public void setNodeInfo(int nodeInfo) {
+        writeLock.lock();
         try {
-            writeLock.lock();
             this.nodeInfo = nodeInfo;
         } finally {
             writeLock.unlock();
@@ -50,8 +55,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public SubNode getTourInfo() {
+        readLock.lock();
         try {
-            readLock.lock();
             return tourInfo;
         } finally {
             readLock.unlock();
@@ -59,8 +64,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public void setTourInfo(SubNode tourInfo) {
+        writeLock.lock();
         try {
-            writeLock.lock();
             this.tourInfo = tourInfo;
         } finally {
             writeLock.unlock();
@@ -68,8 +73,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public int getSubtree() {
+        readLock.lock();
         try {
-            readLock.lock();
             return subtree;
         } finally {
             readLock.unlock();
@@ -77,8 +82,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public void setSubtree(int subtree) {
+        writeLock.lock();
         try {
-            writeLock.lock();
             this.subtree = subtree;
         } finally {
             writeLock.unlock();
@@ -86,8 +91,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public NodeType getType() {
+        readLock.lock();
         try {
-            readLock.lock();
             return type;
         } finally {
             readLock.unlock();
@@ -95,8 +100,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public void setType(NodeType type) {
+        writeLock.lock();
         try {
-            writeLock.lock();
             this.type = type;
         } finally {
             writeLock.unlock();
@@ -104,8 +109,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public int getCost() {
+        readLock.lock();
         try{
-            readLock.lock();
             return cost;
         } finally {
             readLock.unlock();
@@ -113,8 +118,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public void setCost(int cost) {
+        writeLock.lock();
         try{
-            writeLock.lock();
             this.cost = cost;
         } finally {
             writeLock.unlock();
@@ -137,8 +142,8 @@ public class SubNode implements Iterable<SubNode>{
         int subtreeCopy;
         NodeType typeCopy;
         int costCopy;
+        readLock.lock();
         try {
-            readLock.lock();
             nodeInfoCopy = this.nodeInfo;
             tourInfoCopy = this.tourInfo;
             subtreeCopy = this.subtree;
@@ -160,8 +165,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public SubNode getNext() {
+        readLock.lock();
         try{
-            readLock.lock();
             return next;
         } finally {
             readLock.unlock();
@@ -169,8 +174,8 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public void setNext(SubNode next) {
+        writeLock.lock();
         try{
-            writeLock.lock();
             this.next = next;
         } finally {
             writeLock.unlock();
@@ -178,13 +183,10 @@ public class SubNode implements Iterable<SubNode>{
     }
 
     public SubNode getNextWithoutLock() {
-        readLock.lock();
         return next;
-
     }
 
     public void setNextWithoutLock(SubNode next) {
-        writeLock.lock();
         this.next = next;
     }
 

@@ -5,22 +5,21 @@ import com.bachelor.preprocess.initializer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.concurrent.*;
-import java.util.stream.IntStream;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 
 //This class need huge refactoring. It is just for testing now.
 public class Coordinator {
     private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
 
-    private static TreeNode[] initializeSubjectTArray(int length){
+    private static TreeNode[] initializeSubjectTArray(int length) {
         TreeNode[] treeNodes = new TreeNode[length];
 
         int outdegree = 2;
         SubNode[] tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode0 = new TreeNode.Builder("f(f(a,b), f(f(a,a),a))")
@@ -33,7 +32,7 @@ public class Coordinator {
 
         outdegree = 2;
         tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode1 = new TreeNode.Builder("f(a,b)")
@@ -46,7 +45,7 @@ public class Coordinator {
 
         outdegree = 2;
         tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode2 = new TreeNode.Builder("f(f(a,a),a)")
@@ -59,7 +58,7 @@ public class Coordinator {
 
         outdegree = 0;
         tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode3 = new TreeNode.Builder("a")
@@ -72,7 +71,7 @@ public class Coordinator {
 
         outdegree = 0;
         tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode4 = new TreeNode.Builder("b")
@@ -85,7 +84,7 @@ public class Coordinator {
 
         outdegree = 2;
         tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode5 = new TreeNode.Builder("f(a,a)")
@@ -98,7 +97,7 @@ public class Coordinator {
 
         outdegree = 0;
         tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode6 = new TreeNode.Builder("a")
@@ -111,7 +110,7 @@ public class Coordinator {
 
         outdegree = 0;
         tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode7 = new TreeNode.Builder("a")
@@ -124,7 +123,7 @@ public class Coordinator {
 
         outdegree = 0;
         tour = new SubNode[outdegree + 1];
-        for(int i = 0; i < tour.length; i ++){
+        for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
         TreeNode treeNode8 = new TreeNode.Builder("a")
@@ -148,11 +147,11 @@ public class Coordinator {
         return treeNodes;
     }
 
-    private static TreeNode[] initializePatternTArray(int length){
+    private static TreeNode[] initializePatternTArray(int length) {
         TreeNode[] treeNodes = new TreeNode[length];
 
         int outdegree0 = 2;
-        SubNode[] tour = new SubNode[outdegree0+1];
+        SubNode[] tour = new SubNode[outdegree0 + 1];
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
@@ -165,7 +164,7 @@ public class Coordinator {
                 .build();
 
         int outdegree1 = 2;
-        tour = new SubNode[outdegree1+1];
+        tour = new SubNode[outdegree1 + 1];
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
@@ -178,7 +177,7 @@ public class Coordinator {
                 .build();
 
         int outdegree2 = 0;
-        tour = new SubNode[outdegree2+1]; //Do we need here outdegree + 1?
+        tour = new SubNode[outdegree2 + 1]; //Do we need here outdegree + 1?
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
@@ -191,7 +190,7 @@ public class Coordinator {
                 .build();
 
         int outdegree3 = 0;
-        tour = new SubNode[outdegree3+1];
+        tour = new SubNode[outdegree3 + 1];
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
@@ -204,7 +203,7 @@ public class Coordinator {
                 .build();
 
         int outdegree4 = 0;
-        tour = new SubNode[outdegree4+1];
+        tour = new SubNode[outdegree4 + 1];
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
@@ -246,35 +245,39 @@ public class Coordinator {
     }
 
     public static void main(String[] args) throws InterruptedException, TimeoutException {
-        Phaser phaser = new Phaser();
         final int patternLength = 5;
         final int subjectLength = 9;
 
-        try (ExecutorService executor = Executors.newFixedThreadPool(17)){ // Problems with number of nodes and available processors {
+        try (ExecutorService executor1 = Executors.newCachedThreadPool();
+             ExecutorService executor2 = Executors.newCachedThreadPool()) { // Problems with number of nodes and available processors {
+            Phaser phaser1 = new Phaser();
+            Phaser phaser2 = new Phaser();
 
 //             Preprocess pattern
-//            Object[] patternT = buildAndPreprocess(executor, phaser, () -> initializePatternTArray(patternLength), 2, 10);
+            Object[] patternT = buildAndPreprocess(executor1, phaser1, () -> initializePatternTArray(patternLength), 2, 10);
 
             // Preprocess subject
-            Object[] subjectT = buildAndPreprocess(executor, phaser, () -> initializeSubjectTArray(subjectLength), 0, 10);
+            Object[] subjectT = buildAndPreprocess(executor2, phaser2, () -> initializeSubjectTArray(subjectLength), 0, 10);
 
 //             print pattern tours
-//            printTreeTours((TreeNode[]) patternT[0], "Pattern tours:");
-//
-//            EulerChain chain = (EulerChain) patternT[1];
-//            for (var elem : chain.getChain()){
-//                if(elem == null) continue;
-//                System.out.println(elem.getNodeInfo());
-//            }
+            printTreeTours((TreeNode[]) patternT[0], "Pattern tours:");
+
+            EulerChain chain = (EulerChain) patternT[1];
+            for (var elem : chain.getChain()) {
+                if (elem == null) continue;
+                System.out.println(elem.getNodeInfo());
+            }
 
             // print subject tours
             printTreeTours((TreeNode[]) subjectT[0], "Subject tours:");
 
-           EulerChain chain = (EulerChain) subjectT[1];
-            for (var elem : chain.getChain()){
-                if(elem == null) continue;
+            chain = (EulerChain) subjectT[1];
+            for (var elem : chain.getChain()) {
+                if (elem == null) continue;
                 System.out.println(elem.getNodeInfo());
             }
+
+            int a = 2;
         }
     }
 
@@ -340,5 +343,4 @@ public class Coordinator {
                 .toArray(Initializer[]::new);
         runPhase(executor, phaser, initializers, timeoutSeconds);
     }
-
 }
