@@ -3,9 +3,11 @@ package com.bachelor.preprocess.initializer;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
 
 //God knows what's going on here. Just want to
@@ -21,93 +23,63 @@ public class InitializeCost {
         this.head = eulerChain.getT()[0].tour[0];
     }
 
-    private void initialize() {
-        int expectedCount = eulerChain.getChainSize();
-        System.out.println("Expected chain size: " + expectedCount);
-
-        // Count actual nodes
-        int actualCount = 0;
-        for(var current : head) {
-            actualCount++;
-        }
-        System.out.println("Actual nodes in iteration: " + actualCount);
-
-//        if (expectedCount != actualCount) {
-//            throw new IllegalStateException(
-//                    String.format("Mismatch! Expected %d nodes but found %d", expectedCount, actualCount)
-//            );
-//        }
-
-        // Now do the actual initialization
-//        CountDownLatch latch = new CountDownLatch(expectedCount);  // Use actual count!
-
-        for(var current : head) {
-            executor.submit(() -> {
-                try {
-                    if (current.getTourInfo() != null) {
-                        current.setCost(1);
-                    } else {
-                        current.setCost(0);
-                    }
-                } finally {
-//                    latch.countDown();
-                }
-            });
-        }
-
-//        try {
-//            if (!latch.await(2, TimeUnit.SECONDS)) {
-//                System.err.println("Timeout! Remaining count: " + latch.getCount());
-//                System.err.println("This means " + latch.getCount() + " tasks didn't complete");
-//            }
-//        } catch (InterruptedException e) {
-//            System.err.println("Interrupted while waiting!");
-//            Thread.currentThread().interrupt();  // Restore interrupt flag
-//            throw new RuntimeException("Initialize interrupted", e);
-//        }
-    }
-
     public void doWork() {
-        initialize(); // Initial cost setup
 
-        final int eulerChainSize = eulerChain.getChainSize();
-        int rounds = (int) Math.ceil(Math.log(eulerChainSize) / Math.log(2));
+        final int size = eulerChain.getChainSize();
+        int rounds = (int) Math.ceil(Math.log(size) / Math.log(2));
 
+        for (int r = 0; r < rounds; r++) {
 
-        for (int i = 0; i < rounds; i++) {
-//            CountDownLatch countDownLatch = new CountDownLatch(eulerChainSize);
+            List<Future<?>> futures = new ArrayList<>();
+
+            // Phase 1: compute new values (read only old next + cost)
             for (SubNode current : head) {
-                executor.submit(() -> {
-                    SubNode next = current.getNextWithoutLock();
-                    SubNode first = current;
-                    SubNode second = next;
-                    if (next != null && System.identityHashCode(current) > System.identityHashCode(next)) {
-                        first = next;
-                        second = current;
-                    }
-                    first.lock();
-                    try {
-                        if (second != null) second.lock();
-                        try {
-                            if (next != null) {
-                                current.setCostWithoutLock(current.getCostWithoutLock() + next.getCostWithoutLock());
-                                current.setNextWithoutLock(next.getNextWithoutLock());
-                            }
-                        } finally {
-                            if (second != null) second.unlock();
-                        }
-                    } finally {
-                        first.unlock();
-//                        countDownLatch.countDown();
-                    }
-                });
-            }
-//            try {
-//                countDownLatch.await(3, TimeUnit.SECONDS);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-        }
+                futures.add(executor.submit(() -> {
 
+                    SubNode next = current.getNext();
+
+                    if (next != null) {
+                        current.setCostTmp(
+                                current.getCost() + next.getCost()
+                        );
+
+                        current.setNextTmp(
+                                next.getNext()
+                        );
+                    } else {
+                        current.setCostTmp(current.getCost());
+                        current.setNextTmp(null);
+                    }
+                }));
+            }
+
+            // Barrier
+            for (Future<?> f : futures) {
+                try {
+                    f.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            List<Future<?>> commitFutures = new ArrayList<>();
+
+            for (SubNode current : head) {
+                commitFutures.add(executor.submit(() -> {
+                    current.setCost(current.getCostTmp());
+                    current.setNext(current.getNextTmp());
+                }));
+            }
+
+            for (Future<?> f : commitFutures) {
+                try {
+                    f.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }
     }
+
 }

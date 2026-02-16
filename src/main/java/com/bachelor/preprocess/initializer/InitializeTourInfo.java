@@ -22,18 +22,18 @@ public class InitializeTourInfo implements Initializer {
         logger.info("Inside run of InitializeTourInfo");
         int iFather = T[index].getFather();
         logger.debug("got the father {}", iFather);
-        if (iFather < 0) {
-            logger.debug("Returned With father <0");
-            return;
+        if (iFather >= 0) {
+            int edgeLabel = T[index].getEdge_label();
+            T[iFather].tour[edgeLabel].setTourInfo(T[index].tour[0]);
+            T[iFather].tour[edgeLabel].setNext(T[index].tour[0]);
+            SubNode next = T[iFather].tour[T[index].getEdge_label() + 1];
+            T[index].tour[T[index].arity()].setTourInfo(next);
+            T[index].tour[T[index].arity()].setNext(next);
         }
 
-        int edgeLabel = T[index].getEdge_label();
-        T[iFather].tour[edgeLabel].setTourInfo(T[index].tour[0]);
-        T[iFather].tour[edgeLabel].setNext(T[index].tour[0]);
-
-        SubNode next = T[iFather].tour[T[index].getEdge_label() + 1];
-        T[index].tour[T[index].arity()].setTourInfo(next);
-        T[index].tour[T[index].arity()].setNext(next);
+        if(index == 0){
+            T[index].tour[T[index].arity()].setCost(0);
+        }
 
         logger.debug("Completed the task of InitializeTourInfo");
     }

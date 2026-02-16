@@ -28,7 +28,17 @@ public class SubNode implements Iterable<SubNode>{
 //    of each entry in the tour field. At the end, each entry of T [i].tour will
 //    be placed in an array E at a position given by the respective cost
 //    field
-    private int cost;
+    private int cost = 1;
+
+    private SubNode nextTmp;
+    private int costTmp;
+
+    public SubNode getNextTmp() { return nextTmp; }
+    public void setNextTmp(SubNode n) { this.nextTmp = n; }
+
+    public int getCostTmp() { return costTmp; }
+    public void setCostTmp(int c) { this.costTmp = c; }
+
 
     public SubNode(){
     }
@@ -194,7 +204,7 @@ public class SubNode implements Iterable<SubNode>{
         return this.writeLock;
     }
 
-    private static class Itr implements Iterator<SubNode>{
+    private class Itr implements Iterator<SubNode>{
         private SubNode current;
 
         Itr(SubNode head){
