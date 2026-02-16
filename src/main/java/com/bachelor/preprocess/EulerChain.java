@@ -9,8 +9,6 @@ public class EulerChain {
 
     private final SubNode[] CHAIN;
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
-    private final Lock readLock = LOCK.readLock();
-    private final Lock writeLock = LOCK.writeLock();
     private final InputArray inputArray;
     private final TreeNode[] T;
     private final int chainSize;
@@ -32,21 +30,11 @@ public class EulerChain {
     }
 
     public void setAtIndex(int index, SubNode subNode){
-        try{
-            writeLock.lock();
             CHAIN[index] = subNode;
-        }finally {
-            writeLock.unlock();
-        }
     }
 
     public SubNode getFromIndex(int index){
-        try{
-            readLock.lock();
             return CHAIN[index];
-        }finally {
-            readLock.unlock();
-        }
     }
 
     public int getChainSize() {
