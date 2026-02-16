@@ -95,7 +95,6 @@ public class TreeNode {
     }
 
     public int getFather() {
-        logger.debug("Inside the TreeNode for father {}", this.father);
         return this.father;
     }
 

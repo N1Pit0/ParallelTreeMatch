@@ -3,11 +3,9 @@ package com.bachelor.preprocess;
 import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SubNode implements Iterable<SubNode>{
-    private final ReentrantLock lock = new ReentrantLock();
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final Lock readLock = LOCK.readLock();
     private final Lock writeLock = LOCK.writeLock();
@@ -42,9 +40,6 @@ public class SubNode implements Iterable<SubNode>{
 
     public SubNode(){
     }
-
-    public void lock() { lock.lock(); }
-    public void unlock() { lock.unlock(); }
 
     public int getNodeInfo() {
         readLock.lock();

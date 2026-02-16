@@ -2,8 +2,6 @@ package com.bachelor;
 
 import com.bachelor.preprocess.*;
 import com.bachelor.preprocess.initializer.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -12,7 +10,6 @@ import java.util.stream.IntStream;
 
 //This class need huge refactoring. It is just for testing now.
 public class Coordinator {
-    private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
 
     private static TreeNode[] initializeSubjectTArray(int length) {
         TreeNode[] treeNodes = new TreeNode[length];
@@ -230,14 +227,11 @@ public class Coordinator {
         for (int i = 0; i < phaseSize; i++) {
             final int index = i;
             executor.submit(() -> {
-                Coordinator.logger.info("Phase {}: Task {} started", phaser.getPhase(), index);
                 try {
                     initializers[index].initialize();
                 } catch (Exception e) {
-                    Coordinator.logger.error("Phase {}: Task {} exception", phaser.getPhase(), index, e);
                 } finally {
                     phaser.arriveAndDeregister();
-                    Coordinator.logger.debug("Phase {}: Task {} finished and deregistered", phaser.getPhase(), index);
                 }
             });
         }
@@ -276,8 +270,6 @@ public class Coordinator {
                 if (elem == null) continue;
                 System.out.println(elem.getNodeInfo());
             }
-
-            int a = 2;
         }
     }
 

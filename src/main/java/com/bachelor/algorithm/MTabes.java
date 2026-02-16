@@ -10,5 +10,4 @@ public class MTabes {
         this.subjectChain = subjectChain;
     }
 
-
 }

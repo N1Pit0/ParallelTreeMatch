@@ -4,15 +4,12 @@ import com.bachelor.preprocess.Initializer;
 import com.bachelor.preprocess.InputArray;
 import com.bachelor.preprocess.Step;
 import com.bachelor.preprocess.TreeNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.bachelor.preprocess.NodeType.*;
 
 public class InitializeType implements Initializer {
     private final int index;
     private final TreeNode[] T;
-    private final Logger logger = LoggerFactory.getLogger(InitializeType.class);
 
     public InitializeType(int index, InputArray inputArray) {
         this.index = index;
@@ -21,7 +18,6 @@ public class InitializeType implements Initializer {
 
     @Override
     public void initialize() {
-        logger.info("Inside run of InitializeType");
 
         try {
             T[index].getLatches()[Step.INITIALIZE_TYPE.ordinal()].await();
@@ -30,7 +26,6 @@ public class InitializeType implements Initializer {
         }
 
         int iFather = T[index].getFather();
-        logger.debug("got the father {}", iFather);
 
         if (iFather >= 0) {
             int edgeLabel = T[index].getEdge_label();
@@ -49,6 +44,5 @@ public class InitializeType implements Initializer {
             T[iFather].getLatches()[Step.INITIALIZE_TYPE.ordinal()].countDown();
         }
 
-        logger.debug("Completed the task of InitializeType");
     }
 }

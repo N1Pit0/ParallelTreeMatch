@@ -17,7 +17,6 @@ public class Splices {
         splices = new int[size+1][2];
     }
 
-
     public int readFromIndex(int index, int position){
         try{
             readLock.lock();
