@@ -39,7 +39,7 @@ public class InitializeCost {
 //        }
 
         // Now do the actual initialization
-        CountDownLatch latch = new CountDownLatch(actualCount);  // Use actual count!
+//        CountDownLatch latch = new CountDownLatch(expectedCount);  // Use actual count!
 
         for(var current : head) {
             executor.submit(() -> {
@@ -50,21 +50,21 @@ public class InitializeCost {
                         current.setCost(0);
                     }
                 } finally {
-                    latch.countDown();
+//                    latch.countDown();
                 }
             });
         }
 
-        try {
-            if (!latch.await(2, TimeUnit.SECONDS)) {
-                System.err.println("Timeout! Remaining count: " + latch.getCount());
-                System.err.println("This means " + latch.getCount() + " tasks didn't complete");
-            }
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted while waiting!");
-            Thread.currentThread().interrupt();  // Restore interrupt flag
-            throw new RuntimeException("Initialize interrupted", e);
-        }
+//        try {
+//            if (!latch.await(2, TimeUnit.SECONDS)) {
+//                System.err.println("Timeout! Remaining count: " + latch.getCount());
+//                System.err.println("This means " + latch.getCount() + " tasks didn't complete");
+//            }
+//        } catch (InterruptedException e) {
+//            System.err.println("Interrupted while waiting!");
+//            Thread.currentThread().interrupt();  // Restore interrupt flag
+//            throw new RuntimeException("Initialize interrupted", e);
+//        }
     }
 
     public void doWork() {
@@ -75,7 +75,7 @@ public class InitializeCost {
 
 
         for (int i = 0; i < rounds; i++) {
-            CountDownLatch countDownLatch = new CountDownLatch(eulerChainSize);
+//            CountDownLatch countDownLatch = new CountDownLatch(eulerChainSize);
             for (SubNode current : head) {
                 executor.submit(() -> {
                     SubNode next = current.getNextWithoutLock();
@@ -90,7 +90,7 @@ public class InitializeCost {
                         if (second != null) second.lock();
                         try {
                             if (next != null) {
-                                current.setCost(current.getCostWithoutLock() + next.getCostWithoutLock());
+                                current.setCostWithoutLock(current.getCostWithoutLock() + next.getCostWithoutLock());
                                 current.setNextWithoutLock(next.getNextWithoutLock());
                             }
                         } finally {
@@ -98,15 +98,15 @@ public class InitializeCost {
                         }
                     } finally {
                         first.unlock();
-                        countDownLatch.countDown();
+//                        countDownLatch.countDown();
                     }
                 });
             }
-            try {
-                countDownLatch.await(3, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+//            try {
+//                countDownLatch.await(3, TimeUnit.SECONDS);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
         }
 
     }
