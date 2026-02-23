@@ -22,8 +22,8 @@ public class InitializeEulerChain implements Initializer {
 
         int edgeLabel = T[index].getEdge_label();
         if (iFather >= 0) {
-            eulerChain.setAtIndex(T[iFather].tour[edgeLabel + 1].getCost(), T[iFather].tour[edgeLabel + 1]);
+            eulerChain.setAtIndex(eulerChain.getChainSize() - 1 - T[iFather].tour[edgeLabel + 1].getCost(), T[iFather].tour[edgeLabel + 1]);
         }
-        eulerChain.setAtIndex(T[index].tour[0].getCost(), T[index].tour[0]);
+        eulerChain.setAtIndex(eulerChain.getChainSize() - 1 - T[index].tour[0].getCost(), T[index].tour[0]);
     }
 }

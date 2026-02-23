@@ -41,57 +41,42 @@ public class SubNode implements Iterable<SubNode>{
 
     public int getNodeInfo() {
             return nodeInfo;
-
     }
 
     public void setNodeInfo(int nodeInfo) {
             this.nodeInfo = nodeInfo;
-
     }
 
     public SubNode getTourInfo() {
             return tourInfo;
-
     }
 
     public void setTourInfo(SubNode tourInfo) {
             this.tourInfo = tourInfo;
-
     }
 
     public int getSubtree() {
-
             return subtree;
-
     }
 
     public void setSubtree(int subtree) {
-
             this.subtree = subtree;
-
     }
 
     public NodeType getType() {
-
             return type;
-
     }
 
     public void setType(NodeType type) {
-
             this.type = type;
     }
 
     public int getCost() {
-
             return cost;
-
     }
 
     public void setCost(int cost) {
-
             this.cost = cost;
-
     }
 
 
@@ -133,10 +118,6 @@ public class SubNode implements Iterable<SubNode>{
             this.next = next;
 
     }
-
-
-
-
 
     private class Itr implements Iterator<SubNode>{
         private SubNode current;

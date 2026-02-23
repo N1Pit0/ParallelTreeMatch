@@ -63,7 +63,7 @@ public class GenTour {
 
         // Phase 4: SubTree
         initializers = IntStream.range(0, length)
-                .mapToObj(i -> new InitializeSubTree(i, inputArray))
+                .mapToObj(i -> new InitializeSubTree(i, eulerChain))
                 .toArray(Initializer[]::new);
         runPhase(executor, phaser, initializers, timeoutSeconds);
 
