@@ -3,6 +3,8 @@ package com.bachelor.algorithm;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Phaser;
@@ -19,6 +21,7 @@ public class ComputeCosts {
     private final TreeNode[] T;
     private final Splices splices;
     private final Phaser phaser;
+    private final Logger LOGGER = LoggerFactory.getLogger(ComputeCosts.class);
 
     public ComputeCosts(EulerChain eulerChain, Splices splices,ExecutorService executor, Phaser phaser) {
         this.eulerChain = eulerChain;
@@ -32,9 +35,14 @@ public class ComputeCosts {
         doStepOne();
         phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
         doStepTwo();
-        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
         doStepThree();
         phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
+    }
+
+    public void testPrefixSum() throws InterruptedException, TimeoutException {
+        doStepOne();
+        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
+        doStepTwo();
     }
 
     private void doStepOne(){
@@ -50,37 +58,44 @@ public class ComputeCosts {
                 phaser.arriveAndDeregister();
             });
         }
+        for (var elem : eulerChain.getChain()){
+            System.out.println(elem.getCost());
+        }
+        System.out.println("=====================");
     }
 
     private void doStepTwo(){
-        phaser.register();
-        for (int i = 0; i < eulerChain.getChainSize(); i++) {
-            int sum = 0;
-            for (int j = 0; j < i; j++) {
-                sum += eulerChain.getFromIndex(j).getCost();
-            }
-            eulerChain.getFromIndex(i).setCost(sum);
+        ParallelPrefixSum.parallelPrefixSum(eulerChain.getChain());
+        for (var elem : eulerChain.getChain()){
+            System.out.println(elem.getCost());
         }
-        phaser.arriveAndDeregister();
     }
 
-    private void doStepThree(){
-        phaser.bulkRegister(eulerChain.getChainSize());
 
-        //Should we start from i = 0 or i = 1???
-        for(int i = 0; i < eulerChain.getChainSize(); i++) {
+    private void doStepThree(){
+        int[][] splices = this.splices.getSplices();
+        phaser.bulkRegister(splices.length);
+
+        for(int i = 1; i < eulerChain.getChainSize(); i++) {
             final int index = i;
             executor.submit(() -> {
                 SubNode currentSubNode = eulerChain.getFromIndex(index);
                 if(T[currentSubNode.getNodeInfo()].isVariable()){
                     //This array indexing need to take into account that paper uses 1-based indexing
-                    splices.writeAtIndex(currentSubNode.getCost(),1, index - 1);
-                    splices.writeAtIndex(currentSubNode.getCost() + 1, 0 ,index + 1);
+                    try{
+                        splices[eulerChain.getFromIndex(index).getCost()][1] = index - 1;
+                        splices[eulerChain.getFromIndex(index).getCost() + 1][0] = index + 1;
+                    } catch (ArrayIndexOutOfBoundsException e){
+                        for (var elem : e.getStackTrace()){
+                            LOGGER.error(elem.toString());
+                        }
+                    }
                 }
                 phaser.arriveAndDeregister();
             });
         }
-        splices.writeAtIndex(0,0,0);
+        splices[0][0] = 0;
     }
+
 
 }
