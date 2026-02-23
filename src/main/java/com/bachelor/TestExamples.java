@@ -27,7 +27,7 @@ public class TestExamples {
         }
         TreeNode treeNode1 = new TreeNode.Builder("f(a,b)")
                 .father(0)
-                .isVariable(true)
+                .isVariable(false)
                 .outDegree(outdegree)
                 .edgeLabel(0)
                 .tour(tour)
@@ -40,7 +40,7 @@ public class TestExamples {
         }
         TreeNode treeNode2 = new TreeNode.Builder("f(f(a,a),a)")
                 .father(0)
-                .isVariable(true)
+                .isVariable(false)
                 .outDegree(outdegree)
                 .edgeLabel(1)
                 .tour(tour)

@@ -39,12 +39,6 @@ public class ComputeCosts {
         phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
     }
 
-    public void testPrefixSum() throws InterruptedException, TimeoutException {
-        doStepOne();
-        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
-        doStepTwo();
-    }
-
     private void doStepOne(){
         phaser.bulkRegister(eulerChain.getChainSize());
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
@@ -58,17 +52,10 @@ public class ComputeCosts {
                 phaser.arriveAndDeregister();
             });
         }
-        for (var elem : eulerChain.getChain()){
-            System.out.println(elem.getCost());
-        }
-        System.out.println("=====================");
     }
 
     private void doStepTwo(){
         ParallelPrefixSum.parallelPrefixSum(eulerChain.getChain());
-        for (var elem : eulerChain.getChain()){
-            System.out.println(elem.getCost());
-        }
     }
 
 
@@ -81,21 +68,35 @@ public class ComputeCosts {
             executor.submit(() -> {
                 SubNode currentSubNode = eulerChain.getFromIndex(index);
                 if(T[currentSubNode.getNodeInfo()].isVariable()){
-                    //This array indexing need to take into account that paper uses 1-based indexing
-                    try{
-                        splices[eulerChain.getFromIndex(index).getCost()][1] = index - 1;
-                        splices[eulerChain.getFromIndex(index).getCost() + 1][0] = index + 1;
-                    } catch (ArrayIndexOutOfBoundsException e){
-                        for (var elem : e.getStackTrace()){
-                            LOGGER.error(elem.toString());
-                        }
+                    if (checkRangeExclusive(currentSubNode.getCost() - 1, 0, splices.length)) {
+                        splices[currentSubNode.getCost()-1][1] = index - 1;
+                    }
+                    if (checkRangeExclusive(currentSubNode.getCost(), 0, splices.length)) {
+                        splices[currentSubNode.getCost()][0] = index + 1;
                     }
                 }
                 phaser.arriveAndDeregister();
             });
         }
+//        for (int i = 0; i < eulerChain.getChainSize(); i++) {
+//            final int index = i;
+//
+//            SubNode currentSubNode = eulerChain.getFromIndex(index);
+//            if (T[currentSubNode.getNodeInfo()].isVariable()) {
+//                //This array indexing need to take into account that paper uses 1-based indexing
+//                if (checkRangeExclusive(eulerChain.getFromIndex(index).getCost()-1, 0, splices.length)) {
+//                        splices[eulerChain.getFromIndex(index).getCost()-1][1] = index - 1;
+//                }
+//                if (checkRangeExclusive(eulerChain.getFromIndex(index).getCost(), 0, splices.length)) {
+//                        splices[eulerChain.getFromIndex(index).getCost()][0] = index + 1;
+//                }
+//            }
+//        }
         splices[0][0] = 0;
+        splices[splices.length-1][1] = eulerChain.getChainSize() - 1;// This here is not probably correct
     }
 
-
+    private boolean checkRangeExclusive(int index, int from, int to) {
+        return from <= index && index < to;
+    }
 }
