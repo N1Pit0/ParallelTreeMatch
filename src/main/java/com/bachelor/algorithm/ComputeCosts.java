@@ -3,8 +3,6 @@ package com.bachelor.algorithm;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Phaser;
@@ -21,7 +19,6 @@ public class ComputeCosts {
     private final TreeNode[] T;
     private final Splices splices;
     private final Phaser phaser;
-    private final Logger LOGGER = LoggerFactory.getLogger(ComputeCosts.class);
 
     public ComputeCosts(EulerChain eulerChain, Splices splices,ExecutorService executor, Phaser phaser) {
         this.eulerChain = eulerChain;
@@ -61,37 +58,21 @@ public class ComputeCosts {
 
     private void doStepThree(){
         int[][] splices = this.splices.getSplices();
-        phaser.bulkRegister(splices.length);
 
-        for(int i = 1; i < eulerChain.getChainSize(); i++) {
-            final int index = i;
-            executor.submit(() -> {
-                SubNode currentSubNode = eulerChain.getFromIndex(index);
-                if(T[currentSubNode.getNodeInfo()].isVariable()){
-                    if (checkRangeExclusive(currentSubNode.getCost() - 1, 0, splices.length)) {
-                        splices[currentSubNode.getCost()-1][1] = index - 1;
-                    }
-                    if (checkRangeExclusive(currentSubNode.getCost(), 0, splices.length)) {
-                        splices[currentSubNode.getCost()][0] = index + 1;
-                    }
+        //TODO: Parallelize setting splices
+        for (int i = 0; i < eulerChain.getChainSize(); i++) {
+
+            SubNode currentSubNode = eulerChain.getFromIndex(i);
+            if (T[currentSubNode.getNodeInfo()].isVariable()) {
+                //This array indexing need to take into account that paper uses 1-based indexing
+                if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost()-1, 0, splices.length)) {
+                        splices[eulerChain.getFromIndex(i).getCost()-1][1] = i - 1;
                 }
-                phaser.arriveAndDeregister();
-            });
+                if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost(), 0, splices.length)) {
+                        splices[eulerChain.getFromIndex(i).getCost()][0] = i + 1;
+                }
+            }
         }
-//        for (int i = 0; i < eulerChain.getChainSize(); i++) {
-//            final int index = i;
-//
-//            SubNode currentSubNode = eulerChain.getFromIndex(index);
-//            if (T[currentSubNode.getNodeInfo()].isVariable()) {
-//                //This array indexing need to take into account that paper uses 1-based indexing
-//                if (checkRangeExclusive(eulerChain.getFromIndex(index).getCost()-1, 0, splices.length)) {
-//                        splices[eulerChain.getFromIndex(index).getCost()-1][1] = index - 1;
-//                }
-//                if (checkRangeExclusive(eulerChain.getFromIndex(index).getCost(), 0, splices.length)) {
-//                        splices[eulerChain.getFromIndex(index).getCost()][0] = index + 1;
-//                }
-//            }
-//        }
         splices[0][0] = 0;
         splices[splices.length-1][1] = eulerChain.getChainSize() - 1;// This here is not probably correct
     }
