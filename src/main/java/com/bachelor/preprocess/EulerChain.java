@@ -10,7 +10,6 @@ public class EulerChain {
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final InputArray inputArray;
     private final TreeNode[] T;
-    private final int chainSize;
 
     @Override
     public String toString(){
@@ -24,8 +23,7 @@ public class EulerChain {
         for (var elem : T){
             size += elem.arity() + 1;
         }
-        this.chainSize = size;
-        this.CHAIN = new SubNode[chainSize];
+        this.CHAIN = new SubNode[size];
     }
 
     public void setAtIndex(int index, SubNode subNode){

@@ -19,7 +19,7 @@ public class GenTour {
             executor.submit(() -> {
                 try {
                     initializers[index].initialize();
-                } catch (Exception e) {
+                } catch (Exception _) {
                 } finally {
                     phaser.arriveAndDeregister();
                 }
@@ -28,12 +28,12 @@ public class GenTour {
         phaser.awaitAdvanceInterruptibly(phaser.getPhase(), timeoutSeconds, TimeUnit.SECONDS);
     }
 
-    public static Object[] buildAndPreprocess(ExecutorService executor, Phaser phaser, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds) throws InterruptedException, TimeoutException {
+    public static EulerChain buildAndPreprocess(ExecutorService executor, Phaser phaser, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds) throws InterruptedException, TimeoutException {
         TreeNode[] treeNodes = treeSupplier.get();
         InputArray inputArray = new InputArray(treeNodes, variableCount);
         EulerChain eulerChain = new EulerChain(inputArray);
         preprocessTree(executor, phaser, inputArray, eulerChain, treeNodes.length, timeoutSeconds);
-        return new Object[]{treeNodes, eulerChain};
+        return eulerChain;
     }
 
 

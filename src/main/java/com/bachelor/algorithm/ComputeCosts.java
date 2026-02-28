@@ -64,7 +64,7 @@ public class ComputeCosts {
 
             SubNode currentSubNode = eulerChain.getFromIndex(i);
             if (T[currentSubNode.getNodeInfo()].isVariable()) {
-                //This array indexing need to take into account that paper uses 1-based indexing
+
                 if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost()-1, 0, splices.length)) {
                         splices[eulerChain.getFromIndex(i).getCost()-1][1] = i - 1;
                 }
@@ -74,7 +74,10 @@ public class ComputeCosts {
             }
         }
         splices[0][0] = 0;
-        splices[splices.length-1][1] = eulerChain.getChainSize() - 1;// This here is not probably correct
+        // Ensure the last splice end is set properly
+        if (splices.length > 1 && splices[splices.length-1][1] == 0) {
+            splices[splices.length-1][1] = eulerChain.getChainSize() - 1;
+        }
     }
 
     private boolean checkRangeExclusive(int index, int from, int to) {

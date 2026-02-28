@@ -8,8 +8,6 @@ import java.util.concurrent.CountDownLatch;
 public class TreeNode {
     private final CountDownLatch[] latches;
 
-    private static final Logger logger = LoggerFactory.getLogger(TreeNode.class);
-
     //contains either a function symbol or a variable associated with the
     //node
     private final String label;
@@ -96,6 +94,10 @@ public class TreeNode {
 
     public int getFather() {
         return this.father;
+    }
+
+    public String getLabel() {
+        return this.label;
     }
 
     public CountDownLatch[] getLatches(){

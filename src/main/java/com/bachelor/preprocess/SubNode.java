@@ -1,9 +1,6 @@
 package com.bachelor.preprocess;
 
 import java.util.Iterator;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SubNode implements Iterable<SubNode>{
 
@@ -119,7 +116,7 @@ public class SubNode implements Iterable<SubNode>{
 
     }
 
-    private class Itr implements Iterator<SubNode>{
+    private static class Itr implements Iterator<SubNode>{
         private SubNode current;
 
         Itr(SubNode head){

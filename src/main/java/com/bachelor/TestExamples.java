@@ -12,7 +12,7 @@ public class TestExamples {
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
-        TreeNode treeNode0 = new TreeNode.Builder("f(f(a,b), f(f(a,a),a))")
+        TreeNode treeNode0 = new TreeNode.Builder("f")
                 .father(-1)
                 .isVariable(false)
                 .outDegree(outdegree)
@@ -25,7 +25,7 @@ public class TestExamples {
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
-        TreeNode treeNode1 = new TreeNode.Builder("f(a,b)")
+        TreeNode treeNode1 = new TreeNode.Builder("f")
                 .father(0)
                 .isVariable(false)
                 .outDegree(outdegree)
@@ -38,7 +38,7 @@ public class TestExamples {
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
-        TreeNode treeNode2 = new TreeNode.Builder("f(f(a,a),a)")
+        TreeNode treeNode2 = new TreeNode.Builder("f")
                 .father(0)
                 .isVariable(false)
                 .outDegree(outdegree)
@@ -77,7 +77,7 @@ public class TestExamples {
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
-        TreeNode treeNode5 = new TreeNode.Builder("f(a,a)")
+        TreeNode treeNode5 = new TreeNode.Builder("f")
                 .father(2)
                 .isVariable(false)
                 .outDegree(outdegree)
@@ -145,7 +145,7 @@ public class TestExamples {
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
-        TreeNode treeNode0 = new TreeNode.Builder("f(f(a,X),Y)")
+        TreeNode treeNode0 = new TreeNode.Builder("f")
                 .father(-1)
                 .isVariable(false)
                 .outDegree(outdegree0)
@@ -158,7 +158,7 @@ public class TestExamples {
         for (int i = 0; i < tour.length; i++) {
             tour[i] = new SubNode();
         }
-        TreeNode treeNode1 = new TreeNode.Builder("f(a,X)")
+        TreeNode treeNode1 = new TreeNode.Builder("f")
                 .father(0)
                 .isVariable(false)
                 .outDegree(outdegree1)
