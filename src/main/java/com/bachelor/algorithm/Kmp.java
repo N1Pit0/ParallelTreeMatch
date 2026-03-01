@@ -10,7 +10,7 @@ import java.util.Objects;
  * An implementation of the Knuth-Morris-Pratt algorithm
  *
  * @author William Fiset, william.alexandre.fiset@gmail.com
- * @author NikoloziMatsaberidze
+ * @author Nikolozi Matsaberidze
  */
 
 public class Kmp {
@@ -19,10 +19,6 @@ public class Kmp {
     // is found in the text (even overlapping pattern matches)
     public static int[][] kmp(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
         int subjectChainSize = subject.getChainSize();
-        SubNode[] subjectChain = subject.getChain();
-        SubNode[] patternChain = pattern.getChain();
-        TreeNode[] patternT = pattern.getT();
-        TreeNode[] subjectT = subject.getT();
 
         int[][] matches = new int[subjectChainSize][2];
         for (int i = 0; i < subjectChainSize; i++) {
@@ -37,33 +33,34 @@ public class Kmp {
 
         // Pattern slice length (inclusive range)
         int patternLength = patEnd - patStart + 1;
-        int i = 0;
-        int j = 0;  // j tracks position within the pattern slice, starting from 0
+        int currentSubjectPosIndex = 0;
+        int currentPatternPosIndex = 0;  // j tracks position within the pattern slice, starting from 0
 
         // Build failure function for the pattern slice
         int[] failureFunction = kmpFailureHelper(pattern, patStart, patEnd);
 
-        while (i < subjectChainSize) {
-            if (j >= 0 && Objects.equals(patternT[patternChain[patStart + j].getNodeInfo()].getLabel(), subjectT[subjectChain[i].getNodeInfo()].getLabel())) {
-                j++;
-                i++;
+        while (currentSubjectPosIndex < subjectChainSize) {
+            if (currentPatternPosIndex >= 0 && isNodeLabelMatch(subject, pattern, currentSubjectPosIndex, patStart + currentPatternPosIndex)) {
+                currentPatternPosIndex++;
+                currentSubjectPosIndex++;
             }
 
-            if (j == patternLength) {
+            if (currentPatternPosIndex == patternLength) {
                 // Match found: record start and end indices
-                int matchStart = i - patternLength;
-                int matchEnd = i - 1;
+                int matchStart = currentSubjectPosIndex - patternLength;
+                int matchEnd = currentSubjectPosIndex - 1;
                 if (matchStart >= 0 && matchStart < subjectChainSize) {
                     matches[matchStart][0] = matchStart;
                     matches[matchStart][1] = matchEnd;
                 }
                 // Continue searching for overlapping matches
-                j = failureFunction[j - 1];
-            } else if (i < subjectChainSize && !Objects.equals(patternT[patternChain[patStart + j].getNodeInfo()].getLabel(), subjectT[subjectChain[i].getNodeInfo()].getLabel())) {
-                if (j > 0) {
-                    j = failureFunction[j - 1];
+                currentPatternPosIndex = failureFunction[currentPatternPosIndex - 1];
+
+            } else if (currentSubjectPosIndex < subjectChainSize && !isNodeLabelMatch(subject, pattern, currentSubjectPosIndex, patStart + currentPatternPosIndex)) {
+                if (currentPatternPosIndex > 0) {
+                    currentPatternPosIndex = failureFunction[currentPatternPosIndex - 1];
                 } else {
-                    i++;
+                    currentSubjectPosIndex++;
                 }
             }
         }
@@ -71,8 +68,8 @@ public class Kmp {
         return matches;
     }
 
-    // For each index i compute the longest match between the proper
-    // prefix starting at 0 and the proper suffix starting at i
+    // For each index suffixStartPos compute the longest match between the proper
+    // prefix starting at 0 and the proper suffix starting at suffixStartPos
     // Builds the failure function for a slice of the pattern from patStart to patEnd (inclusive)
     private static int[] kmpFailureHelper(EulerChain pattern, int patStart, int patEnd) {
         int patternLength = patEnd - patStart + 1;
@@ -80,18 +77,30 @@ public class Kmp {
         SubNode[] patternChain = pattern.getChain();
         TreeNode[] patternT = pattern.getT();
 
-        for (int i = 1, len = 0; i < patternLength; ) {
-            if (Objects.equals(patternT[patternChain[patStart + i].getNodeInfo()].getLabel(), patternT[patternChain[patStart + len].getNodeInfo()].getLabel())) {
-                failureFunction[i++] = ++len;
+        for (int suffixStartPos = 1, prefixStartPos = 0; suffixStartPos < patternLength; ) {
+            if (isNodeLabelMatch(pattern, pattern, patStart + suffixStartPos, patStart + prefixStartPos)) {
+                failureFunction[suffixStartPos++] = ++prefixStartPos;
             } else {
-                if (len > 0) {
-                    len = failureFunction[len - 1];
+                if (prefixStartPos > 0) {
+                    prefixStartPos = failureFunction[prefixStartPos - 1];
                 } else {
-                    i++;
+                    suffixStartPos++;
                 }
             }
         }
         return failureFunction;
+    }
+
+    private static boolean isNodeLabelMatch(EulerChain aChain, EulerChain chainComparedAgainst,
+                                     int aChainPosIndex,
+                                     int chainComparedAgainstPosIndex){
+        SubNode[] subjectChain = aChain.getChain();
+        SubNode[] patternChain = chainComparedAgainst.getChain();
+        TreeNode[] subjectT = aChain.getT();
+        TreeNode[] patternT = chainComparedAgainst.getT();
+
+        return Objects.equals(subjectT[subjectChain[aChainPosIndex].getNodeInfo()].getLabel(),
+                patternT[patternChain[chainComparedAgainstPosIndex].getNodeInfo()].getLabel());
     }
 
 }

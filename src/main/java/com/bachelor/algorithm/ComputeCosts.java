@@ -17,26 +17,26 @@ public class ComputeCosts {
     private final EulerChain eulerChain;
     private final ExecutorService executor;
     private final TreeNode[] T;
-    private final Splices splices;
+    private final Splice splice;
     private final Phaser phaser;
 
-    public ComputeCosts(EulerChain eulerChain, Splices splices,ExecutorService executor, Phaser phaser) {
+    public ComputeCosts(EulerChain eulerChain, Splice splice, ExecutorService executor, Phaser phaser) {
         this.eulerChain = eulerChain;
         this.executor = executor;
         this.T = eulerChain.getT();
-        this.splices = splices;
+        this.splice = splice;
         this.phaser = phaser;
     }
 
     public void createSplices() throws InterruptedException, TimeoutException {
-        doStepOne();
+        reinitializeCostToMakeSpices();
         phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
-        doStepTwo();
-        doStepThree();
+        ParallelPrefixSum.parallelPrefixSum(eulerChain.getChain());
+        constructSplices();
         phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
     }
 
-    private void doStepOne(){
+    private void reinitializeCostToMakeSpices(){
         phaser.bulkRegister(eulerChain.getChainSize());
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
             final int index = i;
@@ -51,15 +51,10 @@ public class ComputeCosts {
         }
     }
 
-    private void doStepTwo(){
-        ParallelPrefixSum.parallelPrefixSum(eulerChain.getChain());
-    }
+    private void constructSplices(){
+        int[][] splices = this.splice.getSplices();
 
-
-    private void doStepThree(){
-        int[][] splices = this.splices.getSplices();
-
-        //TODO: Parallelize setting splices
+        //TODO: Parallelize setting splice
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
 
             SubNode currentSubNode = eulerChain.getFromIndex(i);

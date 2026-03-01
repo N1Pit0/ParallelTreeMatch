@@ -1,23 +1,22 @@
 package com.bachelor.algorithm;
 
-
 import com.bachelor.preprocess.EulerChain;
 
 public class MTabes {
     private final int[][][] mTables;
     private final EulerChain subject;
     private final EulerChain pattern;
-    private final Splices splices;
+    private final Splice splice;
 
-    public MTabes(Splices splices, EulerChain subject, EulerChain pattern) {
-        this.splices = splices;
+    public MTabes(Splice splice, EulerChain subject, EulerChain pattern) {
+        this.splice = splice;
         this.subject = subject;
         this.pattern = pattern;
-        this.mTables = new int[splices.getSplices().length][subject.getChainSize()][2];
+        this.mTables = new int[splice.getSplices().length][subject.getChainSize()][2];
     }
 
     public void createMTables(){
-        int[][] splicesArray = splices.getSplices();
+        int[][] splicesArray = splice.getSplices();
         for (int i = 0; i < mTables.length; i++) {
             mTables[i] = Kmp.kmp(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
         }
@@ -37,8 +36,8 @@ public class MTabes {
         }
 
         for (int s = 0; s < mTables.length; s++) {
-            sb.append("\nSlice M").append(s).append(" (Pattern range [").append(splices.getSplices()[s][0]).append(", ");
-            sb.append(splices.getSplices()[s][1]).append("]):\n");
+            sb.append("\nSlice M").append(s).append(" (Pattern range [").append(splice.getSplices()[s][0]).append(", ");
+            sb.append(splice.getSplices()[s][1]).append("]):\n");
 
             int[][] table = mTables[s];
             if (table == null) {

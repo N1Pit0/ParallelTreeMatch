@@ -2,11 +2,11 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.EulerChain;
 
-public class Splices {
+public class Splice {
     private final int[][] splices;
     private final EulerChain eulerChain;
 
-    public Splices(EulerChain eulerChain){
+    public Splice(EulerChain eulerChain){
         this.eulerChain = eulerChain;
         int size = eulerChain.getInputArray().getVariableCount();
         splices = new int[size+1][2];

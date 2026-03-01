@@ -2,7 +2,8 @@ package com.bachelor;
 
 import com.bachelor.algorithm.ComputeCosts;
 import com.bachelor.algorithm.MTabes;
-import com.bachelor.algorithm.Splices;
+import com.bachelor.algorithm.Splice;
+
 import static com.bachelor.TestExamples.initializePatternTArray;
 import static com.bachelor.TestExamples.initializeSubjectTArray;
 import com.bachelor.preprocess.*;
@@ -25,20 +26,20 @@ public class Coordinator {
             EulerChain pattern = buildAndPreprocess(executor1, phaser1, () -> initializePatternTArray(patternLength), 2, 10);
             EulerChain subject = buildAndPreprocess(executor2, phaser2, () -> initializeSubjectTArray(subjectLength), 0, 10);
 
-            Splices splices = createAndComputeSplices(pattern, executor1, phaser1);
+            Splice splice = createAndComputeSplices(pattern, executor1, phaser1);
 
-            MTabes mTabes = new MTabes(splices, subject, pattern);
+            MTabes mTabes = new MTabes(splice, subject, pattern);
             mTabes.createMTables();
 
             System.out.println(mTabes);
         }
     }
 
-    private static Splices createAndComputeSplices(EulerChain pattern, ExecutorService executor, Phaser phaser)
+    private static Splice createAndComputeSplices(EulerChain pattern, ExecutorService executor, Phaser phaser)
             throws InterruptedException, TimeoutException {
-        Splices splices = new Splices(pattern);
-        ComputeCosts computeCosts = new ComputeCosts(pattern, splices, executor, phaser);
+        Splice splice = new Splice(pattern);
+        ComputeCosts computeCosts = new ComputeCosts(pattern, splice, executor, phaser);
         computeCosts.createSplices();
-        return splices;
+        return splice;
     }
 }
