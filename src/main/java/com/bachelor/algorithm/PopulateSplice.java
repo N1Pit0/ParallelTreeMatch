@@ -13,14 +13,14 @@ import java.util.concurrent.TimeoutException;
 //This class does more than one thing.
 // It is subject to decomposition according
 // to Single Responsibility principle
-public class ComputeCosts {
+class PopulateSplice {
     private final EulerChain eulerChain;
     private final ExecutorService executor;
     private final TreeNode[] T;
     private final Splice splice;
     private final Phaser phaser;
 
-    public ComputeCosts(EulerChain eulerChain, Splice splice, ExecutorService executor, Phaser phaser) {
+    PopulateSplice(EulerChain eulerChain, Splice splice, ExecutorService executor, Phaser phaser) {
         this.eulerChain = eulerChain;
         this.executor = executor;
         this.T = eulerChain.getT();
@@ -28,7 +28,7 @@ public class ComputeCosts {
         this.phaser = phaser;
     }
 
-    public void createSplices() throws InterruptedException, TimeoutException {
+    void createSplices() throws InterruptedException, TimeoutException {
         reinitializeCostToMakeSpices();
         phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
         ParallelPrefixSum.parallelPrefixSum(eulerChain.getChain());

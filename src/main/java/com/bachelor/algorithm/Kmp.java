@@ -13,11 +13,11 @@ import java.util.Objects;
  * @author Nikolozi Matsaberidze
  */
 
-public class Kmp {
+class Kmp {
 
     // Given a pattern and a text kmp finds all the places that the pattern
     // is found in the text (even overlapping pattern matches)
-    public static int[][] kmp(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
+    static int[][] kmp(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
         int subjectChainSize = subject.getChainSize();
 
         int[][] matches = new int[subjectChainSize][2];

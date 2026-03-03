@@ -2,28 +2,32 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.EulerChain;
 
-public class MTabes {
-    private final int[][][] mTables;
+class MTables {
+    private int[][][] mTables;
     private final EulerChain subject;
     private final EulerChain pattern;
     private final Splice splice;
 
-    public MTabes(Splice splice, EulerChain subject, EulerChain pattern) {
+    MTables(Splice splice, EulerChain subject, EulerChain pattern) {
         this.splice = splice;
         this.subject = subject;
         this.pattern = pattern;
         this.mTables = new int[splice.getSplices().length][subject.getChainSize()][2];
     }
 
-    public void createMTables(){
+    void createMTables(){
         int[][] splicesArray = splice.getSplices();
         for (int i = 0; i < mTables.length; i++) {
             mTables[i] = Kmp.kmp(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
         }
     }
 
-    public int[][][] getMTables() {
+    int[][][] getMTables() {
         return mTables;
+    }
+
+    EulerChain getSubject(){
+        return this.subject;
     }
 
     @Override

@@ -5,9 +5,9 @@ import com.bachelor.preprocess.SubNode;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
-public class ParallelPrefixSum {
+class ParallelPrefixSum {
 
-    public static void parallelPrefixSum(SubNode[] arr) {
+    static void parallelPrefixSum(SubNode[] arr) {
         try(var pool = ForkJoinPool.commonPool()) {
             pool.invoke(new PrefixSumTask(arr, 0, arr.length));
         }
