@@ -22,9 +22,9 @@ class MTableMerger {
     void computeAndMergeMTables(){
         int[][][] mTables = mTablesContainer.getMTables();
         SubNode[] subjectChain = subject.getChain();
-        int k = mTables.length; // k = number of pattern splices
-        int logK = (int) Math.ceil(Math.log(k) / Math.log(2)); // ceiling of log₂(k)
-        int r = (k + logK - 1) / logK; // ceiling division for number of groups
+        int k = mTables.length - 1;
+        int logK = (int) Math.ceil(Math.log(k) / Math.log(2));
+        int r = (int) Math.ceil((k + 1) /(double) logK);
 
         printMTablesState("Initial mTables (after KMP)", mTablesContainer);
 
@@ -58,14 +58,14 @@ class MTableMerger {
     private void step1CombineLogKTables(int[][][] mTables, SubNode[] subjectChain,
                                        int logK, int r, int k) {
         // for each i ∈ {1,2,...,r} pardo
-        for (int i = 0; i < r && i < k; i++) {
+        for (int i = 0; i < mTables.length; i+=logK) {
             // for each j ∈ {1,2,...,Eₛ} pardo
             for (int j = 0; j < subject.getChainSize(); j++) {
-                // for l = 1 to log k do
-                for (int l = 1; l < logK; l++) {
-                    // if (M_i[j][1] ≠ 0) then
-                    if (mTables[i][j][0] != -1) {
-                        int nextTableIdx = i + (1 << l); // i + 2^l
+
+                if (mTables[i][j][0] != -1) {
+                    int l = 1;
+                    do {
+                        int nextTableIdx = i + l;
 
                         if (nextTableIdx >= k) {
                             break;
@@ -77,7 +77,8 @@ class MTableMerger {
                             mTables[i][j][0] = mTables[i][j][1] = -1;
                             break;
                         }
-                    }
+                        l++;
+                    }while(l < logK);
                 }
             }
         }
@@ -94,28 +95,24 @@ class MTableMerger {
         }
 
         int currentSize = r;
-        int iteration = 0;
-        int maxIterations = 20;
+        int depth = 1;
 
-        while (currentSize > 1 && iteration < maxIterations) {
-            iteration++;
-            int logCurrentSize = (int) Math.ceil(Math.log(currentSize) / Math.log(2));
+        while (currentSize > 1 ) {
 
-            System.out.println("\nStep 2 Iteration " + iteration + ": processing " + currentSize +
-                             " tables, logCurrentSize=" + logCurrentSize);
+            int jumpSize = 1 << depth;
 
             // For each table i that we're currently processing
-            for (int i = 0; i < currentSize; i++) {
+            for (int i = 0; i < mTables.length; i+=jumpSize) {
                 // For each subject position j
                 for (int j = 0; j < subject.getChainSize(); j++) {
                     // If M_i[j] has a valid match
                     if (mTables[i][j][0] != -1) {
                         // Try to extend using tables at distances 2^l
-                        for (int l = 1; l < logCurrentSize; l++) {
+                        for (int l = depth; l < jumpSize; l++) {
                             int nextTableIdx = i + (1 << l); // i + 2^l
 
-                            if (nextTableIdx >= currentSize) {
-                                break; // No more tables to combine with
+                            if (nextTableIdx > jumpSize || nextTableIdx >= mTables.length) {
+                                break; // There is a bug here. Not being able to check the other half of the table
                             }
 
                             // Try to extend the match
@@ -133,17 +130,15 @@ class MTableMerger {
             // After merging, tables at indices 0, 2, 4, 6, ... contain all the info
             // So the new "active" set becomes tables 0, 1, 2, 3, ... (ceil(currentSize/2))
             int nextSize = (currentSize + 1) / 2;
+            depth++;
 
             // Copy data from merged tables back to lower indices for next iteration
             // Tables at indices [2i] and [2i+1] are merged into [i]
             // But in our in-place algorithm, we don't need to copy - just track size
 
-            System.out.println("Step 2 Iteration " + iteration + " complete: nextSize=" + nextSize);
-
             currentSize = nextSize;
         }
 
-        System.out.println("\nStep 2 complete after " + iteration + " iterations");
     }
 
     /**
@@ -159,14 +154,16 @@ class MTableMerger {
         for (int i = 0; i < finalTable.length; i++) {
             // if (M_1[i][1] ≠ 0) then
             if (finalTable[i][0] != -1) {
+                int startPos = finalTable[i][0];
                 int endPos = finalTable[i][1];
 
                 // Verify bounds
                 if (endPos >= 0 && endPos < subjectChain.length) {
+                    SubNode startNode = subjectChain[startPos];
                     SubNode endNode = subjectChain[endPos];
 
                     // if (E[M₁[i][2]].type ≠ first ∧ E[M₁[i][2]].type ≠ last) then
-                    if (endNode.getType() != FIRST && endNode.getType() != LAST) {
+                    if (startNode.getType() != FIRST && endNode.getType() != LAST) {
                         finalTable[i][0] = finalTable[i][1] = -1;
                     }
                 } else {
@@ -182,9 +179,10 @@ class MTableMerger {
      * Implements the substitution logic: if the position after the current match
      * is a variable node (FIRST or LEAF), try to find a continuation in the next table.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean extendMatch(int[][][] mTables, SubNode[] subjectChain,
-                               int tableIdx, int subjectPos, int nextTableIdx) {
-        int matchStart = mTables[tableIdx][subjectPos][0];
+                                int tableIdx, int subjectPos, int nextTableIdx) {
+//        int matchStart = mTables[tableIdx][subjectPos][0];
         int matchEnd = mTables[tableIdx][subjectPos][1];
         int nextPosInSubject = matchEnd + 1;
 
