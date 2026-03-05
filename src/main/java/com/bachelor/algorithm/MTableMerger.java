@@ -3,7 +3,9 @@ package com.bachelor.algorithm;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.Phaser;
 
 import static com.bachelor.preprocess.NodeType.*;
@@ -23,78 +25,117 @@ class MTableMerger {
         int[][][] mTables = mTablesContainer.getMTables();
         SubNode[] subjectChain = subject.getChain();
 
-        step2RecursiveMergeTables(mTables, subjectChain);
+        step2RecursiveMergeTables(mTables, subjectChain, executor);
 
-        step3ValidateFinalResults(mTables, subjectChain);
+        step3ValidateFinalResults(mTables, subjectChain, executor);
 
         printMTablesState("After Step 3 (validation - final result)", mTablesContainer);
     }
 
-    /**
-     * STEP 2: Recursively merges the r resulting tables from Step 1
-     * Uses binary lifting to combine tables: in each iteration, combine tables
-     * at exponential distances (2^1, 2^2, ...) until only table 0 remains
-     */
-    private void step2RecursiveMergeTables(int[][][] mTables, SubNode[] subjectChain) {
 
-        int currentSize = mTables.length;
-        int depth = 1;
+    private void step2RecursiveMergeTables(int[][][] mTables, SubNode[] subjectChain, ExecutorService executor) {
 
-        while (currentSize > 1 ) {
+        final int[] currentSize = {mTables.length};
+        final int[] depth = {1};
 
-            int offset = 1 << (depth - 1);
-            int jumpSize = offset * 2;
+        while (currentSize[0] > 1 ) {
+            List<Future<?>> depthIterationFutures = new java.util.ArrayList<>();
 
-            for (int i = 0; i < mTables.length; i+=jumpSize) {
-                for (int j = 0; j < subject.getChainSize(); j++) {
-                    // If M_i[j] has a valid match
-                    if (mTables[i][j][0] != -1) {
-                        int nextTableIdx = i + offset; // i + 2^l
+            depthIterationFutures.add(executor.submit(() -> {
+                int offset = 1 << (depth[0] - 1);
+                int jumpSize = offset * 2;
 
-                        if (nextTableIdx >= mTables.length) {
-                            continue;
+                List<Future<?>> tablePairFutures = new java.util.ArrayList<>();
+
+                for (int i = 0; i < mTables.length; i+=jumpSize) {
+                    final int tableIdx = i;
+                    tablePairFutures.add(executor.submit(() -> {
+                        List<Future<?>> positionFutures = new java.util.ArrayList<>();
+
+                        for (int j = 0; j < subject.getChainSize(); j++) {
+                            final int subjPos = j;
+                            positionFutures.add(executor.submit(() -> {
+                                // If M_i[j] has a valid match
+                                if (mTables[tableIdx][subjPos][0] != -1) {
+                                    int nextTableIdx = tableIdx + offset; // i + 2^l
+
+                                    if (nextTableIdx >= mTables.length) {
+                                        return;
+                                    }
+
+                                    if (!extendMatch(mTables, subjectChain, tableIdx, subjPos, nextTableIdx)) {
+                                        mTables[tableIdx][subjPos][0] = mTables[tableIdx][subjPos][1] = -1;
+                                    }
+                                }
+                            }));
                         }
 
-                        if (!extendMatch(mTables, subjectChain, i, j, nextTableIdx)) {
-                            mTables[i][j][0] = mTables[i][j][1] = -1;
+                        for (var f : positionFutures) {
+                            try {
+                                f.get();
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                         }
+                    }));
+                }
+
+                for (var f : tablePairFutures) {
+                    try {
+                        f.get();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 }
+
+                currentSize[0] = (currentSize[0] + 1) / 2;
+                depth[0]++;
+            }));
+
+            for (var f : depthIterationFutures) {
+                try {
+                    f.get();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
-
-            currentSize = (currentSize + 1) / 2;
-            depth++;
         }
-
     }
 
-    /**
-     * STEP 3: Finally we check whether C₁ is satisfied
-     * For each i ∈ {1,2,...,Eₛ}:
-     *   if (M₁[i][1] ≠ 0) then
-     *     if (E[M₁[i][2]].type ≠ first ∧ E[M₁[i][2]].type ≠ last) then
-     *       M₁[i][1] = M₁[i][2] = 0 (invalidate)
-     */
-    private void step3ValidateFinalResults(int[][][] mTables, SubNode[] subjectChain) {
+    private void step3ValidateFinalResults(int[][][] mTables, SubNode[] subjectChain, ExecutorService executor) {
         int[][] finalTable = mTables[0];
 
+        List<Future<?>> entryValidationFutures = new java.util.ArrayList<>();
+
         for (int i = 0; i < finalTable.length; i++) {
-            if (finalTable[i][0] != -1) {
-                int startPos = finalTable[i][0];
-                int endPos = finalTable[i][1];
+            final int entryIdx = i;
+            entryValidationFutures.add(executor.submit(() -> {
+                if (finalTable[entryIdx][0] != -1) {
+                    int startPos = finalTable[entryIdx][0];
+                    int endPos = finalTable[entryIdx][1];
 
-                if (endPos >= 0 && endPos < subjectChain.length) {
-                    SubNode startNode = subjectChain[startPos];
-                    SubNode endNode = subjectChain[endPos];
+                    if (endPos >= 0 && endPos < subjectChain.length) {
+                        SubNode startNode = subjectChain[startPos];
+                        SubNode endNode = subjectChain[endPos];
 
-                    if (startNode.getType() != FIRST || endNode.getType() != LAST) {
-                        finalTable[i][0] = finalTable[i][1] = -1;
+                        if (startNode.getType() != FIRST || endNode.getType() != LAST) {
+                            finalTable[entryIdx][0] = finalTable[entryIdx][1] = -1;
+                        }
+                    } else {
+                        finalTable[entryIdx][0] = finalTable[entryIdx][1] = -1;
                     }
-                } else {
-                    finalTable[i][0] = finalTable[i][1] = -1;
                 }
+            }));
+        }
+
+        for (var f : entryValidationFutures) {
+            try {
+                f.get();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
+
     }
 
     /**
