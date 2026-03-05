@@ -26,28 +26,28 @@ class MTableMerger {
         int logK = (int) Math.ceil(Math.log(k) / Math.log(2));
         int r = (int) Math.ceil((k + 1) /(double) logK);
 
-        printMTablesState("Initial mTables (after KMP)", mTablesContainer);
+//        printMTablesState("Initial mTables (after KMP)", mTablesContainer);
 
         // STEP 1: Combine each of the log k tables
         // For i ∈ {1,2,...,r}, j ∈ {1,2,...,Eₛ}, l = 1 to log k
         // Merges tables spaced 2^l apart: M[i] with M[i+2], M[i+4], M[i+8], ...
-        step1CombineLogKTables(mTables, subjectChain, logK, r, k);
+//        step1CombineLogKTables(mTables, subjectChain, logK, r, k);
 
-        printMTablesState("After Step 1 (combine log k tables)", mTablesContainer);
+//        printMTablesState("After Step 1 (combine log k tables)", mTablesContainer);
 
         // STEP 2: Recursively merge the r resulting tables
         // Tables M₁logₖ, M₂logₖ, ..., Mᵣlogₖ are recursively merged using binary lifting
         // for l = 1 to log r: if (i + 2^l ≤ r) then combine M[i] with M[i+2^l]
         step2RecursiveMergeTables(mTables, subjectChain, r);
 
-        printMTablesState("After Step 2 (recursive merge)", mTablesContainer);
+//        printMTablesState("After Step 2 (recursive merge)", mTablesContainer);
 
         // STEP 3: Validate final results
         // Check that non-null entries in M₁ satisfy constraints:
         // - E[M₁[i][2]].type must be FIRST or LAST
         step3ValidateFinalResults(mTables, subjectChain);
 
-        printMTablesState("After Step 3 (validation - final result)", mTablesContainer);
+//        printMTablesState("After Step 3 (validation - final result)", mTablesContainer);
     }
 
     /**
@@ -94,12 +94,13 @@ class MTableMerger {
             return; // Only one table, no merging needed
         }
 
-        int currentSize = r;
+        int currentSize = mTables.length;
         int depth = 1;
 
         while (currentSize > 1 ) {
 
-            int jumpSize = 1 << depth;
+            int offset = 1 << (depth - 1);
+            int jumpSize = offset * 2;
 
             // For each table i that we're currently processing
             for (int i = 0; i < mTables.length; i+=jumpSize) {
@@ -108,24 +109,24 @@ class MTableMerger {
                     // If M_i[j] has a valid match
                     if (mTables[i][j][0] != -1) {
                         // Try to extend using tables at distances 2^l
-                        for (int l = depth; l < jumpSize; l++) {
-                            int nextTableIdx = i + (1 << l); // i + 2^l
+                        int nextTableIdx = i + offset; // i + 2^l
 
-                            if (nextTableIdx > jumpSize || nextTableIdx >= mTables.length) {
-                                break; // There is a bug here. Not being able to check the other half of the table
-                            }
+                        if (nextTableIdx > jumpSize || nextTableIdx >= mTables.length) {
+                            continue; // There is a bug here. Not being able to check the other half of the table
+                        }
 
-                            // Try to extend the match
-                            if (!extendMatch(mTables, subjectChain, i, j, nextTableIdx)) {
-                                // Extension failed, invalidate this entry
-                                mTables[i][j][0] = mTables[i][j][1] = -1;
-                                break;
-                            }
+                        // Try to extend the match
+                        if (!extendMatch(mTables, subjectChain, i, j, nextTableIdx)) {
+                            // Extension failed, invalidate this entry
+                            mTables[i][j][0] = mTables[i][j][1] = -1;
+//                            break;
                         }
                     }
                 }
             }
 
+            String label = String.format("After merging tables with offset %d (depth %d)", offset, depth);
+            printMTablesState(label, mTablesContainer);
             // Prepare for next iteration:
             // After merging, tables at indices 0, 2, 4, 6, ... contain all the info
             // So the new "active" set becomes tables 0, 1, 2, 3, ... (ceil(currentSize/2))
