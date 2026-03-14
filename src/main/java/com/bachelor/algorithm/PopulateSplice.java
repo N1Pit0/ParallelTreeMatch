@@ -4,10 +4,12 @@ import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 //This class does more than one thing.
@@ -53,20 +55,42 @@ class PopulateSplice {
 
     private void constructSplices(){
         int[][] splices = this.splice.getSplices();
+        Object[] locks = new Object[splices.length];
 
-        //TODO: Parallelize setting splice
+        phaser.bulkRegister(eulerChain.getChainSize());
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
 
-            SubNode currentSubNode = eulerChain.getFromIndex(i);
-            if (T[currentSubNode.getNodeInfo()].isVariable()) {
+            final int index = i;
+            executor.submit(() -> {
+                SubNode currentSubNode = eulerChain.getFromIndex(index);
 
-                if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost()-1,splices.length)) {
-                        splices[eulerChain.getFromIndex(i).getCost()-1][1] = i - 1;
+                if (T[currentSubNode.getNodeInfo()].isVariable()) {
+                    int previousCost = currentSubNode.getCost()-1, currentCost = currentSubNode.getCost();
+                    synchronized (locks) {
+                        if(locks[previousCost] == null){
+                            locks[previousCost] = new Object();
+                        }
+                        if (locks[currentCost] == null){
+                            locks[currentCost] = new Object();
+                        }
+                    }
+                    if (checkRangeExclusive(previousCost,splices.length)) {
+                        synchronized (locks[previousCost]) {
+                            int currentEnd = splices[eulerChain.getFromIndex(index).getCost()-1][1];
+                            splices[eulerChain.getFromIndex(index).getCost()-1][1] = Math.max(currentEnd, index-1);
+                        }
+                    }
+                    if (checkRangeExclusive(currentCost, splices.length)) {
+                        synchronized (locks[currentCost]) {
+                            int currentStart = splices[eulerChain.getFromIndex(index).getCost()][0];
+                            splices[eulerChain.getFromIndex(index).getCost()][0] = Math.max(currentStart, index+1);
+                        }
+                    }
                 }
-                if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost(), splices.length)) {
-                        splices[eulerChain.getFromIndex(i).getCost()][0] = i + 1;
-                }
-            }
+                
+                phaser.arriveAndDeregister();
+            });
+
         }
         splices[0][0] = 0;
         // Ensure the last splice end is set properly
