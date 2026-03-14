@@ -1,5 +1,6 @@
 package com.bachelor.preprocess;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class InputArray {
 
     private final TreeNode[] T;

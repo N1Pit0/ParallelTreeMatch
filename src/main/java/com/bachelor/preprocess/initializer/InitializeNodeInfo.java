@@ -4,6 +4,7 @@ import com.bachelor.preprocess.Initializer;
 import com.bachelor.preprocess.InputArray;
 import com.bachelor.preprocess.TreeNode;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class InitializeNodeInfo implements Initializer {
     private final int index;
     private final TreeNode[] T;

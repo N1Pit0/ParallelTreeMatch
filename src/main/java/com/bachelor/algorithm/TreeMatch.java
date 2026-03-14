@@ -7,6 +7,7 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeoutException;
 
 
+@SuppressWarnings("ClassCanBeRecord")
 public class TreeMatch {
     private final ExecutorService executor;
     private final Phaser phaser;
@@ -28,7 +29,7 @@ public class TreeMatch {
 
     public void runPhaseTwo() throws InterruptedException, TimeoutException {
         MTables mTables = runPhaseOne();
-        MTableMerger tableMerger = new MTableMerger(mTables, executor, phaser);
+        MTableMerger tableMerger = new MTableMerger(mTables, executor);
         tableMerger.computeAndMergeMTables();
     }
 

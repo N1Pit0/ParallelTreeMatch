@@ -7,6 +7,7 @@ import com.bachelor.preprocess.TreeNode;
 
 import static com.bachelor.preprocess.NodeType.*;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class InitializeType implements Initializer {
     private final int index;
     private final TreeNode[] T;

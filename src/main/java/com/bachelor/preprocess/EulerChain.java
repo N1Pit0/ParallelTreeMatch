@@ -1,13 +1,10 @@
 package com.bachelor.preprocess;
 
 import java.util.Arrays;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class EulerChain {
 
     private final SubNode[] CHAIN;
-    private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
     private final InputArray inputArray;
     private final TreeNode[] T;
 

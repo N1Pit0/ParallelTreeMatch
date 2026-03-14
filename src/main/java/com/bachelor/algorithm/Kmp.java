@@ -74,8 +74,6 @@ class Kmp {
     private static int[] kmpFailureHelper(EulerChain pattern, int patStart, int patEnd) {
         int patternLength = patEnd - patStart + 1;
         int[] failureFunction = new int[patternLength];
-        SubNode[] patternChain = pattern.getChain();
-        TreeNode[] patternT = pattern.getT();
 
         for (int suffixStartPos = 1, prefixStartPos = 0; suffixStartPos < patternLength; ) {
             if (isNodeLabelMatch(pattern, pattern, patStart + suffixStartPos, patStart + prefixStartPos)) {

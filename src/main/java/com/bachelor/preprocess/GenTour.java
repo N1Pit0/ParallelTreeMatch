@@ -36,6 +36,10 @@ public class GenTour {
         return eulerChain;
     }
 
+    public static EulerChain buildAndPreprocess(ExecutorService executor, Phaser phaser, Supplier<TreeNode[]> treeSupplier, int timeoutSeconds) throws InterruptedException, TimeoutException {
+        return buildAndPreprocess(executor, phaser, treeSupplier, 0, timeoutSeconds);
+    }
+
 
     private static void preprocessTree(ExecutorService executor, Phaser phaser, InputArray inputArray, EulerChain eulerChain, int length, int timeoutSeconds) throws InterruptedException, TimeoutException {
         Initializer[] initializers;

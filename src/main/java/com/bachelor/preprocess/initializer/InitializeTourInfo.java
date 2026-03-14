@@ -5,6 +5,7 @@ import com.bachelor.preprocess.InputArray;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class InitializeTourInfo implements Initializer {
     private final int index;
     private final TreeNode[] T;

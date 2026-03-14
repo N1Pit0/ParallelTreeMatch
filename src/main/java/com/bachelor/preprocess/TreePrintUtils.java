@@ -1,5 +1,6 @@
 package com.bachelor.preprocess;
 
+@SuppressWarnings("unused")
 public class TreePrintUtils {
     /**
      * Prints tours for each TreeNode in the array. Safe to call with null arrays or null tours.

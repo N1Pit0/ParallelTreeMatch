@@ -60,10 +60,10 @@ class PopulateSplice {
             SubNode currentSubNode = eulerChain.getFromIndex(i);
             if (T[currentSubNode.getNodeInfo()].isVariable()) {
 
-                if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost()-1, 0, splices.length)) {
+                if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost()-1,splices.length)) {
                         splices[eulerChain.getFromIndex(i).getCost()-1][1] = i - 1;
                 }
-                if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost(), 0, splices.length)) {
+                if (checkRangeExclusive(eulerChain.getFromIndex(i).getCost(), splices.length)) {
                         splices[eulerChain.getFromIndex(i).getCost()][0] = i + 1;
                 }
             }
@@ -75,7 +75,12 @@ class PopulateSplice {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private boolean checkRangeExclusive(int index, int from, int to) {
         return from <= index && index < to;
+    }
+
+    private boolean checkRangeExclusive(int index,int to){
+        return checkRangeExclusive(index, 0, to);
     }
 }

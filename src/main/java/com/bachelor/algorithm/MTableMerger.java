@@ -6,7 +6,6 @@ import com.bachelor.preprocess.SubNode;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.Phaser;
 
 import static com.bachelor.preprocess.NodeType.*;
 
@@ -15,7 +14,7 @@ class MTableMerger {
     private final ExecutorService executor;
     private final EulerChain subject;
 
-    MTableMerger(MTables mTablesContainer, ExecutorService executor, Phaser phaser) {
+    MTableMerger(MTables mTablesContainer, ExecutorService executor) {
         this.mTablesContainer = mTablesContainer;
         this.executor = executor;
         this.subject = mTablesContainer.getSubject();
@@ -177,6 +176,7 @@ class MTableMerger {
     /**
      * Helper method to print mTables state (factored out printing logic).
      */
+    @SuppressWarnings("SameParameterValue")
     private void printMTablesState(String label, MTables container) {
         System.out.println("\n" + label + ":");
         System.out.println(container);
