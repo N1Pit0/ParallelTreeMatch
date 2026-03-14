@@ -19,8 +19,7 @@ public class Coordinator {
 
             EulerChain pattern = buildAndPreprocess(executor1, phaser1, TestExamples::initializePatternTArray, 2, 5);
             EulerChain subject = buildAndPreprocess(executor2, phaser2, TestExamples::initializeSubjectTArray,5);
-            TreeMatch treeMatch = new TreeMatch(executor1, phaser1, subject, pattern);
-            treeMatch.runPhaseTwo();
+            TreeMatch.performTreeMatch(executor2, phaser2, subject, pattern);
         }
     }
 }

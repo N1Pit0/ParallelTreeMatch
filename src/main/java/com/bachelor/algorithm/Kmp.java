@@ -97,8 +97,16 @@ class Kmp {
         TreeNode[] subjectT = aChain.getT();
         TreeNode[] patternT = chainComparedAgainst.getT();
 
-        return Objects.equals(subjectT[subjectChain[aChainPosIndex].getNodeInfo()].getLabel(),
-                patternT[patternChain[chainComparedAgainstPosIndex].getNodeInfo()].getLabel());
+        try {
+            SubNode subjectNode = subjectChain[aChainPosIndex];
+            SubNode patternNode = patternChain[chainComparedAgainstPosIndex];
+            return Objects.equals(subjectT[subjectNode.getNodeInfo()].getLabel(),
+                    patternT[patternNode.getNodeInfo()].getLabel());
+        }catch (NullPointerException e){
+            System.out.printf("aChainPostIndex: %d\n", aChainPosIndex);
+            System.out.printf("chainComparedAgainstPosIndex: %d\n",chainComparedAgainstPosIndex);
+            throw new RuntimeException(e);
+        }
     }
 
 }

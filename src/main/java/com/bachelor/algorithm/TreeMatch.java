@@ -14,7 +14,12 @@ public class TreeMatch {
     private final EulerChain subject;
     private final EulerChain pattern;
 
-    public TreeMatch(ExecutorService executor, Phaser phaser, EulerChain subject, EulerChain pattern) {
+    public static void performTreeMatch(ExecutorService executor, Phaser phaser, EulerChain subject, EulerChain pattern) throws InterruptedException, TimeoutException {
+        TreeMatch treeMatch = new TreeMatch(executor, phaser, subject, pattern);
+        treeMatch.runPhaseTwo();
+    }
+
+    private TreeMatch(ExecutorService executor, Phaser phaser, EulerChain subject, EulerChain pattern) {
         this.executor = executor;
         this.phaser = phaser;
         this.subject = subject;
@@ -27,7 +32,7 @@ public class TreeMatch {
         return createAndComputeMTables(subject, pattern, splice);
     }
 
-    public void runPhaseTwo() throws InterruptedException, TimeoutException {
+    private void runPhaseTwo() throws InterruptedException, TimeoutException {
         MTables mTables = runPhaseOne();
         MTableMerger tableMerger = new MTableMerger(mTables, executor);
         tableMerger.computeAndMergeMTables();
