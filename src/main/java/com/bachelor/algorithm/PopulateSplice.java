@@ -4,12 +4,11 @@ import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
 
-import java.util.Objects;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 //This class does more than one thing.
@@ -56,6 +55,7 @@ class PopulateSplice {
     private void constructSplices(){
         int[][] splices = this.splice.getSplices();
         Object[] locks = new Object[splices.length];
+        Arrays.fill(locks, new Object());
 
         phaser.bulkRegister(eulerChain.getChainSize());
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
@@ -66,14 +66,7 @@ class PopulateSplice {
 
                 if (T[currentSubNode.getNodeInfo()].isVariable()) {
                     int previousCost = currentSubNode.getCost()-1, currentCost = currentSubNode.getCost();
-                    synchronized (locks) {
-                        if(locks[previousCost] == null){
-                            locks[previousCost] = new Object();
-                        }
-                        if (locks[currentCost] == null){
-                            locks[currentCost] = new Object();
-                        }
-                    }
+
                     if (checkRangeExclusive(previousCost,splices.length)) {
                         synchronized (locks[previousCost]) {
                             int currentEnd = splices[eulerChain.getFromIndex(index).getCost()-1][1];
