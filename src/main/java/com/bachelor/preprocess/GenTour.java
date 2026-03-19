@@ -2,10 +2,9 @@ package com.bachelor.preprocess;
 
 import com.bachelor.preprocess.initializer.*;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -14,18 +13,27 @@ public class GenTour {
     private static void runPhase(ExecutorService executor, Phaser phaser, Initializer[] initializers, int timeoutSeconds) throws InterruptedException, TimeoutException {
         int phaseSize = initializers.length;
         phaser.bulkRegister(phaseSize);
+        List<Future<?>> futures = new ArrayList<>();
+
         for (int i = 0; i < phaseSize; i++) {
             final int index = i;
-            executor.submit(() -> {
+           futures.add( executor.submit(() -> {
                 try {
                     initializers[index].initialize();
                 } catch (Exception _) {
-                } finally {
-                    phaser.arriveAndDeregister();
                 }
-            });
+            }));
         }
-        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), timeoutSeconds, TimeUnit.SECONDS);
+
+        for (Future<?> f : futures) {
+            try {
+                f.get(timeoutSeconds, TimeUnit.SECONDS);
+            } catch (ExecutionException e) {
+                // Handle exceptions from the initializer tasks if needed
+                e.printStackTrace();
+            }
+        }
+//        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), timeoutSeconds, TimeUnit.SECONDS);
     }
 
     public static EulerChain buildAndPreprocess(ExecutorService executor, Phaser phaser, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds) throws InterruptedException, TimeoutException {
