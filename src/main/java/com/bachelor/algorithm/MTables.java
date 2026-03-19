@@ -15,7 +15,7 @@ class MTables {
         this.mTables = new int[splice.getSplices().length][subject.getChainSize()][2];
     }
 
-    void createMTables(){
+    void createMTables() {
         int[][] splicesArray = splice.getSplices();
         for (int i = 0; i < mTables.length; i++) {
             mTables[i] = Kmp.kmp(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
@@ -26,7 +26,7 @@ class MTables {
         return mTables;
     }
 
-    EulerChain getSubject(){
+    EulerChain getSubject() {
         return this.subject;
     }
 

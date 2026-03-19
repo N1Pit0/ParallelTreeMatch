@@ -5,7 +5,7 @@ public class TreePrintUtils {
     /**
      * Prints tours for each TreeNode in the array. Safe to call with null arrays or null tours.
      */
-     public static void printTreeTours(TreeNode[] treeNodes, String title) {
+    public static void printTreeTours(TreeNode[] treeNodes, String title) {
         if (title != null && !title.isEmpty()) {
             System.out.println(title);
         }

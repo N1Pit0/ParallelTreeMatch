@@ -10,7 +10,7 @@ public class InitializeTourInfo implements Initializer {
     private final int index;
     private final TreeNode[] T;
 
-    public InitializeTourInfo(int index, InputArray inputArray){
+    public InitializeTourInfo(int index, InputArray inputArray) {
         this.index = index;
         this.T = inputArray.getT();
     }
@@ -27,7 +27,7 @@ public class InitializeTourInfo implements Initializer {
             T[index].tour[T[index].arity()].setNext(next);
         }
 
-        if(index == 0){
+        if (index == 0) {
             T[index].tour[T[index].arity()].setCost(0);
         }
 

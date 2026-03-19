@@ -15,7 +15,7 @@ public class CoordinatorStressTest {
         int successCount = 0;
         int failureCount = 0;
 
-        try (FileWriter fw = new FileWriter(OUTPUT_FILE, false);
+        try (FileWriter fw = new FileWriter(OUTPUT_FILE, true);
              PrintWriter writer = new PrintWriter(fw)) {
 
             writer.println("=".repeat(80));

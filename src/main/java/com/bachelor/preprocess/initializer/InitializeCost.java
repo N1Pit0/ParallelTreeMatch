@@ -17,7 +17,7 @@ public class InitializeCost {
     private final EulerChain eulerChain;
     private final SubNode head;
 
-    public InitializeCost( ExecutorService executor, EulerChain eulerChain){
+    public InitializeCost(ExecutorService executor, EulerChain eulerChain) {
         this.executor = executor;
         this.eulerChain = eulerChain;
         this.head = eulerChain.getT()[0].tour[0];

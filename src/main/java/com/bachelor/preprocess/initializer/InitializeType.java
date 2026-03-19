@@ -41,7 +41,7 @@ public class InitializeType implements Initializer {
             T[index].tour[currentOutDegree].setType(LAST);
         }
 
-        if(iFather >= 0){
+        if (iFather >= 0) {
             T[iFather].getLatches()[Step.INITIALIZE_TYPE.ordinal()].countDown();
         }
 

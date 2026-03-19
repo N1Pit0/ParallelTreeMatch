@@ -9,7 +9,7 @@ public class InitializeNodeInfo implements Initializer {
     private final int index;
     private final TreeNode[] T;
 
-    public InitializeNodeInfo(int index, InputArray inputArray){
+    public InitializeNodeInfo(int index, InputArray inputArray) {
         this.index = index;
         this.T = inputArray.getT();
     }

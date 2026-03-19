@@ -214,7 +214,7 @@ public class TestExamples {
         return treeNodes;
     }
 
-    static TreeNode[] initializeSubjectTArrayOne(){
+    static TreeNode[] initializeSubjectTArrayOne() {
         TreeNode[] treeNodes = new TreeNode[14];
 
         int outdegree0 = 4;
@@ -418,7 +418,7 @@ public class TestExamples {
         return treeNodes;
     }
 
-    static TreeNode[] initializePatternTArrayOne(){
+    static TreeNode[] initializePatternTArrayOne() {
         TreeNode[] treeNodes = new TreeNode[7];
 
         int outdegree0 = 3;

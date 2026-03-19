@@ -2,7 +2,7 @@ package com.bachelor.preprocess;
 
 import com.bachelor.preprocess.initializer.*;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -12,11 +12,11 @@ public class GenTour {
 
     private static void runPhase(ExecutorService executor, Initializer[] initializers, int timeoutSeconds) throws InterruptedException, TimeoutException {
         int phaseSize = initializers.length;
-        List<Future<?>> futures = new ArrayList<>();
+        List<Future<?>> futures = new LinkedList<>();
 
         for (int i = 0; i < phaseSize; i++) {
             final int index = i;
-           futures.add( executor.submit(() -> {
+            futures.add(executor.submit(() -> {
                 try {
                     initializers[index].initialize();
                 } catch (Exception _) {

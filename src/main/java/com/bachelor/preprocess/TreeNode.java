@@ -4,28 +4,22 @@ import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
 public class TreeNode {
-    private final CountDownLatch[] latches;
-
-    //contains either a function symbol or a variable associated with the
-    //node
-    private final String label;
-
-    private final boolean isVariable;
-
-    //contains a pointer to the parent of the node.
-    private final int father;
-
-    //  contains an integer specifying the node’s ordering relative to
-//  its sibling, i.e., which argument of its parent the current node is.
-    private final int edge_label;
-
-    //  contains the outdegree (the number of outgoing edges) of the
-//  node.
-    private final int outDegree;
-
     //  an array containing n + 1 elements, where n is the outdegree of the
     //  current node in the tree. Needs initialization
     public final SubNode[] tour;
+    private final CountDownLatch[] latches;
+    //contains either a function symbol or a variable associated with the
+    //node
+    private final String label;
+    private final boolean isVariable;
+    //contains a pointer to the parent of the node.
+    private final int father;
+    //  contains an integer specifying the node’s ordering relative to
+//  its sibling, i.e., which argument of its parent the current node is.
+    private final int edge_label;
+    //  contains the outdegree (the number of outgoing edges) of the
+//  node.
+    private final int outDegree;
 
     private TreeNode(Builder builder) {
         this.outDegree = builder.outDegree;
@@ -34,10 +28,46 @@ public class TreeNode {
         this.tour = builder.tour;
         this.father = builder.father;
         this.edge_label = builder.edgeLabel;
-        this.latches = new CountDownLatch[Step.values().length]; // 5 Here is number of steps/initializers required for algorithm
+        this.latches = new CountDownLatch[Step.values().length];
         for (Step step : Step.values()) {
             this.latches[step.ordinal()] = new CountDownLatch(this.outDegree);
         }
+    }
+
+    public int getEdge_label() {
+        return this.edge_label;
+    }
+
+    public int arity() {
+        return outDegree;
+    }
+
+    public int getFather() {
+        return this.father;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public CountDownLatch[] getLatches() {
+        return this.latches;
+    }
+
+    public boolean isVariable() {
+        return isVariable;
+    }
+
+    @Override
+    public String toString() {
+        return "TreeNode{" +
+                "label='" + label + '\'' +
+                ", isVariable=" + isVariable +
+                ", father=" + father +
+                ", edge_label=" + edge_label +
+                ", outDegree=" + outDegree +
+                ", tour=" + Arrays.toString(tour) +
+                '}';
     }
 
     public static class Builder {
@@ -77,44 +107,8 @@ public class TreeNode {
             return this;
         }
 
-        public TreeNode build(){
+        public TreeNode build() {
             return new TreeNode(this);
         }
-    }
-
-    public int getEdge_label() {
-        return this.edge_label;
-    }
-
-    public int arity(){
-        return outDegree;
-    }
-
-    public int getFather() {
-        return this.father;
-    }
-
-    public String getLabel() {
-        return this.label;
-    }
-
-    public CountDownLatch[] getLatches(){
-        return this.latches;
-    }
-
-    public boolean isVariable() {
-        return isVariable;
-    }
-
-    @Override
-    public String toString() {
-        return "TreeNode{" +
-                "label='" + label + '\'' +
-                ", isVariable=" + isVariable +
-                ", father=" + father +
-                ", edge_label=" + edge_label +
-                ", outDegree=" + outDegree +
-                ", tour=" + Arrays.toString(tour) +
-                '}';
     }
 }

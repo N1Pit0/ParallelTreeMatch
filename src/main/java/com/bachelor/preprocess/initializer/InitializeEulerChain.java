@@ -10,7 +10,7 @@ public class InitializeEulerChain implements Initializer {
     private final EulerChain eulerChain;
     private final TreeNode[] T;
 
-    public InitializeEulerChain(int index, EulerChain eulerChain){
+    public InitializeEulerChain(int index, EulerChain eulerChain) {
         this.index = index;
         this.eulerChain = eulerChain;
         this.T = eulerChain.getT();

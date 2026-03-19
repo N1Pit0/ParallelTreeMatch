@@ -90,8 +90,8 @@ class Kmp {
     }
 
     private static boolean isNodeLabelMatch(EulerChain aChain, EulerChain chainComparedAgainst,
-                                     int aChainPosIndex,
-                                     int chainComparedAgainstPosIndex){
+                                            int aChainPosIndex,
+                                            int chainComparedAgainstPosIndex) {
         SubNode[] subjectChain = aChain.getChain();
         SubNode[] patternChain = chainComparedAgainst.getChain();
         TreeNode[] subjectT = aChain.getT();
@@ -102,9 +102,9 @@ class Kmp {
             SubNode patternNode = patternChain[chainComparedAgainstPosIndex];
             return Objects.equals(subjectT[subjectNode.getNodeInfo()].getLabel(),
                     patternT[patternNode.getNodeInfo()].getLabel());
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             System.out.printf("aChainPostIndex: %d\n", aChainPosIndex);
-            System.out.printf("chainComparedAgainstPosIndex: %d\n",chainComparedAgainstPosIndex);
+            System.out.printf("chainComparedAgainstPosIndex: %d\n", chainComparedAgainstPosIndex);
             throw new RuntimeException(e);
         }
     }

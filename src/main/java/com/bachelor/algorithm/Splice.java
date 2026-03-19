@@ -6,10 +6,10 @@ class Splice {
     private final int[][] splices;
     private final EulerChain eulerChain;
 
-     Splice(EulerChain eulerChain){
+    Splice(EulerChain eulerChain) {
         this.eulerChain = eulerChain;
         int size = eulerChain.getInputArray().getVariableCount();
-        splices = new int[size+1][2];
+        splices = new int[size + 1][2];
         initializeSplices();
     }
 

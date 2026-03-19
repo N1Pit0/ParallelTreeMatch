@@ -4,8 +4,8 @@ import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -33,7 +33,7 @@ class PopulateSplice {
     }
 
     private void reinitializeCostToMakeSpices() {
-        List<Future<?>> futures = new ArrayList<>();
+        List<Future<?>> futures = new LinkedList<>();
 
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
             final int index = i;
@@ -59,7 +59,7 @@ class PopulateSplice {
         int[][] splices = this.splice.getSplices();
         Object[] locks = new Object[splices.length];
         Arrays.fill(locks, new Object());
-        List<Future<?>> futures = new ArrayList<>();
+        List<Future<?>> futures = new LinkedList<>();
 
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
 

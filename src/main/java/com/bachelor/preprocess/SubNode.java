@@ -2,7 +2,7 @@ package com.bachelor.preprocess;
 
 import java.util.Iterator;
 
-public class SubNode implements Iterable<SubNode>{
+public class SubNode implements Iterable<SubNode> {
 
 
     // -> T[i] where i is the index of the node in the Euler chain.
@@ -26,54 +26,63 @@ public class SubNode implements Iterable<SubNode>{
     private SubNode nextTmp;
     private int costTmp;
 
-    public SubNode getNextTmp() { return nextTmp; }
-    public void setNextTmp(SubNode n) { this.nextTmp = n; }
+    public SubNode() {
+    }
 
-    public int getCostTmp() { return costTmp; }
-    public void setCostTmp(int c) { this.costTmp = c; }
+    public SubNode getNextTmp() {
+        return nextTmp;
+    }
 
+    public void setNextTmp(SubNode n) {
+        this.nextTmp = n;
+    }
 
-    public SubNode(){
+    public int getCostTmp() {
+        return costTmp;
+    }
+
+    public void setCostTmp(int c) {
+        this.costTmp = c;
     }
 
     public int getNodeInfo() {
-            return nodeInfo;
+        return nodeInfo;
     }
 
     public void setNodeInfo(int nodeInfo) {
-            this.nodeInfo = nodeInfo;
+        this.nodeInfo = nodeInfo;
     }
 
     public SubNode getTourInfo() {
-            return tourInfo;
+        return tourInfo;
     }
 
     public void setTourInfo(SubNode tourInfo) {
-            this.tourInfo = tourInfo;
+        this.tourInfo = tourInfo;
     }
 
     public int getSubtree() {
-            return subtree;
+        return subtree;
     }
 
     public void setSubtree(int subtree) {
-            this.subtree = subtree;
+        this.subtree = subtree;
     }
 
     public NodeType getType() {
-            return type;
+        return type;
     }
 
     public void setType(NodeType type) {
-            this.type = type;
+        this.type = type;
     }
 
     public int getCost() {
-            return cost;
+        return cost;
     }
 
     public void setCost(int cost) {
-            this.cost = cost;
+        this.cost = cost;
     }
 
 
@@ -86,11 +95,11 @@ public class SubNode implements Iterable<SubNode>{
         NodeType typeCopy;
         int costCopy;
 
-            nodeInfoCopy = this.nodeInfo;
-            tourInfoCopy = this.tourInfo;
-            subtreeCopy = this.subtree;
-            typeCopy = this.type;
-            costCopy = this.cost;
+        nodeInfoCopy = this.nodeInfo;
+        tourInfoCopy = this.tourInfo;
+        subtreeCopy = this.subtree;
+        typeCopy = this.type;
+        costCopy = this.cost;
 
 
         String tourInfoStr = (tourInfoCopy == null) ? "null" : "SubNode@" + Integer.toHexString(System.identityHashCode(tourInfoCopy));
@@ -106,20 +115,25 @@ public class SubNode implements Iterable<SubNode>{
 
     public SubNode getNext() {
 
-            return next;
+        return next;
 
     }
 
     public void setNext(SubNode next) {
 
-            this.next = next;
+        this.next = next;
 
     }
 
-    private static class Itr implements Iterator<SubNode>{
+    @Override
+    public Iterator<SubNode> iterator() {
+        return new Itr(this);
+    }
+
+    private static class Itr implements Iterator<SubNode> {
         private SubNode current;
 
-        Itr(SubNode head){
+        Itr(SubNode head) {
             this.current = head;
         }
 
@@ -134,10 +148,5 @@ public class SubNode implements Iterable<SubNode>{
             current = current.getTourInfo();
             return node;
         }
-    }
-
-    @Override
-    public Iterator<SubNode> iterator() {
-        return new Itr(this);
     }
 }

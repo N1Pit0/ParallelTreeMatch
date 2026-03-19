@@ -6,16 +6,16 @@ public class InputArray {
     private final TreeNode[] T;
     private final int variableCount;
 
-    public InputArray(TreeNode[] T, int variableCount){
+    public InputArray(TreeNode[] T, int variableCount) {
         this.T = T;
         this.variableCount = variableCount;
     }
 
-    public TreeNode[] getT(){
+    public TreeNode[] getT() {
         return this.T;
     }
 
-    public int getVariableCount(){
+    public int getVariableCount() {
         return this.variableCount;
     }
 }

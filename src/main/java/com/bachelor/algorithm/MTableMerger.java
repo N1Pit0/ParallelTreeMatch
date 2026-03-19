@@ -3,6 +3,7 @@ package com.bachelor.algorithm;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -20,7 +21,7 @@ class MTableMerger {
         this.subject = mTablesContainer.getSubject();
     }
 
-    void computeAndMergeMTables(){
+    void computeAndMergeMTables() {
         int[][][] mTables = mTablesContainer.getMTables();
         SubNode[] subjectChain = subject.getChain();
 
@@ -37,19 +38,19 @@ class MTableMerger {
         final int[] currentSize = {mTables.length};
         final int[] depth = {1};
 
-        while (currentSize[0] > 1 ) {
-            List<Future<?>> depthIterationFutures = new java.util.ArrayList<>();
+        while (currentSize[0] > 1) {
+            List<Future<?>> depthIterationFutures = new LinkedList<>();
 
             depthIterationFutures.add(executor.submit(() -> {
                 int offset = 1 << (depth[0] - 1);
                 int jumpSize = offset * 2;
 
-                List<Future<?>> tablePairFutures = new java.util.ArrayList<>();
+                List<Future<?>> tablePairFutures = new LinkedList<>();
 
-                for (int i = 0; i < mTables.length; i+=jumpSize) {
+                for (int i = 0; i < mTables.length; i += jumpSize) {
                     final int tableIdx = i;
                     tablePairFutures.add(executor.submit(() -> {
-                        List<Future<?>> positionFutures = new java.util.ArrayList<>();
+                        List<Future<?>> positionFutures = new LinkedList<>();
 
                         for (int j = 0; j < subject.getChainSize(); j++) {
                             final int subjPos = j;
