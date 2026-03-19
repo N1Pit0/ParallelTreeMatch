@@ -10,24 +10,22 @@ import java.util.concurrent.TimeoutException;
 @SuppressWarnings("ClassCanBeRecord")
 public class TreeMatch {
     private final ExecutorService executor;
-    private final Phaser phaser;
     private final EulerChain subject;
     private final EulerChain pattern;
 
-    public static void performTreeMatch(ExecutorService executor, Phaser phaser, EulerChain subject, EulerChain pattern) throws InterruptedException, TimeoutException {
-        TreeMatch treeMatch = new TreeMatch(executor, phaser, subject, pattern);
+    public static void performTreeMatch(ExecutorService executor, EulerChain subject, EulerChain pattern) throws InterruptedException, TimeoutException {
+        TreeMatch treeMatch = new TreeMatch(executor, subject, pattern);
         treeMatch.runPhaseTwo();
     }
 
-    private TreeMatch(ExecutorService executor, Phaser phaser, EulerChain subject, EulerChain pattern) {
+    private TreeMatch(ExecutorService executor, EulerChain subject, EulerChain pattern) {
         this.executor = executor;
-        this.phaser = phaser;
         this.subject = subject;
         this.pattern = pattern;
     }
 
     private MTables runPhaseOne() throws InterruptedException, TimeoutException {
-        Splice splice = createAndComputeSplices(pattern, executor, phaser);
+        Splice splice = createAndComputeSplices(pattern, executor);
 
         return createAndComputeMTables(subject, pattern, splice);
     }
@@ -38,10 +36,10 @@ public class TreeMatch {
         tableMerger.computeAndMergeMTables();
     }
 
-    private static Splice createAndComputeSplices(EulerChain pattern, ExecutorService executor, Phaser phaser)
+    private static Splice createAndComputeSplices(EulerChain pattern, ExecutorService executor)
             throws InterruptedException, TimeoutException {
         Splice splice = new Splice(pattern);
-        PopulateSplice populateSplice = new PopulateSplice(pattern, splice, executor, phaser);
+        PopulateSplice populateSplice = new PopulateSplice(pattern, splice, executor);
         populateSplice.createSplices();
         return splice;
     }

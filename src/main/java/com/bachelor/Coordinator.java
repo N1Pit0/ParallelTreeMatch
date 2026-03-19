@@ -9,17 +9,13 @@ import java.util.concurrent.*;
 
 public class Coordinator {
 
-    @SuppressWarnings("UnnecessaryModifier")
     public static void main(@SuppressWarnings("unused") String[] args) throws InterruptedException, TimeoutException {
 
-        try (ExecutorService executor1 = Executors.newCachedThreadPool();
-             ) {
-            Phaser phaser1 = new Phaser();
-//            Phaser phaser2 = new Phaser();
+        try (ExecutorService executor1 = Executors.newCachedThreadPool()) {
 
-            EulerChain pattern = buildAndPreprocess(executor1, phaser1, TestExamples::initializePatternTArray, 2, 5);
-            EulerChain subject = buildAndPreprocess(executor1, phaser1, TestExamples::initializeSubjectTArray,5);
-            TreeMatch.performTreeMatch(executor1, phaser1, subject, pattern);
+            EulerChain pattern = buildAndPreprocess(executor1, TestExamples::initializePatternTArray, 2, 5);
+            EulerChain subject = buildAndPreprocess(executor1, TestExamples::initializeSubjectTArray,5);
+            TreeMatch.performTreeMatch(executor1, subject, pattern);
         }
     }
 }

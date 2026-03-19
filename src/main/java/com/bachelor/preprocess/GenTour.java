@@ -10,9 +10,8 @@ import java.util.stream.IntStream;
 
 public class GenTour {
 
-    private static void runPhase(ExecutorService executor, Phaser phaser, Initializer[] initializers, int timeoutSeconds) throws InterruptedException, TimeoutException {
+    private static void runPhase(ExecutorService executor, Initializer[] initializers, int timeoutSeconds) throws InterruptedException, TimeoutException {
         int phaseSize = initializers.length;
-        phaser.bulkRegister(phaseSize);
         List<Future<?>> futures = new ArrayList<>();
 
         for (int i = 0; i < phaseSize; i++) {
@@ -33,42 +32,41 @@ public class GenTour {
                 e.printStackTrace();
             }
         }
-//        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), timeoutSeconds, TimeUnit.SECONDS);
     }
 
-    public static EulerChain buildAndPreprocess(ExecutorService executor, Phaser phaser, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds) throws InterruptedException, TimeoutException {
+    public static EulerChain buildAndPreprocess(ExecutorService executor, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds) throws InterruptedException, TimeoutException {
         TreeNode[] treeNodes = treeSupplier.get();
         InputArray inputArray = new InputArray(treeNodes, variableCount);
         EulerChain eulerChain = new EulerChain(inputArray);
-        preprocessTree(executor, phaser, inputArray, eulerChain, treeNodes.length, timeoutSeconds);
+        preprocessTree(executor, inputArray, eulerChain, treeNodes.length, timeoutSeconds);
         return eulerChain;
     }
 
-    public static EulerChain buildAndPreprocess(ExecutorService executor, Phaser phaser, Supplier<TreeNode[]> treeSupplier, int timeoutSeconds) throws InterruptedException, TimeoutException {
-        return buildAndPreprocess(executor, phaser, treeSupplier, 0, timeoutSeconds);
+    public static EulerChain buildAndPreprocess(ExecutorService executor, Supplier<TreeNode[]> treeSupplier, int timeoutSeconds) throws InterruptedException, TimeoutException {
+        return buildAndPreprocess(executor, treeSupplier, 0, timeoutSeconds);
     }
 
 
-    private static void preprocessTree(ExecutorService executor, Phaser phaser, InputArray inputArray, EulerChain eulerChain, int length, int timeoutSeconds) throws InterruptedException, TimeoutException {
+    private static void preprocessTree(ExecutorService executor, InputArray inputArray, EulerChain eulerChain, int length, int timeoutSeconds) throws InterruptedException, TimeoutException {
         Initializer[] initializers;
 
         // Phase 1: NodeInfo
         initializers = IntStream.range(0, length)
                 .mapToObj(i -> new InitializeNodeInfo(i, inputArray))
                 .toArray(Initializer[]::new);
-        runPhase(executor, phaser, initializers, timeoutSeconds);
+        runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 2: TourInfo
         initializers = IntStream.range(0, length)
                 .mapToObj(i -> new InitializeTourInfo(i, inputArray))
                 .toArray(Initializer[]::new);
-        runPhase(executor, phaser, initializers, timeoutSeconds);
+        runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 3: Leaf/Type
         initializers = IntStream.range(0, length)
                 .mapToObj(i -> new InitializeType(i, inputArray))
                 .toArray(Initializer[]::new);
-        runPhase(executor, phaser, initializers, timeoutSeconds);
+        runPhase(executor, initializers, timeoutSeconds);
 
         InitializeCost initializeCost = new InitializeCost(executor, eulerChain);
         initializeCost.doWork();
@@ -77,12 +75,12 @@ public class GenTour {
         initializers = IntStream.range(0, length)
                 .mapToObj(i -> new InitializeSubTree(i, eulerChain))
                 .toArray(Initializer[]::new);
-        runPhase(executor, phaser, initializers, timeoutSeconds);
+        runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 5: EulerChain
         initializers = IntStream.range(0, length)
                 .mapToObj(i -> new InitializeEulerChain(i, eulerChain))
                 .toArray(Initializer[]::new);
-        runPhase(executor, phaser, initializers, timeoutSeconds);
+        runPhase(executor, initializers, timeoutSeconds);
     }
 }

@@ -4,11 +4,10 @@ import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.List;
+import java.util.concurrent.*;
 
 
 //This class does more than one thing.
@@ -19,49 +18,53 @@ class PopulateSplice {
     private final ExecutorService executor;
     private final TreeNode[] T;
     private final Splice splice;
-    private final Phaser phaser;
 
-    PopulateSplice(EulerChain eulerChain, Splice splice, ExecutorService executor, Phaser phaser) {
+    PopulateSplice(EulerChain eulerChain, Splice splice, ExecutorService executor) {
         this.eulerChain = eulerChain;
         this.executor = executor;
         this.T = eulerChain.getT();
         this.splice = splice;
-        this.phaser = phaser;
     }
 
     void createSplices() throws InterruptedException, TimeoutException {
         reinitializeCostToMakeSpices();
-        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
         ParallelPrefixSum.parallelPrefixSum(eulerChain.getChain());
         constructSplices();
-        phaser.awaitAdvanceInterruptibly(phaser.getPhase(), 10, TimeUnit.SECONDS);
     }
 
-    private void reinitializeCostToMakeSpices(){
-        phaser.bulkRegister(eulerChain.getChainSize());
+    private void reinitializeCostToMakeSpices() {
+        List<Future<?>> futures = new ArrayList<>();
+
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
             final int index = i;
-            executor.submit(() -> {
+            futures.add(executor.submit(() -> {
                 SubNode current = eulerChain.getFromIndex(index);
                 current.setCost(0);
-                if(T[current.getNodeInfo()].isVariable()){
+                if (T[current.getNodeInfo()].isVariable()) {
                     current.setCost(1);
                 }
-                phaser.arriveAndDeregister();
-            });
+            }));
+        }
+
+        for (Future<?> future : futures){
+            try {
+                future.get(5, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    private void constructSplices(){
+    private void constructSplices() {
         int[][] splices = this.splice.getSplices();
         Object[] locks = new Object[splices.length];
         Arrays.fill(locks, new Object());
+        List<Future<?>> futures = new ArrayList<>();
 
-        phaser.bulkRegister(eulerChain.getChainSize());
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
 
             final int index = i;
-            executor.submit(() -> {
+            futures.add(executor.submit(() -> {
                 SubNode currentSubNode = eulerChain.getFromIndex(index);
 
                 if (T[currentSubNode.getNodeInfo()].isVariable()) {
@@ -69,26 +72,32 @@ class PopulateSplice {
 
                     if (checkRangeExclusive(previousCost,splices.length)) {
                         synchronized (locks[previousCost]) {
-                            int currentEnd = splices[eulerChain.getFromIndex(index).getCost()-1][1];
-                            splices[eulerChain.getFromIndex(index).getCost()-1][1] = Math.max(currentEnd, index-1);
+                            int currentEnd = splices[eulerChain.getFromIndex(index).getCost() - 1][1];
+                            splices[eulerChain.getFromIndex(index).getCost() - 1][1] = Math.max(currentEnd, index - 1);
                         }
                     }
                     if (checkRangeExclusive(currentCost, splices.length)) {
                         synchronized (locks[currentCost]) {
                             int currentStart = splices[eulerChain.getFromIndex(index).getCost()][0];
-                            splices[eulerChain.getFromIndex(index).getCost()][0] = Math.max(currentStart, index+1);
+                            splices[eulerChain.getFromIndex(index).getCost()][0] = Math.max(currentStart, index + 1);
                         }
                     }
                 }
-                
-                phaser.arriveAndDeregister();
-            });
 
+            }));
+        }
+
+        for (Future<?> future : futures){
+            try {
+                future.get(5, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                throw new RuntimeException(e);
+            }
         }
         splices[0][0] = 0;
         // Ensure the last splice end is set properly
-        if (splices.length > 1 && splices[splices.length-1][1] == 0) {
-            splices[splices.length-1][1] = eulerChain.getChainSize() - 1;
+        if (splices.length > 1 && splices[splices.length - 1][1] == 0) {
+            splices[splices.length - 1][1] = eulerChain.getChainSize() - 1;
         }
     }
 
@@ -97,7 +106,7 @@ class PopulateSplice {
         return from <= index && index < to;
     }
 
-    private boolean checkRangeExclusive(int index,int to){
+    private boolean checkRangeExclusive(int index, int to) {
         return checkRangeExclusive(index, 0, to);
     }
 }

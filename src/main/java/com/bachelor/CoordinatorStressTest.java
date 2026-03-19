@@ -9,13 +9,13 @@ import java.time.format.DateTimeFormatter;
 public class CoordinatorStressTest {
 
     private static final String OUTPUT_FILE = "stress_test_exceptions.log";
-    private static final int ITERATIONS = 1000;
+    private static final int ITERATIONS = 3000;
 
     public static void main(String[] args) {
         int successCount = 0;
         int failureCount = 0;
 
-        try (FileWriter fw = new FileWriter(OUTPUT_FILE, true);
+        try (FileWriter fw = new FileWriter(OUTPUT_FILE, false);
              PrintWriter writer = new PrintWriter(fw)) {
 
             writer.println("=".repeat(80));
