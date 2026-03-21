@@ -1,5 +1,6 @@
 package com.bachelor.utils;
 
+import com.bachelor.algorithm.MTables;
 import com.bachelor.preprocess.TreeNode;
 
 @SuppressWarnings("unused")
@@ -20,5 +21,11 @@ public class TreePrintUtils {
                         + " SubNode@" + Integer.toHexString(System.identityHashCode(node.tour[j])));
             }
         }
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    public static void printMTablesState(String label, MTables container) {
+        System.out.println("\n" + label + ":");
+        System.out.println(container);
     }
 }

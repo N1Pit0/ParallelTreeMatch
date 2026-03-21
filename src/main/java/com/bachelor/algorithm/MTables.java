@@ -2,7 +2,7 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.EulerChain;
 
-class MTables {
+public class MTables {
     private final int[][][] mTables;
     private final EulerChain subject;
     private final EulerChain pattern;

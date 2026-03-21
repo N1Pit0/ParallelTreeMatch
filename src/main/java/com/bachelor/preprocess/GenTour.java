@@ -27,33 +27,37 @@ public class GenTour {
 
         // Phase 1: NodeInfo
         initializers = IntStream.range(0, length)
+                .parallel()
                 .mapToObj(i -> (Runnable) new InitializeNodeInfo(i, inputArray))
                 .toList();
         runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 2: TourInfo
         initializers = IntStream.range(0, length)
+                .parallel()
                 .mapToObj(i -> (Runnable) new InitializeTourInfo(i, inputArray))
                 .toList();
         runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 3: Leaf/Type
         initializers = IntStream.range(0, length)
+                .parallel()
                 .mapToObj(i -> (Runnable) new InitializeType(i, inputArray))
                 .toList();
         runPhase(executor, initializers, timeoutSeconds);
 
-        InitializeCost initializeCost = new InitializeCost(executor, eulerChain);
-        initializeCost.doWork(timeoutSeconds);
+        InitializeCost.createAndRunNewInstance(executor, eulerChain, timeoutSeconds);
 
         // Phase 4: SubTree
         initializers = IntStream.range(0, length)
+                .parallel()
                 .mapToObj(i -> (Runnable) new InitializeSubTree(i, eulerChain))
                         .toList();
         runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 5: EulerChain
         initializers = IntStream.range(0, length)
+                .parallel()
                 .mapToObj(i -> (Runnable) new InitializeEulerChain(i, eulerChain))
                         .toList();
         runPhase(executor, initializers, timeoutSeconds);
