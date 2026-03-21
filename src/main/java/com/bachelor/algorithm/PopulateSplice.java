@@ -3,6 +3,7 @@ package com.bachelor.algorithm;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
+import com.bachelor.utils.ExecutorBarrierUtils;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -26,45 +27,38 @@ class PopulateSplice {
         this.splice = splice;
     }
 
-    void createSplices() throws InterruptedException, TimeoutException {
+    void createSplices() {
         reinitializeCostToMakeSpices();
         ParallelPrefixSum.parallelPrefixSum(eulerChain.getChain());
         constructSplices();
     }
 
     private void reinitializeCostToMakeSpices() {
-        List<Future<?>> futures = new LinkedList<>();
+        List<Runnable> tasks = new LinkedList<>();
 
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
             final int index = i;
-            futures.add(executor.submit(() -> {
+            tasks.add(() -> {
                 SubNode current = eulerChain.getFromIndex(index);
                 current.setCost(0);
                 if (T[current.getNodeInfo()].isVariable()) {
                     current.setCost(1);
                 }
-            }));
+            });
         }
-
-        for (Future<?> future : futures){
-            try {
-                future.get(5, TimeUnit.SECONDS);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        ExecutorBarrierUtils.invokeAll(executor, tasks);
     }
 
     private void constructSplices() {
         int[][] splices = this.splice.getSplices();
         Object[] locks = new Object[splices.length];
         Arrays.fill(locks, new Object());
-        List<Future<?>> futures = new LinkedList<>();
+        List<Runnable> tasks = new LinkedList<>();
 
         for (int i = 0; i < eulerChain.getChainSize(); i++) {
 
             final int index = i;
-            futures.add(executor.submit(() -> {
+            tasks.add(() -> {
                 SubNode currentSubNode = eulerChain.getFromIndex(index);
 
                 if (T[currentSubNode.getNodeInfo()].isVariable()) {
@@ -84,16 +78,11 @@ class PopulateSplice {
                     }
                 }
 
-            }));
+            });
         }
 
-        for (Future<?> future : futures){
-            try {
-                future.get(5, TimeUnit.SECONDS);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        ExecutorBarrierUtils.invokeAll(executor, tasks);
+
         splices[0][0] = 0;
         // Ensure the last splice end is set properly
         if (splices.length > 1 && splices[splices.length - 1][1] == 0) {

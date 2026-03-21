@@ -11,7 +11,8 @@ public class CoordinatorStressTest {
     private static final String OUTPUT_FILE = "stress_test_exceptions.log";
     private static final int ITERATIONS = 3000;
 
-    public static void main(String[] args) {
+    @SuppressWarnings({"UnnecessaryModifier", "CallToPrintStackTrace"})
+    public static void main(@SuppressWarnings("unused") String[] args) {
         int successCount = 0;
         int failureCount = 0;
 
@@ -51,7 +52,8 @@ public class CoordinatorStressTest {
             writer.println("Total Iterations: " + ITERATIONS);
             writer.println("Successful: " + successCount);
             writer.println("Failed: " + failureCount);
-            writer.println("Success Rate: " + String.format("%.2f%%", (successCount * 100.0 / ITERATIONS)));
+            String x = "Success Rate: " + String.format("%.2f%%", (successCount * 100.0 / ITERATIONS));
+            writer.println(x);
             writer.println("=".repeat(80));
             writer.flush();
 
@@ -60,7 +62,7 @@ public class CoordinatorStressTest {
             System.out.println("STRESS TEST COMPLETED");
             System.out.println("Successful: " + successCount + "/" + ITERATIONS);
             System.out.println("Failed: " + failureCount + "/" + ITERATIONS);
-            System.out.println("Success Rate: " + String.format("%.2f%%", (successCount * 100.0 / ITERATIONS)));
+            System.out.println(x);
             System.out.println("Exceptions logged to: " + OUTPUT_FILE);
             System.out.println("=".repeat(80));
 

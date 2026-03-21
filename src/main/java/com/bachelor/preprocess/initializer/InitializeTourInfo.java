@@ -1,12 +1,11 @@
 package com.bachelor.preprocess.initializer;
 
-import com.bachelor.preprocess.Initializer;
 import com.bachelor.preprocess.InputArray;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
 
 @SuppressWarnings("ClassCanBeRecord")
-public class InitializeTourInfo implements Initializer {
+public class InitializeTourInfo implements Runnable {
     private final int index;
     private final TreeNode[] T;
 
@@ -16,7 +15,7 @@ public class InitializeTourInfo implements Initializer {
     }
 
     @Override
-    public void initialize() {
+    public void run() {
         int iFather = T[index].getFather();
         if (iFather >= 0) {
             int edgeLabel = T[index].getEdge_label();

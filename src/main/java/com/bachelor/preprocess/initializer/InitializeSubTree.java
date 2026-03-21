@@ -1,13 +1,12 @@
 package com.bachelor.preprocess.initializer;
 
 import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.Initializer;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
 
 import static com.bachelor.preprocess.NodeType.LEAF;
 
-public class InitializeSubTree implements Initializer {
+public class InitializeSubTree implements Runnable {
     private final int index;
     private final TreeNode[] T;
     private final EulerChain eulerChain;
@@ -19,7 +18,7 @@ public class InitializeSubTree implements Initializer {
     }
 
     @Override
-    public void initialize() {
+    public void run() {
         int iFather = T[index].getFather();
 
         if (iFather >= 0) {

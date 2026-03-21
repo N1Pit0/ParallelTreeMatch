@@ -1,4 +1,6 @@
-package com.bachelor.preprocess;
+package com.bachelor.utils;
+
+import com.bachelor.preprocess.TreeNode;
 
 @SuppressWarnings("unused")
 public class TreePrintUtils {

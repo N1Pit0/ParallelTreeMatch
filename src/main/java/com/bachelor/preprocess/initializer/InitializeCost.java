@@ -2,12 +2,11 @@ package com.bachelor.preprocess.initializer;
 
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
+import com.bachelor.utils.ExecutorBarrierUtils;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 
 //God knows what's going on here. Just want to
@@ -23,19 +22,17 @@ public class InitializeCost {
         this.head = eulerChain.getT()[0].tour[0];
     }
 
-    public void doWork() {
+    public void doWork(int timeoutInSeconds) {
 
         final int size = eulerChain.getChainSize();
         int rounds = (int) Math.ceil(Math.log(size) / Math.log(2));
 
         for (int r = 0; r < rounds; r++) {
 
-            List<Future<?>> futures = new ArrayList<>();
-
+            List<Runnable> computeTasks = new LinkedList<>();
             // Phase 1: compute new values (read only old next + cost)
             for (SubNode current : head) {
-                futures.add(executor.submit(() -> {
-
+                computeTasks.add(() -> {
                     SubNode next = current.getNext();
 
                     if (next != null) {
@@ -50,36 +47,20 @@ public class InitializeCost {
                         current.setCostTmp(current.getCost());
                         current.setNextTmp(null);
                     }
-                }));
+                });
             }
 
-            // Barrier
-            for (Future<?> f : futures) {
-                try {
-                    f.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            ExecutorBarrierUtils.invokeAll(executor, computeTasks, timeoutInSeconds);
 
-            List<Future<?>> commitFutures = new ArrayList<>();
-
+            List<Runnable> commitFutures = new LinkedList<>();
             for (SubNode current : head) {
-                commitFutures.add(executor.submit(() -> {
+                commitFutures.add(() -> {
                     current.setCost(current.getCostTmp());
                     current.setNext(current.getNextTmp());
-                }));
+                });
             }
 
-            for (Future<?> f : commitFutures) {
-                try {
-                    f.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
+            ExecutorBarrierUtils.invokeAll(executor, commitFutures, 5);
         }
     }
-
 }

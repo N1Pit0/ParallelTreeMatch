@@ -1,8 +1,8 @@
 package com.bachelor.preprocess;
 
 import com.bachelor.preprocess.initializer.*;
+import com.bachelor.utils.ExecutorBarrierUtils;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -10,31 +10,7 @@ import java.util.stream.IntStream;
 
 public class GenTour {
 
-    private static void runPhase(ExecutorService executor, Initializer[] initializers, int timeoutSeconds) throws InterruptedException, TimeoutException {
-        int phaseSize = initializers.length;
-        List<Future<?>> futures = new LinkedList<>();
-
-        for (int i = 0; i < phaseSize; i++) {
-            final int index = i;
-            futures.add(executor.submit(() -> {
-                try {
-                    initializers[index].initialize();
-                } catch (Exception _) {
-                }
-            }));
-        }
-
-        for (Future<?> f : futures) {
-            try {
-                f.get(timeoutSeconds, TimeUnit.SECONDS);
-            } catch (ExecutionException e) {
-                // Handle exceptions from the initializer tasks if needed
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static EulerChain buildAndPreprocess(ExecutorService executor, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds) throws InterruptedException, TimeoutException {
+    public static EulerChain buildAndPreprocess(ExecutorService executor, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds){
         TreeNode[] treeNodes = treeSupplier.get();
         InputArray inputArray = new InputArray(treeNodes, variableCount);
         EulerChain eulerChain = new EulerChain(inputArray);
@@ -42,45 +18,48 @@ public class GenTour {
         return eulerChain;
     }
 
-    public static EulerChain buildAndPreprocess(ExecutorService executor, Supplier<TreeNode[]> treeSupplier, int timeoutSeconds) throws InterruptedException, TimeoutException {
+    public static EulerChain buildAndPreprocess(ExecutorService executor, Supplier<TreeNode[]> treeSupplier, int timeoutSeconds){
         return buildAndPreprocess(executor, treeSupplier, 0, timeoutSeconds);
     }
 
-
-    private static void preprocessTree(ExecutorService executor, InputArray inputArray, EulerChain eulerChain, int length, int timeoutSeconds) throws InterruptedException, TimeoutException {
-        Initializer[] initializers;
+    private static void preprocessTree(ExecutorService executor, InputArray inputArray, EulerChain eulerChain, int length, int timeoutSeconds){
+        List<Runnable> initializers;
 
         // Phase 1: NodeInfo
         initializers = IntStream.range(0, length)
-                .mapToObj(i -> new InitializeNodeInfo(i, inputArray))
-                .toArray(Initializer[]::new);
+                .mapToObj(i -> (Runnable) new InitializeNodeInfo(i, inputArray))
+                .toList();
         runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 2: TourInfo
         initializers = IntStream.range(0, length)
-                .mapToObj(i -> new InitializeTourInfo(i, inputArray))
-                .toArray(Initializer[]::new);
+                .mapToObj(i -> (Runnable) new InitializeTourInfo(i, inputArray))
+                .toList();
         runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 3: Leaf/Type
         initializers = IntStream.range(0, length)
-                .mapToObj(i -> new InitializeType(i, inputArray))
-                .toArray(Initializer[]::new);
+                .mapToObj(i -> (Runnable) new InitializeType(i, inputArray))
+                .toList();
         runPhase(executor, initializers, timeoutSeconds);
 
         InitializeCost initializeCost = new InitializeCost(executor, eulerChain);
-        initializeCost.doWork();
+        initializeCost.doWork(timeoutSeconds);
 
         // Phase 4: SubTree
         initializers = IntStream.range(0, length)
-                .mapToObj(i -> new InitializeSubTree(i, eulerChain))
-                .toArray(Initializer[]::new);
+                .mapToObj(i -> (Runnable) new InitializeSubTree(i, eulerChain))
+                        .toList();
         runPhase(executor, initializers, timeoutSeconds);
 
         // Phase 5: EulerChain
         initializers = IntStream.range(0, length)
-                .mapToObj(i -> new InitializeEulerChain(i, eulerChain))
-                .toArray(Initializer[]::new);
+                .mapToObj(i -> (Runnable) new InitializeEulerChain(i, eulerChain))
+                        .toList();
         runPhase(executor, initializers, timeoutSeconds);
+    }
+
+    private static void runPhase(ExecutorService executor, List<Runnable> initializers, int timeoutSeconds){
+        ExecutorBarrierUtils.invokeAll(executor, initializers, timeoutSeconds);
     }
 }

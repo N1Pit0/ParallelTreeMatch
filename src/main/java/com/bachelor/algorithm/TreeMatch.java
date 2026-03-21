@@ -1,10 +1,7 @@
 package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.EulerChain;
-
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeoutException;
-
 
 @SuppressWarnings("ClassCanBeRecord")
 public class TreeMatch {
@@ -18,13 +15,12 @@ public class TreeMatch {
         this.pattern = pattern;
     }
 
-    public static void performTreeMatch(ExecutorService executor, EulerChain subject, EulerChain pattern) throws InterruptedException, TimeoutException {
+    public static void performTreeMatch(ExecutorService executor, EulerChain subject, EulerChain pattern){
         TreeMatch treeMatch = new TreeMatch(executor, subject, pattern);
         treeMatch.runPhaseTwo();
     }
 
-    private static Splice createAndComputeSplices(EulerChain pattern, ExecutorService executor)
-            throws InterruptedException, TimeoutException {
+    private static Splice createAndComputeSplices(EulerChain pattern, ExecutorService executor) {
         Splice splice = new Splice(pattern);
         PopulateSplice populateSplice = new PopulateSplice(pattern, splice, executor);
         populateSplice.createSplices();
@@ -38,13 +34,13 @@ public class TreeMatch {
         return mTables;
     }
 
-    private MTables runPhaseOne() throws InterruptedException, TimeoutException {
+    private MTables runPhaseOne(){
         Splice splice = createAndComputeSplices(pattern, executor);
 
         return createAndComputeMTables(subject, pattern, splice);
     }
 
-    private void runPhaseTwo() throws InterruptedException, TimeoutException {
+    private void runPhaseTwo(){
         MTables mTables = runPhaseOne();
         MTableMerger tableMerger = new MTableMerger(mTables, executor);
         tableMerger.computeAndMergeMTables();

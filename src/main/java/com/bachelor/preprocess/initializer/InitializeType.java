@@ -1,6 +1,5 @@
 package com.bachelor.preprocess.initializer;
 
-import com.bachelor.preprocess.Initializer;
 import com.bachelor.preprocess.InputArray;
 import com.bachelor.preprocess.Step;
 import com.bachelor.preprocess.TreeNode;
@@ -8,7 +7,7 @@ import com.bachelor.preprocess.TreeNode;
 import static com.bachelor.preprocess.NodeType.*;
 
 @SuppressWarnings("ClassCanBeRecord")
-public class InitializeType implements Initializer {
+public class InitializeType implements Runnable {
     private final int index;
     private final TreeNode[] T;
 
@@ -18,7 +17,7 @@ public class InitializeType implements Initializer {
     }
 
     @Override
-    public void initialize() {
+    public void run() {
 
         try {
             T[index].getLatches()[Step.INITIALIZE_TYPE.ordinal()].await();

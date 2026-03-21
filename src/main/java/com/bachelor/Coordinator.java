@@ -5,13 +5,12 @@ import com.bachelor.preprocess.EulerChain;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
 
 import static com.bachelor.preprocess.GenTour.buildAndPreprocess;
 
 public class Coordinator {
 
-    public static void main(@SuppressWarnings("unused") String[] args) throws InterruptedException, TimeoutException {
+    public static void main(@SuppressWarnings("unused") String[] args){
 
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
 

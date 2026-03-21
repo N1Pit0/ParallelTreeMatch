@@ -1,11 +1,10 @@
 package com.bachelor.preprocess.initializer;
 
 import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.Initializer;
 import com.bachelor.preprocess.TreeNode;
 
 
-public class InitializeEulerChain implements Initializer {
+public class InitializeEulerChain implements Runnable {
     private final int index;
     private final EulerChain eulerChain;
     private final TreeNode[] T;
@@ -17,7 +16,7 @@ public class InitializeEulerChain implements Initializer {
     }
 
     @Override
-    public void initialize() {
+    public void run() {
         int iFather = T[index].getFather();
 
         int edgeLabel = T[index].getEdge_label();
