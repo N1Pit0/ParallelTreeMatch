@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 class MTableMerger {
-    private final MTables mTablesContainer;
+    private final MTablesContainer mTablesContainer;
     private final ExecutorService executor;
     private final EulerChain subject;
 
-    MTableMerger(MTables mTablesContainer, ExecutorService executor) {
+    MTableMerger(MTablesContainer mTablesContainer, ExecutorService executor) {
         this.mTablesContainer = mTablesContainer;
         this.executor = executor;
         this.subject = mTablesContainer.getSubject();
@@ -75,7 +75,7 @@ class MTableMerger {
         List<Runnable> entryValidationTasks = new java.util.ArrayList<>();
 
         for (int i = 0; i < finalTable.length; i++) {
-            entryValidationTasks.add(new ValidateResultMtable(finalTable, subjectChain, i));
+            entryValidationTasks.add(new ValidateResultMtableStep(finalTable, subjectChain, i));
         }
         ExecutorBarrierUtils.invokeAll(executor, entryValidationTasks);
     }

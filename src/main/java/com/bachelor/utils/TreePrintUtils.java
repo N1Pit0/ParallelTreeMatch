@@ -1,6 +1,6 @@
 package com.bachelor.utils;
 
-import com.bachelor.algorithm.MTables;
+import com.bachelor.algorithm.MTablesContainer;
 import com.bachelor.preprocess.TreeNode;
 
 @SuppressWarnings("unused")
@@ -24,7 +24,7 @@ public class TreePrintUtils {
     }
 
     @SuppressWarnings("SameParameterValue")
-    public static void printMTablesState(String label, MTables container) {
+    public static void printMTablesState(String label, MTablesContainer container) {
         System.out.println("\n" + label + ":");
         System.out.println(container);
     }

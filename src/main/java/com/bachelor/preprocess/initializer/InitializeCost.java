@@ -36,13 +36,13 @@ public class InitializeCost {
 
             List<Runnable> computeTemporaryCosts = new LinkedList<>();
             for (SubNode current : head) {
-                computeTemporaryCosts.add(new ComputeTemporaryCosts(current));
+                computeTemporaryCosts.add(new ComputeTemporaryCostsStep(current));
             }
             ExecutorBarrierUtils.invokeAll(executor, computeTemporaryCosts, timeoutInSeconds);
 
             List<Runnable> commitFutures = new LinkedList<>();
             for (SubNode current : head) {
-                commitFutures.add(new CommitTemporaryCosts(current));
+                commitFutures.add(new CommitTemporaryCostsStep(current));
             }
             ExecutorBarrierUtils.invokeAll(executor, commitFutures, 5);
         }

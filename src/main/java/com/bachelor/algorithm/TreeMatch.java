@@ -17,32 +17,32 @@ public class TreeMatch {
 
     public static void performTreeMatch(ExecutorService executor, EulerChain subject, EulerChain pattern){
         TreeMatch treeMatch = new TreeMatch(executor, subject, pattern);
-        treeMatch.runPhaseTwo();
+        MTablesContainer mTablesContainer = treeMatch.runPhaseOne();
+        treeMatch.runPhaseTwo(mTablesContainer);
     }
 
     private static Splice createAndComputeSplices(EulerChain pattern, ExecutorService executor) {
         Splice splice = new Splice(pattern);
-        PopulateSplice populateSplice = new PopulateSplice(pattern, splice, executor);
-        populateSplice.createSplices();
+        PopulateSpliceStep populateSpliceStep = new PopulateSpliceStep(pattern, splice, executor);
+        populateSpliceStep.createSplices();
         return splice;
     }
 
-    private static MTables createAndComputeMTables(EulerChain subject, EulerChain pattern, Splice splice) {
-        MTables mTables = new MTables(splice, subject, pattern);
-        mTables.createMTables();
+    private static MTablesContainer createAndComputeMTables(EulerChain subject, EulerChain pattern, Splice splice) {
+        MTablesContainer mTablesContainer = new MTablesContainer(splice, subject, pattern);
+        mTablesContainer.createMTables();
 
-        return mTables;
+        return mTablesContainer;
     }
 
-    private MTables runPhaseOne(){
+    private MTablesContainer runPhaseOne(){
         Splice splice = createAndComputeSplices(pattern, executor);
 
         return createAndComputeMTables(subject, pattern, splice);
     }
 
-    private void runPhaseTwo(){
-        MTables mTables = runPhaseOne();
-        MTableMerger tableMerger = new MTableMerger(mTables, executor);
+    private void runPhaseTwo(MTablesContainer mTablesContainer){
+        MTableMerger tableMerger = new MTableMerger(mTablesContainer, executor);
         tableMerger.computeAndMergeMTables();
     }
 }

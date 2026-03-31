@@ -5,7 +5,7 @@ import com.bachelor.preprocess.SubNode;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
-class ParallelPrefixSum {
+class ParallelPrefixSumStep {
 
     static void parallelPrefixSum(SubNode[] arr) {
         try (var pool = ForkJoinPool.commonPool()) {

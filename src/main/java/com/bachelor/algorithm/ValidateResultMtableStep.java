@@ -5,12 +5,12 @@ import com.bachelor.preprocess.SubNode;
 import static com.bachelor.preprocess.NodeType.FIRST;
 import static com.bachelor.preprocess.NodeType.LAST;
 
-class ValidateResultMtable implements Runnable{
+class ValidateResultMtableStep implements Runnable{
     private final int[][] finalTable;
     private final SubNode[] subjectChain;
     private final int entryIdx;
 
-    ValidateResultMtable(int[][] finalTable, SubNode[] subjectChain, int entryIdx) {
+    ValidateResultMtableStep(int[][] finalTable, SubNode[] subjectChain, int entryIdx) {
         this.finalTable = finalTable;
         this.subjectChain = subjectChain;
         this.entryIdx = entryIdx;

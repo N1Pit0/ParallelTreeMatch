@@ -10,12 +10,12 @@ import java.util.stream.IntStream;
 
 
 @SuppressWarnings("ClassCanBeRecord")
-class PopulateSplice {
+class PopulateSpliceStep {
     private final EulerChain eulerChain;
     private final ExecutorService executor;
     private final Splice splice;
 
-    PopulateSplice(EulerChain eulerChain, Splice splice, ExecutorService executor) {
+    PopulateSpliceStep(EulerChain eulerChain, Splice splice, ExecutorService executor) {
         this.eulerChain = eulerChain;
         this.executor = executor;
         this.splice = splice;
@@ -23,14 +23,14 @@ class PopulateSplice {
 
     void createSplices() {
         reinitializeCostToMakeSpices();
-        ParallelPrefixSum.parallelPrefixSum(eulerChain.getChain());
+        ParallelPrefixSumStep.parallelPrefixSum(eulerChain.getChain());
         constructSplices();
     }
 
     private void reinitializeCostToMakeSpices() {
         List<Runnable> tasks = IntStream.range(0, eulerChain.getChainSize())
             .parallel()
-            .mapToObj(index -> (Runnable) new CostReinitializeForSplices(eulerChain, index))
+            .mapToObj(index -> (Runnable) new CostReinitializeForSplicesStep(eulerChain, index))
             .toList();
 
         ExecutorBarrierUtils.invokeAll(executor, tasks);
@@ -43,7 +43,7 @@ class PopulateSplice {
 
         List<Runnable> tasks = IntStream.range(0, eulerChain.getChainSize())
                 .parallel()
-                .mapToObj(index ->(Runnable) new ConstructSplices(eulerChain, splices, locks, index))
+                .mapToObj(index ->(Runnable) new ConstructSplicesStep(eulerChain, splices, locks, index))
                 .toList();
 
         ExecutorBarrierUtils.invokeAll(executor, tasks);

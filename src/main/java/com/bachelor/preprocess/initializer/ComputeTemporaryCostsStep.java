@@ -2,10 +2,10 @@ package com.bachelor.preprocess.initializer;
 
 import com.bachelor.preprocess.SubNode;
 
-class ComputeTemporaryCosts implements Runnable {
+class ComputeTemporaryCostsStep implements Runnable {
     private final SubNode current;
 
-    ComputeTemporaryCosts(SubNode current) {
+    ComputeTemporaryCostsStep(SubNode current) {
         this.current = current;
     }
 

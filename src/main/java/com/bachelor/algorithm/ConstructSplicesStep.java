@@ -4,14 +4,14 @@ import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.preprocess.TreeNode;
 
-class ConstructSplices implements Runnable{
+class ConstructSplicesStep implements Runnable{
     private final EulerChain eulerChain;
     private final TreeNode[] T;
     private final int[][] splices;
     private final Object[] locks;
     private final int index;
 
-    ConstructSplices(EulerChain eulerChain, int[][] splices, Object[] locks, int index) {
+    ConstructSplicesStep(EulerChain eulerChain, int[][] splices, Object[] locks, int index) {
         this.eulerChain = eulerChain;
         this.T = eulerChain.getT();
         this.splices = splices;

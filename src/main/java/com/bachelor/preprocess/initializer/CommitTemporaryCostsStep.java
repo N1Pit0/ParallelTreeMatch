@@ -3,10 +3,10 @@ package com.bachelor.preprocess.initializer;
 import com.bachelor.preprocess.SubNode;
 
 @SuppressWarnings("ClassCanBeRecord")
-class CommitTemporaryCosts implements Runnable{
+class CommitTemporaryCostsStep implements Runnable{
     private final SubNode current;
 
-    CommitTemporaryCosts(SubNode current) {
+    CommitTemporaryCostsStep(SubNode current) {
         this.current = current;
     }
 

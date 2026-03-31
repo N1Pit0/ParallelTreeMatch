@@ -2,13 +2,13 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.EulerChain;
 
-public class MTables {
+public class MTablesContainer {
     private final int[][][] mTables;
     private final EulerChain subject;
     private final EulerChain pattern;
     private final Splice splice;
 
-    MTables(Splice splice, EulerChain subject, EulerChain pattern) {
+    MTablesContainer(Splice splice, EulerChain subject, EulerChain pattern) {
         this.splice = splice;
         this.subject = subject;
         this.pattern = pattern;
