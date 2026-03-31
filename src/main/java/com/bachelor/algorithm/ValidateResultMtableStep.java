@@ -2,8 +2,7 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.SubNode;
 
-import static com.bachelor.preprocess.NodeType.FIRST;
-import static com.bachelor.preprocess.NodeType.LAST;
+import static com.bachelor.preprocess.NodeType.*;
 
 class ValidateResultMtableStep implements Runnable{
     private final int[][] finalTable;

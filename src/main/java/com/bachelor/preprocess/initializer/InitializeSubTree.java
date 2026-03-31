@@ -1,8 +1,6 @@
 package com.bachelor.preprocess.initializer;
 
-import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.SubNode;
-import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.*;
 
 import static com.bachelor.preprocess.NodeType.LEAF;
 

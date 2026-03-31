@@ -1,8 +1,6 @@
 package com.bachelor.preprocess.initializer;
 
-import com.bachelor.preprocess.InputArray;
-import com.bachelor.preprocess.Step;
-import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.*;
 
 import static com.bachelor.preprocess.NodeType.*;
 

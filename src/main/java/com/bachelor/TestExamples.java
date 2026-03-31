@@ -1,8 +1,6 @@
 package com.bachelor;
 
-import com.bachelor.preprocess.SubNode;
-import com.bachelor.preprocess.TermVariable;
-import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.*;
 
 public class TestExamples {
     static TreeNode[] initializeSubjectTArray() {

@@ -3,7 +3,6 @@ package com.bachelor.preprocess.initializer;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.TreeNode;
 
-
 public class InitializeEulerChain implements Runnable {
     private final int index;
     private final EulerChain eulerChain;
