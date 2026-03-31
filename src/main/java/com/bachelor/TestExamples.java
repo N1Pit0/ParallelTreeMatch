@@ -1,6 +1,7 @@
 package com.bachelor;
 
 import com.bachelor.preprocess.SubNode;
+import com.bachelor.preprocess.TermVariable;
 import com.bachelor.preprocess.TreeNode;
 
 public class TestExamples {
@@ -14,7 +15,7 @@ public class TestExamples {
         }
         TreeNode treeNode0 = new TreeNode.Builder("f")
                 .father(-1)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(0)
                 .tour(tour)
@@ -27,7 +28,7 @@ public class TestExamples {
         }
         TreeNode treeNode1 = new TreeNode.Builder("f")
                 .father(0)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(0)
                 .tour(tour)
@@ -40,7 +41,7 @@ public class TestExamples {
         }
         TreeNode treeNode2 = new TreeNode.Builder("f")
                 .father(0)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(1)
                 .tour(tour)
@@ -53,7 +54,7 @@ public class TestExamples {
         }
         TreeNode treeNode3 = new TreeNode.Builder("a")
                 .father(1)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(0)
                 .tour(tour)
@@ -66,7 +67,7 @@ public class TestExamples {
         }
         TreeNode treeNode4 = new TreeNode.Builder("b")
                 .father(1)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(1)
                 .tour(tour)
@@ -79,7 +80,7 @@ public class TestExamples {
         }
         TreeNode treeNode5 = new TreeNode.Builder("f")
                 .father(2)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(0)
                 .tour(tour)
@@ -92,7 +93,7 @@ public class TestExamples {
         }
         TreeNode treeNode6 = new TreeNode.Builder("a")
                 .father(2)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(1)
                 .tour(tour)
@@ -105,7 +106,7 @@ public class TestExamples {
         }
         TreeNode treeNode7 = new TreeNode.Builder("a")
                 .father(5)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(0)
                 .tour(tour)
@@ -118,7 +119,7 @@ public class TestExamples {
         }
         TreeNode treeNode8 = new TreeNode.Builder("a")
                 .father(5)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree)
                 .edgeLabel(1)
                 .tour(tour)
@@ -147,7 +148,7 @@ public class TestExamples {
         }
         TreeNode treeNode0 = new TreeNode.Builder("f")
                 .father(-1)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree0)
                 .edgeLabel(0)
                 .tour(tour)
@@ -160,7 +161,7 @@ public class TestExamples {
         }
         TreeNode treeNode1 = new TreeNode.Builder("f")
                 .father(0)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree1)
                 .edgeLabel(0)
                 .tour(tour)
@@ -173,7 +174,7 @@ public class TestExamples {
         }
         TreeNode treeNode2 = new TreeNode.Builder("Y")
                 .father(0)
-                .isVariable(true)
+                .variable(new TermVariable())
                 .outDegree(outdegree2)
                 .edgeLabel(1)
                 .tour(tour)
@@ -186,7 +187,7 @@ public class TestExamples {
         }
         TreeNode treeNode3 = new TreeNode.Builder("a")
                 .father(1)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree3)
                 .edgeLabel(0)
                 .tour(tour)
@@ -199,7 +200,7 @@ public class TestExamples {
         }
         TreeNode treeNode4 = new TreeNode.Builder("X")
                 .father(1)
-                .isVariable(true)
+                .variable(new TermVariable())
                 .outDegree(outdegree4)
                 .edgeLabel(1)
                 .tour(tour)
@@ -224,7 +225,7 @@ public class TestExamples {
         }
         TreeNode treeNode0 = new TreeNode.Builder("f")
                 .father(-1)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree0)
                 .edgeLabel(0)
                 .tour(tour)
@@ -237,7 +238,7 @@ public class TestExamples {
         }
         TreeNode treeNode1 = new TreeNode.Builder("a")
                 .father(0)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree1)
                 .edgeLabel(0)
                 .tour(tour)
@@ -250,7 +251,7 @@ public class TestExamples {
         }
         TreeNode treeNode2 = new TreeNode.Builder("f")
                 .father(0)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree2)
                 .edgeLabel(1)
                 .tour(tour)
@@ -263,7 +264,7 @@ public class TestExamples {
         }
         TreeNode treeNode3 = new TreeNode.Builder("f")
                 .father(0)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree3)
                 .edgeLabel(2)
                 .tour(tour)
@@ -276,7 +277,7 @@ public class TestExamples {
         }
         TreeNode treeNode4 = new TreeNode.Builder("f")
                 .father(0)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree4)
                 .edgeLabel(3)
                 .tour(tour)
@@ -289,7 +290,7 @@ public class TestExamples {
         }
         TreeNode treeNode5 = new TreeNode.Builder("a")
                 .father(2)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree5)
                 .edgeLabel(0)
                 .tour(tour)
@@ -302,7 +303,7 @@ public class TestExamples {
         }
         TreeNode treeNode6 = new TreeNode.Builder("b")
                 .father(2)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree6)
                 .edgeLabel(1)
                 .tour(tour)
@@ -315,7 +316,7 @@ public class TestExamples {
         }
         TreeNode treeNode7 = new TreeNode.Builder("c")
                 .father(2)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree7)
                 .edgeLabel(2)
                 .tour(tour)
@@ -328,7 +329,7 @@ public class TestExamples {
         }
         TreeNode treeNode8 = new TreeNode.Builder("a")
                 .father(3)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree8)
                 .edgeLabel(0)
                 .tour(tour)
@@ -341,7 +342,7 @@ public class TestExamples {
         }
         TreeNode treeNode9 = new TreeNode.Builder("f")
                 .father(3)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree9)
                 .edgeLabel(1)
                 .tour(tour)
@@ -354,7 +355,7 @@ public class TestExamples {
         }
         TreeNode treeNode10 = new TreeNode.Builder("e")
                 .father(3)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree10)
                 .edgeLabel(2)
                 .tour(tour)
@@ -367,7 +368,7 @@ public class TestExamples {
         }
         TreeNode treeNode11 = new TreeNode.Builder("a")
                 .father(9)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree11)
                 .edgeLabel(0)
                 .tour(tour)
@@ -380,7 +381,7 @@ public class TestExamples {
         }
         TreeNode treeNode12 = new TreeNode.Builder("b")
                 .father(9)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree12)
                 .edgeLabel(1)
                 .tour(tour)
@@ -393,7 +394,7 @@ public class TestExamples {
         }
         TreeNode treeNode13 = new TreeNode.Builder("d")
                 .father(9)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree13)
                 .edgeLabel(2)
                 .tour(tour)
@@ -428,7 +429,7 @@ public class TestExamples {
         }
         TreeNode treeNode0 = new TreeNode.Builder("f")
                 .father(-1)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree0)
                 .edgeLabel(0)
                 .tour(tour)
@@ -441,7 +442,7 @@ public class TestExamples {
         }
         TreeNode treeNode1 = new TreeNode.Builder("X")
                 .father(0)
-                .isVariable(true)
+                .variable(new TermVariable())
                 .outDegree(outdegree1)
                 .edgeLabel(0)
                 .tour(tour)
@@ -454,7 +455,7 @@ public class TestExamples {
         }
         TreeNode treeNode2 = new TreeNode.Builder("f")
                 .father(0)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree2)
                 .edgeLabel(1)
                 .tour(tour)
@@ -467,7 +468,7 @@ public class TestExamples {
         }
         TreeNode treeNode3 = new TreeNode.Builder("Z")
                 .father(0)
-                .isVariable(true)
+                .variable(new TermVariable())
                 .outDegree(outdegree3)
                 .edgeLabel(2)
                 .tour(tour)
@@ -480,7 +481,7 @@ public class TestExamples {
         }
         TreeNode treeNode4 = new TreeNode.Builder("a")
                 .father(2)
-                .isVariable(false)
+                .variable(null)
                 .outDegree(outdegree4)
                 .edgeLabel(0)
                 .tour(tour)
@@ -493,7 +494,7 @@ public class TestExamples {
         }
         TreeNode treeNode5 = new TreeNode.Builder("X")
                 .father(2)
-                .isVariable(true)
+                .variable(new TermVariable())
                 .outDegree(outdegree5)
                 .edgeLabel(1)
                 .tour(tour)
@@ -506,7 +507,7 @@ public class TestExamples {
         }
         TreeNode treeNode6 = new TreeNode.Builder("Y")
                 .father(2)
-                .isVariable(true)
+                .variable(new TermVariable())
                 .outDegree(outdegree6)
                 .edgeLabel(2)
                 .tour(tour)

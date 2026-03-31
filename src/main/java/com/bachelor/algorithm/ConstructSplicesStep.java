@@ -1,8 +1,6 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.SubNode;
-import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.*;
 
 class ConstructSplicesStep implements Runnable{
     private final EulerChain eulerChain;
@@ -23,7 +21,7 @@ class ConstructSplicesStep implements Runnable{
     public void run() {
         SubNode currentSubNode = eulerChain.getFromIndex(index);
 
-        if (T[currentSubNode.getNodeInfo()].isVariable()) {
+        if (T[currentSubNode.getNodeInfo()].getVariable() != null) {
             int previousCost = currentSubNode.getCost() - 1, currentCost = currentSubNode.getCost();
 
             if (checkRangeExclusive(previousCost,splices.length)) {

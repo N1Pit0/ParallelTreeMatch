@@ -11,7 +11,7 @@ public class TreeNode {
     //contains either a function symbol or a variable associated with the
     //node
     private final String label;
-    private final boolean isVariable;
+    private final Variable variable;
     //contains a pointer to the parent of the node.
     private final int father;
     //  contains an integer specifying the node’s ordering relative to
@@ -23,7 +23,7 @@ public class TreeNode {
 
     private TreeNode(Builder builder) {
         this.outDegree = builder.outDegree;
-        this.isVariable = builder.isVariable;
+        this.variable = builder.variable;
         this.label = builder.label;
         this.tour = builder.tour;
         this.father = builder.father;
@@ -54,15 +54,15 @@ public class TreeNode {
         return this.latches;
     }
 
-    public boolean isVariable() {
-        return isVariable;
+    public Variable getVariable() {
+        return variable;
     }
 
     @Override
     public String toString() {
         return "TreeNode{" +
                 "label='" + label + '\'' +
-                ", isVariable=" + isVariable +
+                ", variable=" + variable +
                 ", father=" + father +
                 ", edge_label=" + edge_label +
                 ", outDegree=" + outDegree +
@@ -73,7 +73,7 @@ public class TreeNode {
     public static class Builder {
         private final String label;
         private int father;
-        private boolean isVariable;
+        private Variable variable;
         private int outDegree;
         private int edgeLabel;
         private SubNode[] tour;
@@ -87,8 +87,8 @@ public class TreeNode {
             return this;
         }
 
-        public Builder isVariable(boolean answer) {
-            this.isVariable = answer;
+        public Builder variable(Variable answer) {
+            this.variable = answer;
             return this;
         }
 

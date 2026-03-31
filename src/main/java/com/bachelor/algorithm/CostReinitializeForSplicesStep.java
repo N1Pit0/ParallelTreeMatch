@@ -2,6 +2,7 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
+import com.bachelor.preprocess.TermVariable;
 import com.bachelor.preprocess.TreeNode;
 
 class CostReinitializeForSplicesStep implements Runnable {
@@ -20,7 +21,7 @@ class CostReinitializeForSplicesStep implements Runnable {
     public void run() {
         SubNode current = eulerChain.getFromIndex(index);
         current.setCost(0);
-        if (T[current.getNodeInfo()].isVariable()) {
+        if (T[current.getNodeInfo()].getVariable() != null) {
             current.setCost(1);
         }
     }
