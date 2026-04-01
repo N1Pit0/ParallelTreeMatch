@@ -2,7 +2,9 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.*;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * An implementation of the Knuth-Morris-Pratt algorithm
@@ -15,14 +17,10 @@ class Kmp {
 
     // Given a pattern and a text kmp finds all the places that the pattern
     // is found in the text (even overlapping pattern matches)
-    static int[][] kmp(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
+    static Map<Integer, ConcurrentLinkedDeque<Permutation>> kmp(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
         int subjectChainSize = subject.getChainSize();
 
-        int[][] matches = new int[subjectChainSize][2];
-        for (int i = 0; i < subjectChainSize; i++) {
-            matches[i][0] = -1;
-            matches[i][1] = -1;
-        }
+        ConcurrentHashMap<Integer, ConcurrentLinkedDeque<Permutation>> matches = new ConcurrentHashMap<>();
 
         // Validate slice bounds
         if (patEnd < patStart || patStart < 0 || patEnd >= pattern.getChainSize()) {
@@ -48,8 +46,13 @@ class Kmp {
                 int matchStart = currentSubjectPosIndex - patternLength;
                 int matchEnd = currentSubjectPosIndex - 1;
                 if (matchStart >= 0 && matchStart < subjectChainSize) {
-                    matches[matchStart][0] = matchStart;
-                    matches[matchStart][1] = matchEnd;
+                    ConcurrentLinkedDeque<Permutation> permutations = new ConcurrentLinkedDeque<>();
+//                    Variable variable = subject.getT()[].getVariable();
+                    //Dummy string replacement for variable. Will add the logic later.
+                    //Not needed for now...
+                    Permutation permutation = new Permutation(matchStart, matchEnd, new TermVariable(), "Dummy replacement");
+                    permutations.add(permutation);
+                    matches.put(matchStart, permutations);
                 }
                 // Continue searching for overlapping matches
                 currentPatternPosIndex = failureFunction[currentPatternPosIndex - 1];

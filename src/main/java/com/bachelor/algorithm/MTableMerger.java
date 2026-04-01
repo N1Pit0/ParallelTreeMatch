@@ -6,6 +6,8 @@ import com.bachelor.utils.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 
 class MTableMerger {
@@ -20,19 +22,19 @@ class MTableMerger {
     }
 
     void computeAndMergeMTables() {
-        int[][][] mTables = mTablesContainer.getMTables();
         SubNode[] subjectChain = subject.getChain();
 
-        mergeTables(mTables, executor);
+        mergeTables();
 
-        validateFinalResults(mTables, subjectChain, executor);
+        validateFinalResults();
 
         TreePrintUtils.printMTablesState("match", mTablesContainer);
     }
 
-    private void mergeTables(int[][][] mTables, ExecutorService executor) {
+    private void mergeTables() {
 
-        final int[] currentSize = {mTables.length};
+        int mTablesLength = mTablesContainer.getLength();
+        final int[] currentSize = {mTablesLength};
         final int[] depth = {1};
 
         while (currentSize[0] > 1) {
@@ -44,14 +46,15 @@ class MTableMerger {
 
                 List<Runnable> tablePairTasks = new LinkedList<>();
 
-                for (int i = 0; i < mTables.length; i += jumpSize) {
+                for (int i = 0; i < mTablesLength; i += jumpSize) {
                     final int tableIdx = i;
                     tablePairTasks.add(() -> {
                         List<Runnable> positionTasks = new LinkedList<>();
 
                         for (int subjPos = 0; subjPos < subject.getChainSize(); subjPos++) {
-                            if (mTables[tableIdx][subjPos][0] != -1) {
-                                positionTasks.add(new PerformMatch(mTables, tableIdx, subjPos, offset, subject));
+
+                            if (mTablesContainer.isTableEntryEmpty(tableIdx,subjPos)) {
+                                positionTasks.add(new TermVariableMatch(mTablesContainer, tableIdx, subjPos, offset, subject));
                             }
                         }
                         ExecutorBarrierUtils.invokeAll(executor, positionTasks);
@@ -68,13 +71,14 @@ class MTableMerger {
         }
     }
 
-    private void validateFinalResults(int[][][] mTables, SubNode[] subjectChain, ExecutorService executor) {
-        int[][] finalTable = mTables[0];
+    private void validateFinalResults() {
+        Map<Integer, ConcurrentLinkedDeque<Permutation>> finalTable = mTablesContainer.getFirstTable();
+        SubNode[] subjectChain = subject.getChain();
 
-        List<Runnable> entryValidationTasks = new java.util.ArrayList<>();
+        List<Runnable> entryValidationTasks = new LinkedList<>();
 
-        for (int i = 0; i < finalTable.length; i++) {
-            entryValidationTasks.add(new ValidateResultMtableStep(finalTable, subjectChain, i));
+        for (int i = 0; i < finalTable.size(); i++) {
+            entryValidationTasks.add(new ValidateResultMtableStep(mTablesContainer, subjectChain, i));
         }
         ExecutorBarrierUtils.invokeAll(executor, entryValidationTasks);
     }

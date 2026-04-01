@@ -5,31 +5,33 @@ import com.bachelor.preprocess.SubNode;
 import static com.bachelor.preprocess.NodeType.*;
 
 class ValidateResultMtableStep implements Runnable{
-    private final int[][] finalTable;
+    private final MTablesContainer mTablesContainer;
     private final SubNode[] subjectChain;
     private final int entryIdx;
 
-    ValidateResultMtableStep(int[][] finalTable, SubNode[] subjectChain, int entryIdx) {
-        this.finalTable = finalTable;
+    ValidateResultMtableStep(MTablesContainer mTablesContainer, SubNode[] subjectChain, int entryIdx) {
+        this.mTablesContainer = mTablesContainer;
         this.subjectChain = subjectChain;
         this.entryIdx = entryIdx;
     }
 
     @Override
     public void run() {
-        if (finalTable[entryIdx][0] != -1) {
-            int startPos = finalTable[entryIdx][0];
-            int endPos = finalTable[entryIdx][1];
+
+        if (!mTablesContainer.isTableEntryEmpty(0,entryIdx)) {
+            Permutation currentPermutation = mTablesContainer.readPermutationsFromTable(0, entryIdx).getFirst();
+            int startPos = currentPermutation.matchStart();
+            int endPos = currentPermutation.matchEnd();
 
             if (endPos >= 0 && endPos < subjectChain.length) {
                 SubNode startNode = subjectChain[startPos];
                 SubNode endNode = subjectChain[endPos];
 
                 if (startNode.getType() != FIRST || endNode.getType() != LAST) {
-                    finalTable[entryIdx][0] = finalTable[entryIdx][1] = -1;
+                    mTablesContainer.clearTableEntry(0, entryIdx);
                 }
             } else {
-                finalTable[entryIdx][0] = finalTable[entryIdx][1] = -1;
+                mTablesContainer.clearTableEntry(0, entryIdx);
             }
         }
     }
