@@ -1,13 +1,10 @@
 package com.bachelor.algorithm;
 
 import com.bachelor.datastructure.PermutationChain;
-import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.SubNode;
+import com.bachelor.preprocess.*;
 import com.bachelor.utils.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 
 class MTableMerger {

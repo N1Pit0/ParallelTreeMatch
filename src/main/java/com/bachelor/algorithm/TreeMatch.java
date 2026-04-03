@@ -19,7 +19,6 @@ public class TreeMatch {
         TreeMatch treeMatch = new TreeMatch(executor, subject, pattern);
         MTablesContainer mTablesContainer = treeMatch.runPhaseOne();
         treeMatch.runPhaseTwo(mTablesContainer);
-        int a = 0;
     }
 
     private static Splice createAndComputeSplices(EulerChain pattern, ExecutorService executor) {

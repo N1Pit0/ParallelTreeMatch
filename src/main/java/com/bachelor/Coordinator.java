@@ -3,8 +3,7 @@ package com.bachelor;
 import com.bachelor.algorithm.TreeMatch;
 import com.bachelor.preprocess.EulerChain;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 import static com.bachelor.preprocess.GenTour.buildAndPreprocess;
 

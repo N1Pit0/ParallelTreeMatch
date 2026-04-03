@@ -1,7 +1,6 @@
 package com.bachelor.preprocess.initializer;
 
-import com.bachelor.preprocess.InputArray;
-import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.*;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class InitializeNodeInfo implements Runnable {

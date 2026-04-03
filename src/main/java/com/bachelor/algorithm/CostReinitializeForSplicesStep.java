@@ -1,8 +1,6 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.SubNode;
-import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.*;
 
 class CostReinitializeForSplicesStep implements Runnable {
     private final EulerChain eulerChain;

@@ -1,11 +1,9 @@
 package com.bachelor.preprocess.initializer;
 
-import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.SubNode;
+import com.bachelor.preprocess.*;
 import com.bachelor.utils.ExecutorBarrierUtils;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 
 public class InitializeCost {

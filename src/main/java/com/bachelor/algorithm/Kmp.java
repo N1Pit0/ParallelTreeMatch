@@ -1,8 +1,6 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.datastructure.Permutation;
-import com.bachelor.datastructure.PermutationChain;
-import com.bachelor.datastructure.PermutationNode;
+import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.*;
 
 import java.util.*;

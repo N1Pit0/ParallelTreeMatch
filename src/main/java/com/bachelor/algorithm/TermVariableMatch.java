@@ -1,9 +1,7 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.datastructure.Permutation;
-import com.bachelor.datastructure.PermutationChain;
-import com.bachelor.preprocess.EulerChain;
-import com.bachelor.preprocess.SubNode;
+import com.bachelor.datastructure.*;
+import com.bachelor.preprocess.*;
 
 import java.util.List;
 

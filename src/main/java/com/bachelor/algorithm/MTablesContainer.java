@@ -1,7 +1,6 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.datastructure.Permutation;
-import com.bachelor.datastructure.PermutationChain;
+import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.EulerChain;
 
 import java.util.HashMap;
@@ -78,8 +77,7 @@ public class MTablesContainer {
                     sb.append("  Matches:\n");
                     hasMatches = true;
                 }
-                var a = readPermutationsFromTable(firstTable, i);
-                sb.append(a).append("\n");
+                sb.append(readPermutationsFromTable(firstTable, i)).append("\n");
             }
         }
 

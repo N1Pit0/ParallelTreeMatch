@@ -1,7 +1,6 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.datastructure.Permutation;
-import com.bachelor.datastructure.PermutationChain;
+import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.SubNode;
 
 import static com.bachelor.preprocess.NodeType.*;
@@ -22,22 +21,24 @@ class ValidateResultMtableStep implements Runnable{
         PermutationChain currentPermutations = mTablesContainer
                 .readPermutationsFromTable(0,entryIdx);
 
-        if (currentPermutations != null) {
-            Permutation currentPermutation = mTablesContainer.readPermutationsFromTable(0, entryIdx)
-                    .getHead().getPermutations().getFirst();
-            int startPos = currentPermutation.matchStart();
-            int endPos = currentPermutation.matchEnd();
+        if (currentPermutations == null) {
+            return;
+        }
 
-            if (endPos >= 0 && endPos < subjectChain.length) {
-                SubNode startNode = subjectChain[startPos];
-                SubNode endNode = subjectChain[endPos];
+        Permutation currentPermutation = currentPermutations
+                .getHead().getPermutations().getFirst();
+        int startPos = currentPermutation.matchStart();
+        int endPos = currentPermutation.matchEnd();
 
-                if (startNode.getType() != FIRST || endNode.getType() != LAST) {
-                    mTablesContainer.clearTableEntry(0, entryIdx);
-                }
-            } else {
+        if (endPos >= 0 && endPos < subjectChain.length) {
+            SubNode startNode = subjectChain[startPos];
+            SubNode endNode = subjectChain[endPos];
+
+            if (startNode.getType() != FIRST || endNode.getType() != LAST) {
                 mTablesContainer.clearTableEntry(0, entryIdx);
             }
+        } else {
+            mTablesContainer.clearTableEntry(0, entryIdx);
         }
     }
 }
