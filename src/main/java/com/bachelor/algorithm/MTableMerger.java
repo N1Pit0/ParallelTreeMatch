@@ -1,5 +1,6 @@
 package com.bachelor.algorithm;
 
+import com.bachelor.datastructure.PermutationChain;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 import com.bachelor.utils.*;
@@ -7,7 +8,6 @@ import com.bachelor.utils.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 
 class MTableMerger {
@@ -22,8 +22,6 @@ class MTableMerger {
     }
 
     void computeAndMergeMTables() {
-        SubNode[] subjectChain = subject.getChain();
-
         mergeTables();
 
         validateFinalResults();
@@ -52,8 +50,10 @@ class MTableMerger {
                         List<Runnable> positionTasks = new LinkedList<>();
 
                         for (int subjPos = 0; subjPos < subject.getChainSize(); subjPos++) {
+                            PermutationChain currentPermutations = mTablesContainer
+                                    .readPermutationsFromTable(tableIdx,subjPos);
 
-                            if (mTablesContainer.isTableEntryEmpty(tableIdx,subjPos)) {
+                            if (currentPermutations != null) {
                                 positionTasks.add(new TermVariableMatch(mTablesContainer, tableIdx, subjPos, offset, subject));
                             }
                         }
@@ -72,7 +72,7 @@ class MTableMerger {
     }
 
     private void validateFinalResults() {
-        Map<Integer, ConcurrentLinkedDeque<Permutation>> finalTable = mTablesContainer.getFirstTable();
+        Map<Integer, PermutationChain> finalTable = mTablesContainer.getFirstTable();
         SubNode[] subjectChain = subject.getChain();
 
         List<Runnable> entryValidationTasks = new LinkedList<>();

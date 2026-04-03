@@ -1,14 +1,14 @@
 package com.bachelor.algorithm;
 
+import com.bachelor.datastructure.Permutation;
+import com.bachelor.datastructure.PermutationChain;
 import com.bachelor.preprocess.EulerChain;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class MTablesContainer {
-    private final Map<Integer, Map<Integer, ConcurrentLinkedDeque<Permutation>>> mTables;
-    private final boolean[][] isValueInTableEntry;
+    private final Map<Integer, Map<Integer, PermutationChain>> mTables;
     private final EulerChain subject;
     private final EulerChain pattern;
     private final Splice splice;
@@ -18,13 +18,12 @@ public class MTablesContainer {
         this.subject = subject;
         this.pattern = pattern;
         this.mTables = new HashMap<>();
-        this.isValueInTableEntry = new boolean[splice.getSplices().length][subject.getChainSize()];
     }
 
     void createMTables() {
         int[][] splicesArray = splice.getSplices();
         for (int i = 0; i < splicesArray.length; i++) {
-            Map<Integer, ConcurrentLinkedDeque<Permutation>> matches = Kmp.kmp(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
+            Map<Integer, PermutationChain> matches = Kmp.kmp(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
             mTables.put(i, matches);
         }
     }
@@ -37,70 +36,58 @@ public class MTablesContainer {
         return mTables.size();
     }
 
-    boolean isTableEntryEmpty(int tableIndex, int subjectPos) {
-        return !this.isValueInTableEntry[tableIndex][subjectPos];
-    }
-
-    void clearTableEntry(int tableIndex, int subjectPos) {
-        this.isValueInTableEntry[tableIndex][subjectPos] = false;
-    }
-
-    private void assignValueToTableEntry(int tableIndex, int subjectPos) {
-        this.isValueInTableEntry[tableIndex][subjectPos] = true;
+    boolean isTableEntryEmpty(int tableIdx, int subjPos) {
+        return mTables.get(tableIdx) == null || mTables.get(tableIdx).get(subjPos) == null
+                || mTables.get(tableIdx).get(subjPos).isEmpty();
     }
 
     void writePermutationsIntoTable(Permutation permutation, int tableIndex, int subjectPos) {
-        assignValueToTableEntry(tableIndex, subjectPos);
-        mTables.get(tableIndex).get(subjectPos).add(permutation);
+        //I don't like adding straight into the head
+        mTables.get(tableIndex).get(subjectPos).getHead().addPermutationToCurrentNode(permutation);
     }
 
-    ConcurrentLinkedDeque<Permutation> readPermutationsFromTable(int tableIndex, int subjectPos) {
-        var a = mTables.get(tableIndex).get(subjectPos);
-        return a;
+    PermutationChain readPermutationsFromTable(int tableIndex, int subjectPos) {
+        return mTables.get(tableIndex).get(subjectPos);
     }
 
-    Map<Integer, ConcurrentLinkedDeque<Permutation>> getFirstTable() {
+    void clearTableEntry(int tableIdx, int subjPos) {
+        mTables.get(tableIdx).remove(subjPos);
+    }
+
+    Map<Integer, PermutationChain> getFirstTable() {
         return this.mTables.get(0);
     }
 
-//    @Override
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("=== mTables (3D Array - Dimension: [Slices][Subject Positions][Match Info]) ===\n");
-//
-//        if (mTables == null) {
-//            return "mTables=null";
-//        }
-//
-//        for (int s = 0; s < mTables.length; s++) {
-//            sb.append("\nSlice M").append(s).append(" (Pattern range [").append(splice.getSplices()[s][0]).append(", ");
-//            sb.append(splice.getSplices()[s][1]).append("]):\n");
-//
-//            int[][] table = mTables[s];
-//            if (table == null) {
-//                sb.append("  null\n");
-//                continue;
-//            }
-//
-//            // Print matches in a compact format
-//            boolean hasMatches = false;
-//            for (int i = 0; i < table.length; i++) {
-//                if (table[i][0] != -1) {
-//                    if (!hasMatches) {
-//                        sb.append("  Matches:\n");
-//                        hasMatches = true;
-//                    }
-//                    sb.append("    Position ").append(i).append(": [").append(table[i][0]).append(", ");
-//                    sb.append(table[i][1]).append("] (length: ").append(table[i][1] - table[i][0] + 1).append(")\n");
-//                }
-//            }
-//
-//            if (!hasMatches) {
-//                sb.append("  No matches found\n");
-//            }
-//        }
-//
-//        return sb.toString();
-//    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== mTables (3D Array - Dimension: [Slices][Subject Positions][Match Info]) ===\n");
+
+        int firstTable = 0;
+
+        sb.append("\nSlice M").append(firstTable).append(" (Pattern range [").append(splice.getSplices()[firstTable][0]).append(", ");
+        sb.append(splice.getSplices()[firstTable][1]).append("]):\n");
+
+        Map<Integer, PermutationChain> table = mTables.get(firstTable);
+
+        // Print matches in a compact format
+        boolean hasMatches = false;
+        for (Integer i : table.keySet()) {
+            if (!isTableEntryEmpty(firstTable, i)) {
+                if (!hasMatches) {
+                    sb.append("  Matches:\n");
+                    hasMatches = true;
+                }
+                var a = readPermutationsFromTable(firstTable, i);
+                sb.append(a).append("\n");
+            }
+        }
+
+        if (!hasMatches) {
+            sb.append("  No matches found\n");
+        }
+
+        return sb.toString();
+    }
 
 }

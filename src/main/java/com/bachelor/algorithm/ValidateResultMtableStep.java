@@ -1,5 +1,7 @@
 package com.bachelor.algorithm;
 
+import com.bachelor.datastructure.Permutation;
+import com.bachelor.datastructure.PermutationChain;
 import com.bachelor.preprocess.SubNode;
 
 import static com.bachelor.preprocess.NodeType.*;
@@ -17,9 +19,12 @@ class ValidateResultMtableStep implements Runnable{
 
     @Override
     public void run() {
+        PermutationChain currentPermutations = mTablesContainer
+                .readPermutationsFromTable(0,entryIdx);
 
-        if (!mTablesContainer.isTableEntryEmpty(0,entryIdx)) {
-            Permutation currentPermutation = mTablesContainer.readPermutationsFromTable(0, entryIdx).getFirst();
+        if (currentPermutations != null) {
+            Permutation currentPermutation = mTablesContainer.readPermutationsFromTable(0, entryIdx)
+                    .getHead().getPermutations().getFirst();
             int startPos = currentPermutation.matchStart();
             int endPos = currentPermutation.matchEnd();
 

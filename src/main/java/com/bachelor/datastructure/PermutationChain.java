@@ -46,4 +46,11 @@ public class PermutationChain implements Iterable<Permutation> {
     public PermutationNode getHead() {
         return head;
     }
+
+    @Override
+    public String toString() {
+        return "PermutationChain{" +
+                "head=" + head +
+                '}';
+    }
 }

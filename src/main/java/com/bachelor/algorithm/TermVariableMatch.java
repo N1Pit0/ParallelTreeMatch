@@ -1,9 +1,11 @@
 package com.bachelor.algorithm;
 
+import com.bachelor.datastructure.Permutation;
+import com.bachelor.datastructure.PermutationChain;
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.List;
 
 import static com.bachelor.preprocess.NodeType.*;
 
@@ -41,15 +43,15 @@ class TermVariableMatch implements Runnable{
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean extendMatch(int tableIdx, int nextTableIdx) {
 
-        ConcurrentLinkedDeque<Permutation> currentPermutations = mTablesContainer
+        PermutationChain currentPermutations = mTablesContainer
                 .readPermutationsFromTable(tableIdx,subjPos);
 
-        if(currentPermutations == null) return false;
-
-        Permutation currentPermutation = currentPermutations.getFirst();
+        List<Permutation> currentPermutationList = currentPermutations.getHead().getPermutations();
+        Permutation currentPermutation = currentPermutationList.getFirst();
         int matchEnd = currentPermutation.matchEnd();
 
         int nextPosInSubject = matchEnd + 1;
+
 
         if (nextPosInSubject >= subjectChain.length) {
             return false;
@@ -67,15 +69,18 @@ class TermVariableMatch implements Runnable{
             return false;
         }
 
-        if (mTablesContainer.isTableEntryEmpty(nextTableIdx, subtreeIdx)) {
+        PermutationChain nextPermutationchain =  mTablesContainer
+                .readPermutationsFromTable(nextTableIdx, subtreeIdx);
+        if (nextPermutationchain == null) {
             return false;
         }
 
-        Permutation nextPermutation = mTablesContainer
-                .readPermutationsFromTable(nextTableIdx, subtreeIdx).getFirst();
+        Permutation nextPermutation = nextPermutationchain.getHead().getPermutations().getFirst();
+
         Permutation updatedCurrentPermutation =
                 new Permutation(currentPermutation.matchStart(), nextPermutation.matchEnd(),
                         currentPermutation.variable(), currentPermutation.replacement());
+        currentPermutationList.remove(currentPermutation);
         mTablesContainer.writePermutationsIntoTable(updatedCurrentPermutation, tableIdx, subjPos);
         return true;
     }

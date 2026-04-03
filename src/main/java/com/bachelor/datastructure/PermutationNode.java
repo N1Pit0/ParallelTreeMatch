@@ -1,9 +1,6 @@
 package com.bachelor.datastructure;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class PermutationNode implements Iterable<Permutation> {
     private int matchStartIndex;
@@ -14,11 +11,6 @@ public class PermutationNode implements Iterable<Permutation> {
         this.matchStartIndex = matchStartIndex;
         this.permutations = new LinkedList<>();
         this.next = null;
-    }
-
-    // Getters and setters
-    public int getMatchStartIndex() {
-        return matchStartIndex;
     }
 
     public List<Permutation> getPermutations() {
@@ -33,12 +25,7 @@ public class PermutationNode implements Iterable<Permutation> {
         this.next = next;
     }
 
-    public void setPermutations(List<Permutation> permutations) {
-        this.permutations = permutations;
-    }
-
-    // Add permutation to current node
-    public void addPermutation(Permutation permutation) {
+    public void addPermutationToCurrentNode(Permutation permutation) {
         this.permutations.add(permutation);
     }
 
@@ -94,5 +81,13 @@ public class PermutationNode implements Iterable<Permutation> {
                 currentNode = currentNode.getNext();
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "PermutationNode{" +
+                "permutations=" + permutations +
+                ", matchStartIndex=" + matchStartIndex +
+                '}';
     }
 }
