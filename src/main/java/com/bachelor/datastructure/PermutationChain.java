@@ -11,7 +11,6 @@ public class PermutationChain implements Iterable<Permutation> {
         this.tail = null;
     }
 
-    // O(1) append operation
     public void appendNode(PermutationNode node) {
         if (head == null) {
             head = tail = node;
@@ -21,7 +20,6 @@ public class PermutationChain implements Iterable<Permutation> {
         }
     }
 
-    // O(1) concatenate another chain
     public void concatenate(PermutationChain other) {
         if (other.head == null) return;
 

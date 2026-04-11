@@ -24,7 +24,7 @@ public class TreePrintUtils {
     }
 
     @SuppressWarnings("SameParameterValue")
-    public static void printMTablesState(String label, MTablesContainer container) {
+    public static void printMTablesFinalState(String label, MTablesContainer container) {
         System.out.println("\n" + label + ":");
         System.out.println(container);
     }

@@ -1,5 +1,6 @@
 package com.bachelor.algorithm;
 
+import com.bachelor.algorithm.stringmatch.Kmp;
 import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.EulerChain;
 
@@ -21,8 +22,9 @@ public class MTablesContainer {
 
     void createMTables() {
         int[][] splicesArray = splice.getSplices();
+        StringMatch<PermutationChain> stringMatch = new Kmp();
         for (int i = 0; i < splicesArray.length; i++) {
-            Map<Integer, PermutationChain> matches = Kmp.kmp(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
+            Map<Integer, PermutationChain> matches = stringMatch.matchString(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
             mTables.put(i, matches);
         }
     }

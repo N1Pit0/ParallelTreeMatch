@@ -1,5 +1,6 @@
-package com.bachelor.algorithm;
+package com.bachelor.algorithm.stringmatch;
 
+import com.bachelor.algorithm.StringMatch;
 import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.*;
 
@@ -13,11 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Nikolozi Matsaberidze
  */
 
-class Kmp {
+public class Kmp implements StringMatch<PermutationChain> {
 
     // Given a pattern and a text kmp finds all the places that the pattern
     // is found in the text (even overlapping pattern matches)
-    static Map<Integer, PermutationChain> kmp(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
+    public Map<Integer, PermutationChain> matchString(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
         int subjectChainSize = subject.getChainSize();
 
         ConcurrentHashMap<Integer, PermutationChain> matches = new ConcurrentHashMap<>();

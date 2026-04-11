@@ -23,7 +23,7 @@ class MTableMerger {
 
         validateFinalResults();
 
-        TreePrintUtils.printMTablesState("match", mTablesContainer);
+        TreePrintUtils.printMTablesFinalState("match", mTablesContainer);
     }
 
     private void mergeTables() {
@@ -51,7 +51,19 @@ class MTableMerger {
                                     .readPermutationsFromTable(tableIdx,subjPos);
 
                             if (currentPermutations != null) {
-                                positionTasks.add(new TermVariableMatch(mTablesContainer, tableIdx, subjPos, offset, subject));
+                                int nextTableIdx = tableIdx + offset; // i + 2^l
+
+                                if (nextTableIdx >= mTablesContainer.getLength()) {
+                                    return;
+                                }
+                                VariableMatch variableMatch = new TermVariableMatch.Builder()
+                                        .mTablesContainer(mTablesContainer)
+                                        .eulerChain(subject)
+                                        .tableIdx(tableIdx)
+                                        .nextTableIndex(nextTableIdx)
+                                        .subjPos(subjPos)
+                                        .build();
+                                positionTasks.add(variableMatch);
                             }
                         }
                         ExecutorBarrierUtils.invokeAll(executor, positionTasks);

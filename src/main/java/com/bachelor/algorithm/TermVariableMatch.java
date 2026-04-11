@@ -7,39 +7,28 @@ import java.util.List;
 
 import static com.bachelor.preprocess.NodeType.*;
 
-class TermVariableMatch implements Runnable{
-    private final MTablesContainer mTablesContainer;
-    private final int tableIdx;
-    private final int subjPos;
-    private final int offset;
-    private final SubNode[] subjectChain;
-    private final EulerChain subject;
+class TermVariableMatch extends VariableMatch {
 
-    TermVariableMatch(MTablesContainer mTablesContainer, int tableIdx, int subjPos, int offset, EulerChain subject) {
-        this.mTablesContainer = mTablesContainer;
-        this.tableIdx = tableIdx;
-        this.subjPos = subjPos;
-        this.offset = offset;
-        this.subject = subject;
-        this.subjectChain = subject.getChain();
+    private TermVariableMatch(Builder builder) {
+        super(builder);
     }
 
-    @Override
-    public void run() {
-        int nextTableIdx = tableIdx + offset; // i + 2^l
+    static class Builder extends VariableMatch.Builder<Builder>{
 
-        if (nextTableIdx >= mTablesContainer.getLength()) {
-            return;
+        @Override
+        VariableMatch build() {
+            return new TermVariableMatch(this);
         }
 
-        if (!extendMatch(tableIdx, nextTableIdx)) {
-            mTablesContainer.clearTableEntry(tableIdx, subjPos);
+        @Override
+        protected Builder self() {
+            return this;
         }
     }
 
     //This matching works for term variable
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean extendMatch(int tableIdx, int nextTableIdx) {
+    public boolean extendMatch() {
 
         PermutationChain currentPermutations = mTablesContainer
                 .readPermutationsFromTable(tableIdx,subjPos);
@@ -50,8 +39,7 @@ class TermVariableMatch implements Runnable{
 
         int nextPosInSubject = matchEnd + 1;
 
-
-        if (nextPosInSubject >= subjectChain.length) {
+        if (nextPosInSubject >= subject.getChainSize()) {
             return false;
         }
 
