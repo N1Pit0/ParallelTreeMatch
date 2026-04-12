@@ -35,7 +35,7 @@ class SequentialVariableMatch extends VariableMatch {
         PermutationChain permutations = new PermutationChain();
 
         for (Permutation currentNode : positionMatchList) {
-            int nextPos = currentNode.matchEnd() + 1;
+            int nextPos = currentNode.matchEnd + 1;
             SubNode nodeAtNextPos = subjectChain[nextPos];
 
             if (subjectChain[nextPos].getType().equals(FIRST)

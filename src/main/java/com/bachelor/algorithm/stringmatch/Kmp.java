@@ -3,6 +3,7 @@ package com.bachelor.algorithm.stringmatch;
 import com.bachelor.algorithm.StringMatch;
 import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.*;
+import com.bachelor.utils.TreeProcessingUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,10 +48,17 @@ public class Kmp implements StringMatch<PermutationChain> {
                 int matchStart = currentSubjectPosIndex - patternLength;
                 int matchEnd = currentSubjectPosIndex - 1;
                 if (matchStart >= 0 && matchStart < subjectChainSize) {
-//                    Variable variable = subject.getT()[].getVariable();
-                    //Dummy string replacement for variable. Will add the logic later.
-                    //Not needed for now...
-                    Permutation permutation = new Permutation(matchStart, matchEnd, new TermVariable(), "Dummy replacement");
+                    String variableReplacement = TreeProcessingUtils.getReplacementForVar(subject, matchStart, matchEnd);
+                    int matchStartNodeIndex = TreeProcessingUtils.getMatchStartNodeIndex(subject, matchStart);
+//                    Permutation permutation = new Permutation(matchStart, matchEnd, new TermVariable(), variableReplacement, matchStartNode);
+                    Permutation permutation = new Permutation.Builder()
+                            .matchStart(matchStart)
+                            .matchEnd(matchEnd)
+                            .matchStartNodeIndex(matchStartNodeIndex)
+                            .variable(new TermVariable())
+                            .variableReplacement(variableReplacement)
+                            .build();
+
                     PermutationNode permutations = new PermutationNode(matchStart);
                     permutations.addPermutationToCurrentNode(permutation);
 

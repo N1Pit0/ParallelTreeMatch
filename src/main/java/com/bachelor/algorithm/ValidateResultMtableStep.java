@@ -27,8 +27,8 @@ class ValidateResultMtableStep implements Runnable{
 
         Permutation currentPermutation = currentPermutations
                 .getHead().getPermutations().getFirst();
-        int startPos = currentPermutation.matchStart();
-        int endPos = currentPermutation.matchEnd();
+        int startPos = currentPermutation.matchStart;
+        int endPos = currentPermutation.matchEnd;
 
         if (endPos >= 0 && endPos < subjectChain.length) {
             SubNode startNode = subjectChain[startPos];

@@ -2,6 +2,7 @@ package com.bachelor.algorithm;
 
 import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.*;
+import com.bachelor.utils.TreeProcessingUtils;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ class TermVariableMatch extends VariableMatch {
 
         List<Permutation> currentPermutationList = currentPermutations.getHead().getPermutations();
         Permutation currentPermutation = currentPermutationList.getFirst();
-        int matchEnd = currentPermutation.matchEnd();
+        int matchEnd = currentPermutation.matchEnd;
 
         int nextPosInSubject = matchEnd + 1;
 
@@ -55,19 +56,24 @@ class TermVariableMatch extends VariableMatch {
             return false;
         }
 
-        PermutationChain nextPermutationchain =  mTablesContainer
+        PermutationChain nextTablePermutationchain =  mTablesContainer
                 .readPermutationsFromTable(nextTableIdx, subtreeIdx);
-        if (nextPermutationchain == null) {
+        if (nextTablePermutationchain == null) {
             return false;
         }
 
-        Permutation nextPermutation = nextPermutationchain.getHead().getPermutations().getFirst();
+        Permutation nextTablePermutation = nextTablePermutationchain.getHead().getPermutations().getFirst();
 
-        Permutation updatedCurrentPermutation =
-                new Permutation(currentPermutation.matchStart(), nextPermutation.matchEnd(),
-                        currentPermutation.variable(), currentPermutation.replacement());
-        currentPermutationList.remove(currentPermutation);
-        mTablesContainer.writePermutationsIntoTable(updatedCurrentPermutation, tableIdx, subjPos);
+        int newMatchStart = currentPermutation.matchStart;
+        int newMatchEnd = nextTablePermutation.matchEnd;
+        String newReplacement = TreeProcessingUtils.getReplacementForVar(subject, newMatchStart, newMatchEnd);
+
+        currentPermutation.matchEnd = newMatchEnd;
+        currentPermutation.variableReplacement = newReplacement;
+        //I am not sure if clearing this entry does any good.
+        //Idea is that I am freeing up the memory.
+        mTablesContainer.clearTableEntry(nextTableIdx, subtreeIdx);
+
         return true;
     }
 }

@@ -55,6 +55,10 @@ public class MTablesContainer {
         mTables.get(tableIdx).remove(subjPos);
     }
 
+    void clearTable(int tableIdx){
+        mTables.remove(tableIdx);
+    }
+
     Map<Integer, PermutationChain> getFirstTable() {
         return this.mTables.get(0);
     }
