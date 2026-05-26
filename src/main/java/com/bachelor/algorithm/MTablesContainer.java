@@ -43,7 +43,6 @@ public class MTablesContainer {
     }
 
     void writePermutationsIntoTable(Permutation permutation, int tableIndex, int subjectPos) {
-        //I don't like adding straight into the head
         mTables.get(tableIndex).get(subjectPos).addPermutationToCurrentNode(permutation);
     }
 

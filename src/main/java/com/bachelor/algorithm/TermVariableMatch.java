@@ -4,8 +4,6 @@ import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.*;
 import com.bachelor.utils.TreeProcessingUtils;
 
-import java.util.List;
-
 import static com.bachelor.preprocess.NodeType.*;
 
 class TermVariableMatch extends VariableMatch {
@@ -34,8 +32,9 @@ class TermVariableMatch extends VariableMatch {
         PermutationNode currentPermutations = mTablesContainer
                 .readPermutationsFromTable(tableIdx,subjPos);
 
-        List<Permutation> currentPermutationList = currentPermutations.getPermutations();
-        Permutation currentPermutation = currentPermutationList.getFirst();
+        // TODO: Need to look into it. Why are we taking first?
+        // Answer: TermVariable match could only have a single permutation per MTable entry
+        Permutation currentPermutation = currentPermutations.getPermutations().getFirst();
         int matchEnd = currentPermutation.matchEnd;
 
         int nextPosInSubject = matchEnd + 1;

@@ -1,6 +1,7 @@
 package com.bachelor.parser;
 
 import com.bachelor.InputParser;
+import com.bachelor.parser.dto.*;
 import com.bachelor.exceptions.InvalidInputException;
 import com.bachelor.preprocess.*;
 

@@ -1,4 +1,4 @@
-package com.bachelor.parser;
+package com.bachelor.parser.dto;
 
 import com.bachelor.preprocess.Variable;
 

@@ -1,7 +1,7 @@
 package com.bachelor;
 
 import com.bachelor.exceptions.InvalidInputException;
-import com.bachelor.parser.*;
+import com.bachelor.parser.dto.*;
 import com.bachelor.preprocess.*;
 
 import java.util.List;

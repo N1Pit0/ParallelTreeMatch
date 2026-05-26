@@ -5,14 +5,12 @@ import com.bachelor.preprocess.Variable;
 public class Permutation {
     public int matchStart;
     public int matchEnd;
-    public int matchStartNodeIndex;
     public Variable variable;
     public String variableReplacement;
 
     private Permutation(Builder builder){
         this.matchStart = builder.matchStart;
         this.matchEnd = builder.matchEnd;
-        this.matchStartNodeIndex = builder.matchStartNodeIndex;
         this.variable = builder.variable;
         this.variableReplacement = builder.variableReplacement;
     }
@@ -20,7 +18,6 @@ public class Permutation {
     public static class Builder{
         private int matchStart;
         private int matchEnd;
-        private int matchStartNodeIndex;
         private Variable variable;
         private String variableReplacement;
 
@@ -31,11 +28,6 @@ public class Permutation {
 
         public Builder matchEnd(int matchEnd){
             this.matchEnd = matchEnd;
-            return this;
-        }
-
-        public Builder matchStartNodeIndex(int matchStartNodeIndex){
-            this.matchStartNodeIndex = matchStartNodeIndex;
             return this;
         }
 
@@ -61,7 +53,6 @@ public class Permutation {
                 ", matchEnd=" + matchEnd +
                 ", variable=" + variable +
                 ", variableReplacement='" + variableReplacement +
-                ", matchStartNodeIndex='" + matchStartNodeIndex + '\'' +
                 '}';
     }
 }
