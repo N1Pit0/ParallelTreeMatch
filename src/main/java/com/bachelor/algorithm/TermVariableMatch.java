@@ -31,10 +31,10 @@ class TermVariableMatch extends VariableMatch {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean extendMatch() {
 
-        PermutationChain currentPermutations = mTablesContainer
+        PermutationNode currentPermutations = mTablesContainer
                 .readPermutationsFromTable(tableIdx,subjPos);
 
-        List<Permutation> currentPermutationList = currentPermutations.getHead().getPermutations();
+        List<Permutation> currentPermutationList = currentPermutations.getPermutations();
         Permutation currentPermutation = currentPermutationList.getFirst();
         int matchEnd = currentPermutation.matchEnd;
 
@@ -56,13 +56,13 @@ class TermVariableMatch extends VariableMatch {
             return false;
         }
 
-        PermutationChain nextTablePermutationchain =  mTablesContainer
+        PermutationNode nextTablePermutationNode =  mTablesContainer
                 .readPermutationsFromTable(nextTableIdx, subtreeIdx);
-        if (nextTablePermutationchain == null) {
+        if (nextTablePermutationNode == null) {
             return false;
         }
 
-        Permutation nextTablePermutation = nextTablePermutationchain.getHead().getPermutations().getFirst();
+        Permutation nextTablePermutation = nextTablePermutationNode.getPermutations().getFirst();
 
         int newMatchStart = currentPermutation.matchStart;
         int newMatchEnd = nextTablePermutation.matchEnd;

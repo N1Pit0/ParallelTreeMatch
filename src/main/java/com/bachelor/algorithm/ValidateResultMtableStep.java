@@ -18,7 +18,7 @@ class ValidateResultMtableStep implements Runnable{
 
     @Override
     public void run() {
-        PermutationChain currentPermutations = mTablesContainer
+        PermutationNode currentPermutations = mTablesContainer
                 .readPermutationsFromTable(0,entryIdx);
 
         if (currentPermutations == null) {
@@ -26,7 +26,7 @@ class ValidateResultMtableStep implements Runnable{
         }
 
         Permutation currentPermutation = currentPermutations
-                .getHead().getPermutations().getFirst();
+                .getPermutations().getFirst();
         int startPos = currentPermutation.matchStart;
         int endPos = currentPermutation.matchEnd;
 

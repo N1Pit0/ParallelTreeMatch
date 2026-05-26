@@ -15,14 +15,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Nikolozi Matsaberidze
  */
 
-public class Kmp implements StringMatch<PermutationChain> {
+public class Kmp implements StringMatch<PermutationNode> {
 
     // Given a pattern and a text kmp finds all the places that the pattern
     // is found in the text (even overlapping pattern matches)
-    public Map<Integer, PermutationChain> matchString(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
+    public Map<Integer, PermutationNode> matchString(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
         int subjectChainSize = subject.getChainSize();
 
-        ConcurrentHashMap<Integer, PermutationChain> matches = new ConcurrentHashMap<>();
+        ConcurrentHashMap<Integer, PermutationNode> matches = new ConcurrentHashMap<>();
 
         // Validate slice bounds
         if (patEnd < patStart || patStart < 0 || patEnd >= pattern.getChainSize()) {
@@ -62,11 +62,7 @@ public class Kmp implements StringMatch<PermutationChain> {
                     PermutationNode permutations = new PermutationNode(matchStart);
                     permutations.addPermutationToCurrentNode(permutation);
 
-                    PermutationChain permutationChain = new PermutationChain();
-                    permutationChain.appendNode(permutations);
-
-                    matches.put(matchStart, permutationChain);
-
+                    matches.put(matchStart, permutations);
                 }
                 // Continue searching for overlapping matches
                 currentPatternPosIndex = failureFunction[currentPatternPosIndex - 1];

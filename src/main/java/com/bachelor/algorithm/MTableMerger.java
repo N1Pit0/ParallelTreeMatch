@@ -1,6 +1,6 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.datastructure.PermutationChain;
+import com.bachelor.datastructure.PermutationNode;
 import com.bachelor.preprocess.*;
 import com.bachelor.utils.*;
 
@@ -47,7 +47,7 @@ class MTableMerger {
                         List<Runnable> positionTasks = new LinkedList<>();
 
                         for (int subjPos = 0; subjPos < subject.getChainSize(); subjPos++) {
-                            PermutationChain currentPermutations = mTablesContainer
+                            PermutationNode currentPermutations = mTablesContainer
                                     .readPermutationsFromTable(tableIdx,subjPos);
 
                             if (currentPermutations != null) {
@@ -81,7 +81,7 @@ class MTableMerger {
     }
 
     private void validateFinalResults() {
-        Map<Integer, PermutationChain> finalTable = mTablesContainer.getFirstTable();
+        Map<Integer, PermutationNode> finalTable = mTablesContainer.getFirstTable();
         SubNode[] subjectChain = subject.getChain();
 
         List<Runnable> entryValidationTasks = new LinkedList<>();

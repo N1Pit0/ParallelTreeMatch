@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MTablesContainer {
-    private final Map<Integer, Map<Integer, PermutationChain>> mTables;
+    private final Map<Integer, Map<Integer, PermutationNode>> mTables;
     private final EulerChain subject;
     private final EulerChain pattern;
     private final Splice splice;
@@ -22,9 +22,9 @@ public class MTablesContainer {
 
     void createMTables() {
         int[][] splicesArray = splice.getSplices();
-        StringMatch<PermutationChain> stringMatch = new Kmp();
+        StringMatch<PermutationNode> stringMatch = new Kmp();
         for (int i = 0; i < splicesArray.length; i++) {
-            Map<Integer, PermutationChain> matches = stringMatch.matchString(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
+            Map<Integer, PermutationNode> matches = stringMatch.matchString(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
             mTables.put(i, matches);
         }
     }
@@ -44,10 +44,10 @@ public class MTablesContainer {
 
     void writePermutationsIntoTable(Permutation permutation, int tableIndex, int subjectPos) {
         //I don't like adding straight into the head
-        mTables.get(tableIndex).get(subjectPos).getHead().addPermutationToCurrentNode(permutation);
+        mTables.get(tableIndex).get(subjectPos).addPermutationToCurrentNode(permutation);
     }
 
-    PermutationChain readPermutationsFromTable(int tableIndex, int subjectPos) {
+    PermutationNode readPermutationsFromTable(int tableIndex, int subjectPos) {
         return mTables.get(tableIndex).get(subjectPos);
     }
 
@@ -59,7 +59,7 @@ public class MTablesContainer {
         mTables.remove(tableIdx);
     }
 
-    Map<Integer, PermutationChain> getFirstTable() {
+    Map<Integer, PermutationNode> getFirstTable() {
         return this.mTables.get(0);
     }
 
@@ -73,7 +73,7 @@ public class MTablesContainer {
         sb.append("\nSlice M").append(firstTable).append(" (Pattern range [").append(splice.getSplices()[firstTable][0]).append(", ");
         sb.append(splice.getSplices()[firstTable][1]).append("]):\n");
 
-        Map<Integer, PermutationChain> table = mTables.get(firstTable);
+        Map<Integer, PermutationNode> table = mTables.get(firstTable);
 
         // Print matches in a compact format
         boolean hasMatches = false;
