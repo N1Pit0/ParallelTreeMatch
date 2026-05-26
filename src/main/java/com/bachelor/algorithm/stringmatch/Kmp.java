@@ -59,7 +59,7 @@ public class Kmp implements StringMatch<PermutationNode> {
                             .variableReplacement(variableReplacement)
                             .build();
 
-                    PermutationNode permutations = new PermutationNode(matchStart);
+                    PermutationNode permutations = new PermutationNode();
                     permutations.addPermutationToCurrentNode(permutation);
 
                     matches.put(matchStart, permutations);

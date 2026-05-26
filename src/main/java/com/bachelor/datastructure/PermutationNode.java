@@ -3,11 +3,9 @@ package com.bachelor.datastructure;
 import java.util.*;
 
 public class PermutationNode {
-    private int matchStartIndex;
     private List<Permutation> permutations;
 
-    public PermutationNode(int matchStartIndex) {
-        this.matchStartIndex = matchStartIndex;
+    public PermutationNode() {
         this.permutations = new LinkedList<>();
     }
 
@@ -23,7 +21,6 @@ public class PermutationNode {
     public String toString() {
         return "PermutationNode{" +
                 "permutations=" + permutations +
-                ", matchStartIndex=" + matchStartIndex +
                 '}';
     }
 
@@ -31,7 +28,4 @@ public class PermutationNode {
         return this.permutations.isEmpty();
     }
 
-    public int getMatchStartIndex() {
-        return matchStartIndex;
-    }
 }

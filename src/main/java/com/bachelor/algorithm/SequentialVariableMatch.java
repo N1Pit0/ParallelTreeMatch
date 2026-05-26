@@ -32,7 +32,7 @@ class SequentialVariableMatch extends VariableMatch {
     }
 
     private PermutationNode collectAllMatches(PermutationNode positionMatchList) {
-        PermutationNode permutations = new PermutationNode(positionMatchList.getMatchStartIndex());
+        PermutationNode permutations = new PermutationNode();
 
         for (Permutation currentNode : positionMatchList.getPermutations()) {
             int nextPos = currentNode.matchEnd + 1;
