@@ -34,7 +34,7 @@ public class TreeNode {
         }
     }
 
-    public int getEdge_label() {
+    public int getEdgeLabel() {
         return this.edge_label;
     }
 

@@ -26,7 +26,7 @@ public class InitializeType implements Runnable {
         int iFather = T[index].getFather();
 
         if (iFather >= 0) {
-            int edgeLabel = T[index].getEdge_label();
+            int edgeLabel = T[index].getEdgeLabel();
             T[iFather].tour[edgeLabel].setType(DUMMY);
         }
 

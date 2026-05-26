@@ -16,7 +16,7 @@ public class InitializeNodeInfo implements Runnable {
     public void run() {
         int iFather = T[index].getFather();
         if (iFather >= 0) {
-            int edgeLabel = T[index].getEdge_label();
+            int edgeLabel = T[index].getEdgeLabel();
             T[iFather].tour[edgeLabel].setNodeInfo(iFather);
             T[iFather].tour[T[iFather].arity()].setNodeInfo(iFather);
         }

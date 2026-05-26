@@ -20,7 +20,7 @@ public class InitializeSubTree implements Runnable {
         int iFather = T[index].getFather();
 
         if (iFather >= 0) {
-            int edgeLabel = T[index].getEdge_label();
+            int edgeLabel = T[index].getEdgeLabel();
             int subTree = eulerChain.getChainSize() - 1 - T[iFather].tour[T[iFather].arity()].getCost();
             T[iFather].tour[edgeLabel].setSubtree(subTree);
             T[iFather].tour[T[iFather].arity()].setSubtree(subTree);

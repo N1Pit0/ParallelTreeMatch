@@ -16,10 +16,10 @@ public class InitializeTourInfo implements Runnable {
     public void run() {
         int iFather = T[index].getFather();
         if (iFather >= 0) {
-            int edgeLabel = T[index].getEdge_label();
+            int edgeLabel = T[index].getEdgeLabel();
             T[iFather].tour[edgeLabel].setTourInfo(T[index].tour[0]);
             T[iFather].tour[edgeLabel].setNext(T[index].tour[0]);
-            SubNode next = T[iFather].tour[T[index].getEdge_label() + 1];
+            SubNode next = T[iFather].tour[T[index].getEdgeLabel() + 1];
             T[index].tour[T[index].arity()].setTourInfo(next);
             T[index].tour[T[index].arity()].setNext(next);
         }

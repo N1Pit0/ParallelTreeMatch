@@ -5,23 +5,15 @@ import com.bachelor.utils.ExecutorBarrierUtils;
 
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public class GenTour {
 
-    public static EulerChain buildAndPreprocess(ExecutorService executor, Supplier<TreeNode[]> treeSupplier, int variableCount, int timeoutSeconds){
-        TreeNode[] treeNodes = treeSupplier.get();
-        InputArray inputArray = new InputArray(treeNodes, variableCount);
+    public static EulerChain buildAndPreprocess(ExecutorService executor, InputArray inputArray, int timeoutSeconds){
         EulerChain eulerChain = new EulerChain(inputArray);
-        preprocessTree(executor, inputArray, eulerChain, treeNodes.length, timeoutSeconds);
+        preprocessTree(executor, inputArray, eulerChain, inputArray.getT().length, timeoutSeconds);
         return eulerChain;
     }
-
-    public static EulerChain buildAndPreprocess(ExecutorService executor, Supplier<TreeNode[]> treeSupplier, int timeoutSeconds){
-        return buildAndPreprocess(executor, treeSupplier, 0, timeoutSeconds);
-    }
-
     private static void preprocessTree(ExecutorService executor, InputArray inputArray, EulerChain eulerChain, int length, int timeoutSeconds){
         List<Runnable> initializers;
 

@@ -1,4 +1,8 @@
 package com.bachelor.preprocess;
 
-public class TermVariable implements Variable{
+public class TermVariable extends Variable {
+
+    public TermVariable() {
+        super();
+    }
 }

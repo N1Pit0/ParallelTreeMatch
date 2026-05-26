@@ -17,7 +17,7 @@ public class InitializeEulerChain implements Runnable {
     public void run() {
         int iFather = T[index].getFather();
 
-        int edgeLabel = T[index].getEdge_label();
+        int edgeLabel = T[index].getEdgeLabel();
         if (iFather >= 0) {
             eulerChain.setAtIndex(eulerChain.getChainSize() - 1 - T[iFather].tour[edgeLabel + 1].getCost(), T[iFather].tour[edgeLabel + 1]);
         }
