@@ -43,7 +43,7 @@ public class InputParserImpl implements InputParser {
 
     public static Variable createVariable(String variable) throws InvalidInputException {
         if (variable.length() != 1) throw new InvalidInputException("Variable name length should be only 1");
-        return (variable.charAt(0) <= 'M') ? new TermVariable() : new SequentialVariable();
+        return (variable.charAt(0) <= 'M') ? new TermVariable(variable) : new SequentialVariable(variable);
     }
 
     @Override
