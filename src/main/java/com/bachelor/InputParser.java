@@ -22,7 +22,7 @@ public interface InputParser {
     List<String> splitParameters(String paramList);
 
     ParseResult parseExpression(String input, int startIndex, List<NodeDto> nodeList,
-                                int parentIndex, int edgeLabel) throws InvalidInputException;
+                                List<Variable> variableList, int parentIndex, int edgeLabel) throws InvalidInputException;
 
     TreeNode[] convertToBfs(List<NodeDto> nodeList);
 }

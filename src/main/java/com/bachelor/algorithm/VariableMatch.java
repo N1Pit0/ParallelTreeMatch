@@ -2,7 +2,6 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
-import com.bachelor.preprocess.Variable;
 
 public abstract class VariableMatch implements Runnable {
     protected final MTablesContainer mTablesContainer;
@@ -11,6 +10,7 @@ public abstract class VariableMatch implements Runnable {
     protected final int nextTableIdx;
     protected final SubNode[] subjectChain;
     protected final EulerChain subject;
+    protected final EulerChain pattern;
 
     VariableMatch(Builder<?> builder) {
         this.mTablesContainer = builder.mTablesContainer;
@@ -19,6 +19,7 @@ public abstract class VariableMatch implements Runnable {
         this.nextTableIdx = builder.nextTableIdx;
         this.subject = builder.subject;
         this.subjectChain = subject.getChain();
+        this.pattern = builder.pattern;
     }
 
     abstract static class Builder<T extends Builder<T>>{
@@ -27,15 +28,20 @@ public abstract class VariableMatch implements Runnable {
         protected int subjPos;
         protected int nextTableIdx;
         protected EulerChain subject;
-        protected Variable variable;
+        protected EulerChain pattern;
 
         T mTablesContainer(MTablesContainer mTablesContainer){
             this.mTablesContainer = mTablesContainer;
             return self();
         }
 
-        T eulerChain(EulerChain eulerChain){
-            this.subject = eulerChain;
+        T subject(EulerChain subject){
+            this.subject = subject;
+            return self();
+        }
+
+        T pattern(EulerChain pattern){
+            this.pattern = pattern;
             return self();
         }
 

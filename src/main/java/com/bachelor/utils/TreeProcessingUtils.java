@@ -15,7 +15,7 @@ public class TreeProcessingUtils {
         SubNode[] chain = eulerChain.getChain();
         TreeNode[] T = eulerChain.getT();
 
-        return IntStream.rangeClosed(start, end)
+        return IntStream.range(start, end)
                 .mapToObj(i -> T[chain[i].getNodeInfo()].getLabel())
                 .collect(Collectors.joining());
     }

@@ -11,15 +11,6 @@ import java.util.stream.IntStream;
 
 
 public class InputParserImpl implements InputParser {
-    private int variableCount = 0;
-
-    private void incrementVariableCount(){
-        variableCount++;
-    }
-
-    private void clearVariableCount(){
-        variableCount = 0;
-    }
 
     @Override
     public InputArray parseToArray(String inputValue) throws InvalidInputException {
@@ -31,12 +22,12 @@ public class InputParserImpl implements InputParser {
 
         // Parse the tree structure
         List<NodeDto> nodeList = new ArrayList<>();
-        parseExpression(inputValue, 0, nodeList, -1, 0);
+        List<Variable> variableList = new ArrayList<>();
+        parseExpression(inputValue, 0, nodeList, variableList,-1, 0);
 
         // Convert to BFS order
         TreeNode[] tree = convertToBfs(nodeList);
-        InputArray inputArray = new InputArray(tree, variableCount);
-        clearVariableCount();
+        InputArray inputArray = new InputArray(tree, variableList);
 
         return inputArray;
     }
@@ -188,7 +179,7 @@ public class InputParserImpl implements InputParser {
 
     @Override
     public ParseResult parseExpression(String input, int startIndex, List<NodeDto> nodeList,
-                                       int parentIndex, int edgeLabel) throws InvalidInputException {
+                                       List<Variable> variableList, int parentIndex, int edgeLabel) throws InvalidInputException {
         if (startIndex >= input.length()) {
             throw new InvalidInputException("Unexpected end of input");
         }
@@ -201,7 +192,7 @@ public class InputParserImpl implements InputParser {
             Variable variable = createVariable(currentCharString);
             NodeDto node = new NodeDto(currentCharString, variable, edgeLabel, parentIndex, 0);
             nodeList.add(node);
-            incrementVariableCount();
+            variableList.add(variable);
             return new ParseResult(node, startIndex + 1);
         }
 
@@ -230,7 +221,7 @@ public class InputParserImpl implements InputParser {
                         continue;
                     }
 
-                    ParseResult childResult = parseExpression(input, nextIndex, nodeList, functionNodeIndex, parameterIndex);
+                    ParseResult childResult = parseExpression(input, nextIndex, nodeList, variableList, functionNodeIndex, parameterIndex);
                     nextIndex = childResult.nextIndex();
                     parameterIndex++;
                     childCount++;

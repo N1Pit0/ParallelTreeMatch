@@ -11,11 +11,13 @@ class MTableMerger {
     private final MTablesContainer mTablesContainer;
     private final ExecutorService executor;
     private final EulerChain subject;
+    private final EulerChain pattern;
 
     MTableMerger(MTablesContainer mTablesContainer, ExecutorService executor) {
         this.mTablesContainer = mTablesContainer;
         this.executor = executor;
         this.subject = mTablesContainer.getSubject();
+        this.pattern = mTablesContainer.getPattern();
     }
 
     void computeAndMergeMTables() {
@@ -58,7 +60,8 @@ class MTableMerger {
                                 }
                                 VariableMatch variableMatch = new TermVariableMatch.Builder()
                                         .mTablesContainer(mTablesContainer)
-                                        .eulerChain(subject)
+                                        .subject(subject)
+                                        .pattern(pattern)
                                         .tableIdx(tableIdx)
                                         .nextTableIndex(nextTableIdx)
                                         .subjPos(subjPos)

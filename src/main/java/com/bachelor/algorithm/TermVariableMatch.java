@@ -63,7 +63,17 @@ class TermVariableMatch extends VariableMatch {
 
         Permutation nextTablePermutation = nextTablePermutationNode.getPermutations().getFirst();
 
+        //Find and replace variable
+        int variableMatchStart = currentPermutation.matchEnd + 1;
+        int variableMatchEnd = nextTablePermutation.matchStart;
+        String newReplacement = TreeProcessingUtils.getReplacementForVar(subject, variableMatchStart, variableMatchEnd);
+
+        Variable variableOrder = pattern.getInputArray().getVariableWithIndex(nextTableIdx-1);
+        VariableReplacement variableReplacement = new VariableReplacement(variableOrder, newReplacement);
+        currentPermutations.addToVariableReplacements(variableReplacement);
+
         currentPermutation.matchEnd = nextTablePermutation.matchEnd;
+
         //I am not sure if clearing this entry does any good.
         //Idea is that I am freeing up the memory.
         mTablesContainer.clearTableEntry(nextTableIdx, subtreeIdx);

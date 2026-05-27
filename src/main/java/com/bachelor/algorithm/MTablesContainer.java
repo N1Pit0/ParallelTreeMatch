@@ -33,6 +33,8 @@ public class MTablesContainer {
         return this.subject;
     }
 
+    EulerChain getPattern(){return this.pattern;}
+
     int getLength() {
         return mTables.size();
     }
