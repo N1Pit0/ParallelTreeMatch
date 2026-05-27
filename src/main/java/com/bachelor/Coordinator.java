@@ -17,6 +17,8 @@ public class Coordinator {
     // Leave this here for easy copy-paste
     // String subjectString = "f(f(a,b), f(f(a,a),a))";
     // String patternString = "f(f(a,A), B)";
+//    String subjectString = "f(a,f(a,b,c),f(a,f(a,b,c),e),f)";
+//    String patternString = "f(A,f(a,B,C),D)";
 
     private static InputArray acceptInput(String prompt) {
         InputArray result = null;
@@ -41,8 +43,8 @@ public class Coordinator {
             // Get valid pattern tree
             InputArray patternTree = acceptInput("Please enter a pattern tree:");
 
-            EulerChain pattern = buildAndPreprocess(executor, patternTree, 5);
-            EulerChain subject = buildAndPreprocess(executor, subjectTree, 5);
+            EulerChain pattern = buildAndPreprocess(executor, patternTree, 10000);
+            EulerChain subject = buildAndPreprocess(executor, subjectTree, 10000);
             TreeMatch.performTreeMatch(executor, subject, pattern);
 
         } finally {

@@ -1,10 +1,11 @@
 package com.bachelor.datastructure;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class PermutationNode {
-    private ConcurrentLinkedDeque<Permutation> permutations;
-    private ConcurrentLinkedDeque<VariableReplacement> variableReplacements;
+    private final ConcurrentLinkedDeque<Permutation> permutations;
+    private final ConcurrentLinkedDeque<VariableReplacement> variableReplacements;
 
     public PermutationNode() {
         this.permutations = new ConcurrentLinkedDeque<>();
@@ -21,6 +22,14 @@ public class PermutationNode {
 
     public void addToVariableReplacements(VariableReplacement variableReplacement){
         this.variableReplacements.add(variableReplacement);
+    }
+
+    public void addAllToVariableReplacements(Collection<? extends VariableReplacement> collection){
+        this.variableReplacements.addAll(collection);
+    }
+
+    public ConcurrentLinkedDeque<VariableReplacement> getVariableReplacements() {
+        return variableReplacements;
     }
 
     @Override

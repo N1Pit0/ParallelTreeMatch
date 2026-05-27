@@ -22,6 +22,6 @@ public class ExecutorBarrierUtils {
     }
 
     public static void invokeAll(ExecutorService executor, List<Runnable> tasks){
-        invokeAll(executor, tasks, 10);
+        invokeAll(executor, tasks, 10000);
     }
 }

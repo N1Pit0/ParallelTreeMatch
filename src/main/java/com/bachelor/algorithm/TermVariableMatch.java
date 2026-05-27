@@ -68,9 +68,10 @@ class TermVariableMatch extends VariableMatch {
         int variableMatchEnd = nextTablePermutation.matchStart;
         String newReplacement = TreeProcessingUtils.getReplacementForVar(subject, variableMatchStart, variableMatchEnd);
 
-        Variable variableOrder = pattern.getInputArray().getVariableWithIndex(nextTableIdx-1);
-        VariableReplacement variableReplacement = new VariableReplacement(variableOrder, newReplacement);
+        Variable variable = pattern.getInputArray().getVariableWithIndex(nextTableIdx-1);
+        VariableReplacement variableReplacement = new VariableReplacement(variable, newReplacement);
         currentPermutations.addToVariableReplacements(variableReplacement);
+        currentPermutations.addAllToVariableReplacements(nextTablePermutationNode.getVariableReplacements());
 
         currentPermutation.matchEnd = nextTablePermutation.matchEnd;
 
