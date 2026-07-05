@@ -1,7 +1,6 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.datastructure.Permutation;
-import com.bachelor.datastructure.PermutationNode;
+import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.SubNode;
 
 import static com.bachelor.preprocess.NodeType.FIRST;
@@ -31,10 +30,10 @@ class SequentialVariableMatch extends VariableMatch {
         return false;
     }
 
-    private PermutationNode collectAllMatches(PermutationNode positionMatchList) {
-        PermutationNode permutations = new PermutationNode();
+    private MatchRegistry collectAllMatches(MatchRegistry positionMatchList) {
+        MatchRegistry permutations = new MatchRegistry();
 
-        for (Permutation currentNode : positionMatchList.getPermutations()) {
+        for (MatchInterval currentNode : positionMatchList.getPermutations()) {
             int nextPos = currentNode.matchEnd + 1;
             SubNode nodeAtNextPos = subjectChain[nextPos];
 
@@ -46,13 +45,13 @@ class SequentialVariableMatch extends VariableMatch {
                     continue;
                 }
 
-                PermutationNode nextPermutationNode = mTablesContainer
+                MatchRegistry nextPermutationNode = mTablesContainer
                         .readPermutationsFromTable(nextTableIdx, subtreeIdx);
                 if (nextPermutationNode == null) {
                     continue;
                 }
 
-                for(Permutation nextNode : nextPermutationNode.getPermutations()){
+                for(MatchInterval nextNode : nextPermutationNode.getPermutations()){
                     //TODO: FINISH IT!!!
                 }
             }

@@ -14,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Nikolozi Matsaberidze
  */
 
-public class Kmp implements StringMatch<PermutationNode> {
+public class Kmp implements StringMatch<MatchRegistry> {
 
     // Given a pattern and a text kmp finds all the places that the pattern
     // is found in the text (even overlapping pattern matches)
-    public Map<Integer, PermutationNode> matchString(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
+    public Map<Integer, MatchRegistry> matchString(EulerChain subject, EulerChain pattern, int patStart, int patEnd) {
         int subjectChainSize = subject.getChainSize();
 
-        ConcurrentHashMap<Integer, PermutationNode> matches = new ConcurrentHashMap<>();
+        ConcurrentHashMap<Integer, MatchRegistry> matches = new ConcurrentHashMap<>();
 
         // Validate slice bounds
         if (patEnd < patStart || patStart < 0 || patEnd >= pattern.getChainSize()) {
@@ -47,13 +47,13 @@ public class Kmp implements StringMatch<PermutationNode> {
                 int matchStart = currentSubjectPosIndex - patternLength;
                 int matchEnd = currentSubjectPosIndex - 1;
                 if (matchStart >= 0 && matchStart < subjectChainSize) {
-                    Permutation permutation = new Permutation.Builder()
+                    MatchInterval matchInterval = new MatchInterval.Builder()
                             .matchStart(matchStart)
                             .matchEnd(matchEnd)
                             .build();
 
-                    PermutationNode permutations = new PermutationNode();
-                    permutations.addPermutationToCurrentNode(permutation);
+                    MatchRegistry permutations = new MatchRegistry();
+                    permutations.addPermutationToCurrentNode(matchInterval);
 
                     matches.put(matchStart, permutations);
                 }

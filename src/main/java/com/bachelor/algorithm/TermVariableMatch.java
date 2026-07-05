@@ -29,13 +29,11 @@ class TermVariableMatch extends VariableMatch {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean extendMatch() {
 
-        PermutationNode currentPermutations = mTablesContainer
+        MatchRegistry currentPermutations = mTablesContainer
                 .readPermutationsFromTable(tableIdx,subjPos);
 
-        // TODO: Need to look into it. Why are we taking first?
-        // Answer: TermVariable match could only have a single permutation per MTable entry
-        Permutation currentPermutation = currentPermutations.getPermutations().getFirst();
-        int matchEnd = currentPermutation.matchEnd;
+        MatchInterval currentMatchInterval = currentPermutations.getPermutations().getFirst();
+        int matchEnd = currentMatchInterval.matchEnd;
 
         int nextPosInSubject = matchEnd + 1;
 
@@ -55,25 +53,24 @@ class TermVariableMatch extends VariableMatch {
             return false;
         }
 
-        PermutationNode nextTablePermutationNode =  mTablesContainer
+        MatchRegistry nextTableMatchRegistry =  mTablesContainer
                 .readPermutationsFromTable(nextTableIdx, subtreeIdx);
-        if (nextTablePermutationNode == null) {
+        if (nextTableMatchRegistry == null) {
             return false;
         }
 
-        Permutation nextTablePermutation = nextTablePermutationNode.getPermutations().getFirst();
+        MatchInterval nextTableMatchInterval = nextTableMatchRegistry.getPermutations().getFirst();
 
         //Find and replace variable
-        int variableMatchStart = currentPermutation.matchEnd + 1;
-        int variableMatchEnd = nextTablePermutation.matchStart;
+        int variableMatchStart = currentMatchInterval.matchEnd + 1;
+        int variableMatchEnd = nextTableMatchInterval.matchStart;
         String newReplacement = TreeProcessingUtils.getReplacementForVar(subject, variableMatchStart, variableMatchEnd);
 
-        Variable variable = pattern.getInputArray().getVariableWithIndex(nextTableIdx-1);
-        VariableReplacement variableReplacement = new VariableReplacement(variable, newReplacement);
+        VariableReplacement variableReplacement = new VariableReplacement(variableToBeReplaced, newReplacement);
         currentPermutations.addToVariableReplacements(variableReplacement);
-        currentPermutations.addAllToVariableReplacements(nextTablePermutationNode.getVariableReplacements());
+        currentPermutations.addAllToVariableReplacements(nextTableMatchRegistry.getVariableReplacements());
 
-        currentPermutation.matchEnd = nextTablePermutation.matchEnd;
+        currentMatchInterval.matchEnd = nextTableMatchInterval.matchEnd;
 
         //I am not sure if clearing this entry does any good.
         //Idea is that I am freeing up the memory.

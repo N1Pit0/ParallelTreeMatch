@@ -18,17 +18,17 @@ class ValidateResultMtableStep implements Runnable{
 
     @Override
     public void run() {
-        PermutationNode currentPermutations = mTablesContainer
+        MatchRegistry currentPermutations = mTablesContainer
                 .readPermutationsFromTable(0,entryIdx);
 
         if (currentPermutations == null) {
             return;
         }
 
-        Permutation currentPermutation = currentPermutations
+        MatchInterval currentMatchInterval = currentPermutations
                 .getPermutations().getFirst();
-        int startPos = currentPermutation.matchStart;
-        int endPos = currentPermutation.matchEnd;
+        int startPos = currentMatchInterval.matchStart;
+        int endPos = currentMatchInterval.matchEnd;
 
         if (endPos >= 0 && endPos < subjectChain.length) {
             SubNode startNode = subjectChain[startPos];

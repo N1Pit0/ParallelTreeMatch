@@ -1,10 +1,10 @@
 package com.bachelor.datastructure;
 
-public class Permutation {
+public class MatchInterval {
     public int matchStart;
     public int matchEnd;
 
-    private Permutation(Builder builder){
+     private MatchInterval(Builder builder){
         this.matchStart = builder.matchStart;
         this.matchEnd = builder.matchEnd;
     }
@@ -23,14 +23,14 @@ public class Permutation {
             return this;
         }
 
-        public Permutation build(){
-            return new Permutation(this);
+        public MatchInterval build(){
+            return new MatchInterval(this);
         }
     }
 
     @Override
     public String toString() {
-        return "Permutation{" +
+        return "MatchInterval{" +
                 "matchStart=" + matchStart +
                 ", matchEnd=" + matchEnd +
                 '}';

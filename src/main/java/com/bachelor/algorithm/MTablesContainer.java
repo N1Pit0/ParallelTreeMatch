@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MTablesContainer {
-    private final Map<Integer, Map<Integer, PermutationNode>> mTables;
+    private final Map<Integer, Map<Integer, MatchRegistry>> mTables;
     private final EulerChain subject;
     private final EulerChain pattern;
     private final Splice splice;
@@ -22,9 +22,9 @@ public class MTablesContainer {
 
     void createMTables() {
         int[][] splicesArray = splice.getSplices();
-        StringMatch<PermutationNode> stringMatch = new Kmp();
+        StringMatch<MatchRegistry> stringMatch = new Kmp();
         for (int i = 0; i < splicesArray.length; i++) {
-            Map<Integer, PermutationNode> matches = stringMatch.matchString(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
+            Map<Integer, MatchRegistry> matches = stringMatch.matchString(subject, pattern, splicesArray[i][0], splicesArray[i][1]);
             mTables.put(i, matches);
         }
     }
@@ -44,11 +44,16 @@ public class MTablesContainer {
                 || mTables.get(tableIdx).get(subjPos).isEmpty();
     }
 
-    void writePermutationsIntoTable(Permutation permutation, int tableIndex, int subjectPos) {
-        mTables.get(tableIndex).get(subjectPos).addPermutationToCurrentNode(permutation);
+    void writePermutationsIntoTable(MatchInterval matchInterval, int tableIndex, int subjectPos) {
+        mTables.get(tableIndex).get(subjectPos).addPermutationToCurrentNode(matchInterval);
     }
 
-    PermutationNode readPermutationsFromTable(int tableIndex, int subjectPos) {
+    void writePermutationNodeIntoTable(MatchRegistry matchRegistry, int tableIndex, int subjectPos){
+        MatchRegistry oldValue = mTables.get(tableIndex).get(subjectPos);
+        mTables.get(tableIndex).replace(subjectPos, oldValue, matchRegistry);
+    }
+
+    MatchRegistry readPermutationsFromTable(int tableIndex, int subjectPos) {
         return mTables.get(tableIndex).get(subjectPos);
     }
 
@@ -60,7 +65,7 @@ public class MTablesContainer {
         mTables.remove(tableIdx);
     }
 
-    Map<Integer, PermutationNode> getFirstTable() {
+    Map<Integer, MatchRegistry> getFirstTable() {
         return this.mTables.get(0);
     }
 
@@ -74,7 +79,7 @@ public class MTablesContainer {
         sb.append("\nSlice M").append(firstTable).append(" (Pattern range [").append(splice.getSplices()[firstTable][0]).append(", ");
         sb.append(splice.getSplices()[firstTable][1]).append("]):\n");
 
-        Map<Integer, PermutationNode> table = mTables.get(firstTable);
+        Map<Integer, MatchRegistry> table = mTables.get(firstTable);
 
         // Print matches in a compact format
         boolean hasMatches = false;
