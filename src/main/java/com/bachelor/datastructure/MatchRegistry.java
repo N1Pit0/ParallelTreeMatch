@@ -1,46 +1,38 @@
 package com.bachelor.datastructure;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class MatchRegistry {
+    public int matchStart;
     private final ConcurrentLinkedDeque<MatchInterval> matchIntervals;
-    private final ConcurrentLinkedDeque<VariableReplacement> variableReplacements;
 
     public MatchRegistry() {
         this.matchIntervals = new ConcurrentLinkedDeque<>();
-        this.variableReplacements = new ConcurrentLinkedDeque<>();
     }
 
-    public ConcurrentLinkedDeque<MatchInterval> getPermutations() {
+    public ConcurrentLinkedDeque<MatchInterval> getMatchIntervals() {
         return matchIntervals;
     }
 
-    public void addPermutationToCurrentNode(MatchInterval matchInterval) {
+    public MatchInterval getMatchIntervalWithIndex(int index) throws NoSuchElementException {
+        return this.matchIntervals.stream().skip(index).findFirst().get();
+    }
+
+    public void addMatchIntervalToCurrentNode(MatchInterval matchInterval) {
         this.matchIntervals.add(matchInterval);
-    }
-
-    public void addToVariableReplacements(VariableReplacement variableReplacement){
-        this.variableReplacements.add(variableReplacement);
-    }
-
-    public void addAllToVariableReplacements(Collection<? extends VariableReplacement> collection){
-        this.variableReplacements.addAll(collection);
     }
 
     public void addAllToPermutations(Collection<MatchInterval> matchIntervals){
         this.matchIntervals.addAll(matchIntervals);
     }
 
-    public ConcurrentLinkedDeque<VariableReplacement> getVariableReplacements() {
-        return variableReplacements;
-    }
-
     @Override
     public String toString() {
         return "MatchRegistry{" +
-                "matchIntervals=" + matchIntervals +
-                "variableReplacements=" + variableReplacements+
+                "matchStart="+ matchStart +
+                " with matchIntervals=" + matchIntervals +
                 '}';
     }
 
@@ -49,7 +41,7 @@ public class MatchRegistry {
     }
 
     public void concat(MatchRegistry other){
-        this.matchIntervals.addAll(other.getPermutations());
-        this.variableReplacements.addAll(other.getVariableReplacements());
+        this.matchIntervals.addAll(other.getMatchIntervals());
+//        this.variableReplacements.addAll(other.getVariableReplacements());
     }
 }

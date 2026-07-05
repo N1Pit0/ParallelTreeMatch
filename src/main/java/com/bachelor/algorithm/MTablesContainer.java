@@ -45,7 +45,7 @@ public class MTablesContainer {
     }
 
     void writePermutationsIntoTable(MatchInterval matchInterval, int tableIndex, int subjectPos) {
-        mTables.get(tableIndex).get(subjectPos).addPermutationToCurrentNode(matchInterval);
+        mTables.get(tableIndex).get(subjectPos).addMatchIntervalToCurrentNode(matchInterval);
     }
 
     void writePermutationNodeIntoTable(MatchRegistry matchRegistry, int tableIndex, int subjectPos){

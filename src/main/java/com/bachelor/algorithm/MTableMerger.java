@@ -58,7 +58,7 @@ class MTableMerger {
                                 if (nextTableIdx >= mTablesContainer.getLength()) {
                                     return;
                                 }
-                                VariableMatch variableMatch = new SequentialVariableMatch.Builder()
+                                VariableMatch variableMatch = new TermVariableMatch.Builder()
                                         .mTablesContainer(mTablesContainer)
                                         .subject(subject)
                                         .pattern(pattern)

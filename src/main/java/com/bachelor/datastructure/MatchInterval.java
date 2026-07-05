@@ -1,12 +1,27 @@
 package com.bachelor.datastructure;
 
+import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedDeque;
+
 public class MatchInterval {
-    public int matchStart;
     public int matchEnd;
+    private final ConcurrentLinkedDeque<VariableReplacement> variableReplacements;
 
      private MatchInterval(Builder builder){
-        this.matchStart = builder.matchStart;
         this.matchEnd = builder.matchEnd;
+        this.variableReplacements = new ConcurrentLinkedDeque<>();
+    }
+
+    public void addToVariableReplacements(VariableReplacement variableReplacement){
+        this.variableReplacements.add(variableReplacement);
+    }
+
+    public void addAllToVariableReplacements(Collection<? extends VariableReplacement> collection){
+        this.variableReplacements.addAll(collection);
+    }
+
+    public ConcurrentLinkedDeque<VariableReplacement> getVariableReplacements() {
+        return variableReplacements;
     }
 
     public static class Builder{
@@ -31,8 +46,8 @@ public class MatchInterval {
     @Override
     public String toString() {
         return "MatchInterval{" +
-                "matchStart=" + matchStart +
                 ", matchEnd=" + matchEnd +
+                ", variableReplacements="+ variableReplacements +
                 '}';
     }
 }

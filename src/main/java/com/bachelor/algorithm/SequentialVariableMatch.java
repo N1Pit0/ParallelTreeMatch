@@ -33,7 +33,7 @@ class SequentialVariableMatch extends VariableMatch {
     private MatchRegistry collectAllMatches(MatchRegistry positionMatchList) {
         MatchRegistry permutations = new MatchRegistry();
 
-        for (MatchInterval currentNode : positionMatchList.getPermutations()) {
+        for (MatchInterval currentNode : positionMatchList.getMatchIntervals()) {
             int nextPos = currentNode.matchEnd + 1;
             SubNode nodeAtNextPos = subjectChain[nextPos];
 
@@ -51,7 +51,7 @@ class SequentialVariableMatch extends VariableMatch {
                     continue;
                 }
 
-                for(MatchInterval nextNode : nextPermutationNode.getPermutations()){
+                for(MatchInterval nextNode : nextPermutationNode.getMatchIntervals()){
                     //TODO: FINISH IT!!!
                 }
             }

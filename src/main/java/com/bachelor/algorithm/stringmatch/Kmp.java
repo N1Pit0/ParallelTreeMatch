@@ -52,10 +52,11 @@ public class Kmp implements StringMatch<MatchRegistry> {
                             .matchEnd(matchEnd)
                             .build();
 
-                    MatchRegistry permutations = new MatchRegistry();
-                    permutations.addPermutationToCurrentNode(matchInterval);
+                    MatchRegistry matchRegistry = new MatchRegistry();
+                    matchRegistry.matchStart = matchStart;
+                    matchRegistry.addMatchIntervalToCurrentNode(matchInterval);
 
-                    matches.put(matchStart, permutations);
+                    matches.put(matchStart, matchRegistry);
                 }
                 // Continue searching for overlapping matches
                 currentPatternPosIndex = failureFunction[currentPatternPosIndex - 1];
