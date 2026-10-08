@@ -18,8 +18,9 @@ public class Coordinator {
             InputArray subjectTree = dataLoader.loadSubjectTree();
             InputArray patternTree = dataLoader.loadPatterTree();
 
-            EulerChain pattern = buildAndPreprocess(executor, patternTree, Config.getInt("com.bachelor.coordinator.thread.timeout"));
-            EulerChain subject = buildAndPreprocess(executor, subjectTree, Config.getInt("com.bachelor.coordinator.thread.timeout"));
+            int threadTimeout = Config.getInt("com.bachelor.coordinator.thread.timeout");
+            EulerChain pattern = buildAndPreprocess(executor, patternTree, threadTimeout);
+            EulerChain subject = buildAndPreprocess(executor, subjectTree, threadTimeout);
 
             TreeMatch.performTreeMatch(executor, subject, pattern);
         }

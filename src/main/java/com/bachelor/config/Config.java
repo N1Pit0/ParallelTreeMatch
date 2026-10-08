@@ -1,5 +1,6 @@
 package com.bachelor.config;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -64,12 +65,11 @@ public final class Config {
                 if (required) throw new IllegalStateException(fileName + " not found on classpath");
                 return;
             }
-            Config.PROPS.load(new InputStreamReader(in, StandardCharsets.UTF_8));
+            Config.PROPS.load(new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)));
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load " + fileName, e);
         }
     }
-
 
     public static String getActiveProfile() { return ACTIVE_PROFILE; }
     public static boolean isDev()  { return "dev".equals(ACTIVE_PROFILE); }
@@ -77,7 +77,6 @@ public final class Config {
     public static boolean isProd() { return "prod".equals(ACTIVE_PROFILE); }
 
     public static String getMatchingAlgorithm() { return MATCHING_ALGORITHM; }
-
 
     private static String raw(String key) {
         String value = System.getProperty(key, PROPS.getProperty(key));
