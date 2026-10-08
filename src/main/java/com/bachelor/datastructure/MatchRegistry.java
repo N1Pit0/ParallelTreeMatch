@@ -24,7 +24,7 @@ public class MatchRegistry {
         this.matchIntervals.add(matchInterval);
     }
 
-    public void addAllToPermutations(Collection<MatchInterval> matchIntervals){
+    public void addAllToMatchIntervals(Collection<MatchInterval> matchIntervals){
         this.matchIntervals.addAll(matchIntervals);
     }
 
@@ -40,8 +40,18 @@ public class MatchRegistry {
         return this.matchIntervals.isEmpty();
     }
 
-    public void concat(MatchRegistry other){
-        this.matchIntervals.addAll(other.getMatchIntervals());
-//        this.variableReplacements.addAll(other.getVariableReplacements());
+    public static MatchRegistry concat(MatchRegistry first,MatchRegistry second){
+        MatchRegistry result = new MatchRegistry();
+        result.addAllToMatchIntervals(first.getMatchIntervals());
+        result.addAllToMatchIntervals(second.getMatchIntervals());
+        return result;
+    }
+
+    public static MatchRegistry concat(MatchRegistry first, String variableReplacement, MatchRegistry second){
+        MatchRegistry result = new MatchRegistry();
+        result.addAllToMatchIntervals(first.getMatchIntervals());
+        result.addAllToMatchIntervals(second.getMatchIntervals());
+
+        return result;
     }
 }

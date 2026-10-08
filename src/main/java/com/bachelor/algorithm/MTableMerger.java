@@ -1,10 +1,14 @@
 package com.bachelor.algorithm;
 
 import com.bachelor.datastructure.MatchRegistry;
-import com.bachelor.preprocess.*;
-import com.bachelor.utils.*;
+import com.bachelor.preprocess.EulerChain;
+import com.bachelor.preprocess.SubNode;
+import com.bachelor.utils.ExecutorBarrierUtils;
+import com.bachelor.utils.TreePrintUtils;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 class MTableMerger {
@@ -58,14 +62,14 @@ class MTableMerger {
                                 if (nextTableIdx >= mTablesContainer.getLength()) {
                                     return;
                                 }
-                                VariableMatch variableMatch = new TermVariableMatch.Builder()
-                                        .mTablesContainer(mTablesContainer)
-                                        .subject(subject)
-                                        .pattern(pattern)
-                                        .tableIdx(tableIdx)
-                                        .nextTableIndex(nextTableIdx)
-                                        .subjPos(subjPos)
-                                        .build();
+                                VariableMatch variableMatch = MatchingAlgorithmFactory.create(
+                                        mTablesContainer,
+                                        subject,
+                                        pattern,
+                                        tableIdx,
+                                        nextTableIdx,
+                                        subjPos);
+
                                 positionTasks.add(variableMatch);
                             }
                         }

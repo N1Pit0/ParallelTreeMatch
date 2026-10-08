@@ -1,7 +1,11 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.datastructure.*;
+import com.bachelor.datastructure.MatchInterval;
+import com.bachelor.datastructure.MatchRegistry;
+import com.bachelor.datastructure.VariableReplacement;
+import com.bachelor.preprocess.SequentialVariable;
 import com.bachelor.preprocess.SubNode;
+import com.bachelor.utils.TreeProcessingUtils;
 
 import static com.bachelor.preprocess.NodeType.FIRST;
 import static com.bachelor.preprocess.NodeType.LEAF;
@@ -25,38 +29,73 @@ class SequentialVariableMatch extends VariableMatch {
         }
     }
 
+    //TODO: This code is a mess. I am not sure what is going on here and I do not like this many hard-copying collections this many times
     @Override
     public boolean extendMatch() {
-        return false;
+        MatchRegistry posMatchList = collectAllMatches(mTablesContainer.readPermutationsFromTable(tableIdx, subjPos));
+
+        mTablesContainer.writePermutationNodeIntoTable(posMatchList, tableIdx, subjPos);
+        if (posMatchList.isEmpty()) {
+            return false;
+        }
+
+        if (variableToBeReplaced instanceof SequentialVariable) {
+            MatchRegistry currentNode = mTablesContainer.readPermutationsFromTable(tableIdx, subjPos);
+            posMatchList = currentNode;
+            while (!posMatchList.isEmpty()) {
+                posMatchList = collectAllMatches(posMatchList);
+                currentNode.concat(posMatchList);
+            }
+        }
+
+        return true;
     }
 
-    private MatchRegistry collectAllMatches(MatchRegistry positionMatchList) {
-        MatchRegistry permutations = new MatchRegistry();
+    private MatchRegistry collectAllMatches(MatchRegistry currentMatchRegistry) {
+        MatchRegistry result = new MatchRegistry();
 
-        for (MatchInterval currentNode : positionMatchList.getMatchIntervals()) {
-            int nextPos = currentNode.matchEnd + 1;
-            SubNode nodeAtNextPos = subjectChain[nextPos];
+        for (MatchInterval currentMatchInterval : currentMatchRegistry.getMatchIntervals()) {
+            int variableMatchStart = currentMatchInterval.matchEnd + 1;
+            if (variableMatchStart >= subjectChain.length) continue;
+            SubNode variableMatchStartNode = subjectChain[variableMatchStart];
 
-            if (subjectChain[nextPos].getType().equals(FIRST)
-                    || subjectChain[nextPos].getType().equals(LEAF)) {
-                int subtreeIdx = nodeAtNextPos.getSubtree() + 1;
+            if (subjectChain[variableMatchStart].getType().equals(FIRST)
+                    || subjectChain[variableMatchStart].getType().equals(LEAF)) {
+                int subtreeIdx = variableMatchStartNode.getSubtree() + 1;
 
                 if (subtreeIdx >= subject.getChainSize()) {
                     continue;
                 }
 
-                MatchRegistry nextPermutationNode = mTablesContainer
+                MatchRegistry nextTableMatchRegistry = mTablesContainer
                         .readPermutationsFromTable(nextTableIdx, subtreeIdx);
-                if (nextPermutationNode == null) {
+                if (nextTableMatchRegistry == null) {
                     continue;
                 }
 
-                for(MatchInterval nextNode : nextPermutationNode.getMatchIntervals()){
-                    //TODO: FINISH IT!!!
+                for (MatchInterval nextTableMatchInterval : nextTableMatchRegistry.getMatchIntervals()) {
+                    //Find and replace variable
+                    int variableMatchEnd = nextTableMatchRegistry.matchStart;
+                    String newReplacement = TreeProcessingUtils.getReplacementForVar(subject, variableMatchStart, variableMatchEnd);
+
+                    VariableReplacement variableReplacement = new VariableReplacement(variableToBeReplaced, newReplacement);
+                    result.addToVariableReplacements(variableReplacement);
+
+                    MatchInterval newMatchInterval = new MatchInterval.Builder()
+                            .matchStart(currentMatchRegistry.matchStart)
+                            .matchEnd(nextTableMatchInterval.matchEnd)
+                            .build();
+
+                    result.addPermutationToCurrentNode(newMatchInterval);
                 }
+                result.concat(nextTableMatchRegistry);
+                //I am not sure if clearing this entry does any good.
+                //Idea is that I am freeing up the memory.
+                mTablesContainer.clearTableEntry(nextTableIdx, subtreeIdx);
             }
         }
+        result.concat(currentMatchRegistry);
 
-        return permutations;
+        return result;
     }
 }

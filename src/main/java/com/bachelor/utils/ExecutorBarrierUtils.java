@@ -1,5 +1,7 @@
 package com.bachelor.utils;
 
+import com.bachelor.config.Config;
+
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -22,6 +24,6 @@ public class ExecutorBarrierUtils {
     }
 
     public static void invokeAll(ExecutorService executor, List<Runnable> tasks){
-        invokeAll(executor, tasks, 10000);
+        invokeAll(executor, tasks, Config.getInt("com.bachelor.coordinator.thread.timeout"));
     }
 }
