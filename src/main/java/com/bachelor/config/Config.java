@@ -65,7 +65,7 @@ public final class Config {
                 if (required) throw new IllegalStateException(fileName + " not found on classpath");
                 return;
             }
-            Config.PROPS.load(new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)));
+            Config.PROPS.load(new InputStreamReader(in, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load " + fileName, e);
         }

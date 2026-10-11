@@ -10,7 +10,7 @@ public class SampleDataLoader implements DataLoader {
     }
 
     @Override
-    public InputArray loadPatterTree() {
+    public InputArray loadPatternTree() {
         return null;
     }
 }

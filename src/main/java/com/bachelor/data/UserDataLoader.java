@@ -18,7 +18,6 @@ public class UserDataLoader implements DataLoader {
     private final static Scanner scanner = new Scanner(System.in);
 
     private static InputArray acceptInput(String prompt) {
-        try {
             InputArray result = null;
             while (result == null) {
                 try {
@@ -30,9 +29,6 @@ public class UserDataLoader implements DataLoader {
                 }
             }
             return result;
-        } finally {
-            scanner.close();
-        }
     }
 
     @Override
@@ -41,7 +37,7 @@ public class UserDataLoader implements DataLoader {
     }
 
     @Override
-    public InputArray loadPatterTree() {
+    public InputArray loadPatternTree() {
         return acceptInput("Please enter a pattern tree:");
     }
 }

@@ -4,5 +4,5 @@ import com.bachelor.preprocess.InputArray;
 
 public interface DataLoader {
     InputArray loadSubjectTree();
-    InputArray loadPatterTree();
+    InputArray loadPatternTree();
 }
