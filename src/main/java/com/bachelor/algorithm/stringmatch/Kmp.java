@@ -113,5 +113,4 @@ public class Kmp implements StringMatch<MatchRegistry> {
             throw new RuntimeException(e);
         }
     }
-
 }

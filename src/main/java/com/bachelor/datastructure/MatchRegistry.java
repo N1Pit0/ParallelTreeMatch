@@ -46,12 +46,4 @@ public class MatchRegistry {
         result.addAllToMatchIntervals(second.getMatchIntervals());
         return result;
     }
-
-    public static MatchRegistry concat(MatchRegistry first, String variableReplacement, MatchRegistry second){
-        MatchRegistry result = new MatchRegistry();
-        result.addAllToMatchIntervals(first.getMatchIntervals());
-        result.addAllToMatchIntervals(second.getMatchIntervals());
-
-        return result;
-    }
 }

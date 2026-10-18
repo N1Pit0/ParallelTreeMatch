@@ -1,0 +1,10 @@
+[
+  {
+    "subject": "f(f(a,b), f(f(a,a),a))",
+    "pattern": "f(f(a,A), B)"
+  },
+  {
+    "subject": "f(a,f(a,b,c),f(a,f(a,b,c),e),f)",
+    "pattern": "f(A,f(a,B,C),D)"
+  }
+]

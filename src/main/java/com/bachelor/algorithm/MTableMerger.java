@@ -29,7 +29,7 @@ class MTableMerger {
 
         validateFinalResults();
 
-        TreePrintUtils.printMTablesFinalState("match", mTablesContainer);
+        TreePrintUtils.printMTablesFinalState("matches found", mTablesContainer);
     }
 
     private void mergeTables() {

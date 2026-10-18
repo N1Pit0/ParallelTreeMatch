@@ -72,12 +72,8 @@ public class MTablesContainer {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("=== mTables (3D Array - Dimension: [Slices][Subject Positions][Match Info]) ===\n");
 
         int firstTable = 0;
-
-        sb.append("\nSlice M").append(firstTable).append(" (Pattern range [").append(splice.getSplices()[firstTable][0]).append(", ");
-        sb.append(splice.getSplices()[firstTable][1]).append("]):\n");
 
         Map<Integer, MatchRegistry> table = mTables.get(firstTable);
 
@@ -86,7 +82,6 @@ public class MTablesContainer {
         for (Integer i : table.keySet()) {
             if (!isTableEntryEmpty(firstTable, i)) {
                 if (!hasMatches) {
-                    sb.append("  Matches:\n");
                     hasMatches = true;
                 }
                 sb.append(readPermutationsFromTable(firstTable, i)).append("\n");

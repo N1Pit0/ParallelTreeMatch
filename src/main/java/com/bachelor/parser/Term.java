@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 /**
  * A parsed term such as f(a, B). Pure syntax: no algorithm-specific data.
- *
  *   variable : uppercase symbol, no arguments      (e.g. A)
  *   constant : lowercase symbol, no arguments      (e.g. a)
  *   function : lowercase symbol, >= 1 argument     (e.g. f(a, B))

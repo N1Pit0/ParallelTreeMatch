@@ -8,10 +8,6 @@ import java.util.stream.IntStream;
 
 public class TreeProcessingUtils {
 
-    public static int getMatchStartNodeIndex(EulerChain eulerChain, int startIndexInEulerChian){
-        return eulerChain.getChain()[startIndexInEulerChian].getNodeInfo();
-    }
-
     public static String getReplacementForVar(EulerChain eulerChain, int start, int end){
         SubNode[] chain = eulerChain.getChain();
         TreeNode[] T = eulerChain.getT();

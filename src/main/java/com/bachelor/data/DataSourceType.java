@@ -1,14 +1,18 @@
 package com.bachelor.data;
 
 import com.bachelor.InputParser;
+import com.bachelor.config.Config;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.function.Function;
 
 public enum DataSourceType {
 
     SAMPLE(SampleDataLoader::new),
-    USER(UserDataLoader::new);
+    USER(UserDataLoader::new),
+    FILE(parser -> new JsonFileDataLoader(parser,
+            Path.of(Config.get("com.bachelor.application.input.file"))));
 
     private final Function<InputParser, DataLoader> creator;
 

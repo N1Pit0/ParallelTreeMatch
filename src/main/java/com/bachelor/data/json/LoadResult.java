@@ -9,11 +9,15 @@ public record LoadResult(List<InputPair> pairs, List<InputError> errors) {
         errors = List.copyOf(errors);
     }
 
+    /** For loaders that never produce entry errors. */
+    public static LoadResult of(List<InputPair> pairs) {
+        return new LoadResult(pairs, List.of());
+    }
+
     public boolean hasErrors() {
         return !errors.isEmpty();
     }
 
-    /** Number of skipped entries (one entry can have several errors). */
     public long skippedEntryCount() {
         return errors.stream().mapToInt(InputError::entryNumber).distinct().count();
     }

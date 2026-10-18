@@ -45,8 +45,7 @@ public class MatchInterval {
 
     @Override
     public String toString() {
-        return "MatchInterval{" +
-                ", matchEnd=" + matchEnd +
+        return "matchEnd=" + matchEnd +
                 ", variableReplacements="+ variableReplacements +
                 '}';
     }
