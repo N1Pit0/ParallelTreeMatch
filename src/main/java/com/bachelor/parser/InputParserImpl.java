@@ -1,318 +1,192 @@
 package com.bachelor.parser;
 
 import com.bachelor.InputParser;
-import com.bachelor.parser.dto.*;
 import com.bachelor.exceptions.InvalidInputException;
-import com.bachelor.preprocess.*;
+import com.bachelor.preprocess.InputArray;
+import com.bachelor.preprocess.SubNode;
+import com.bachelor.preprocess.TreeNode;
+import com.bachelor.preprocess.Variable;
 
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.IntStream;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Queue;
 
+import static com.bachelor.utils.TreeProcessingUtils.createVariable;
 
+/**
+ * Parses a term such as "f(a, f(B, c))" into an {@link InputArray}.
+ *
+ * <pre>
+ * term := VARIABLE                              A-Z, never has arguments
+ *       | CONSTANT                              a-z without arguments
+ *       | FUNCTION "(" term ("," term)* ")"     a-z with at least one argument
+ * </pre>
+ *
+ * Each symbol is exactly one letter. Whitespace between symbols is ignored.
+ * The resulting nodes are in breadth-first order:
+ *   father    = index of the parent node (-1 for the root)
+ *   edgeLabel = argument position within the parent (0-based, 0 for the root)
+ * Variables are listed in the order they appear in the input.
+ */
 public class InputParserImpl implements InputParser {
 
     @Override
-    public InputArray parseToArray(String inputValue) throws InvalidInputException {
-        // Validate input first
-        validateInput(inputValue);
-
-        // Remove whitespaces
-        inputValue = inputValue.replaceAll("\\s+", "");
-
-        // Parse the tree structure
-        List<NodeDto> nodeList = new ArrayList<>();
-        List<Variable> variableList = new ArrayList<>();
-        parseExpression(inputValue, 0, nodeList, variableList,-1, 0);
-
-        // Convert to BFS order
-        TreeNode[] tree = convertToBfs(nodeList);
-        InputArray inputArray = new InputArray(tree, variableList);
-
-        return inputArray;
-    }
-
-    public static Variable createVariable(String variable) throws InvalidInputException {
-        if (variable.length() != 1) throw new InvalidInputException("Variable name length should be only 1");
-        return (variable.charAt(0) <= 'M') ? new TermVariable(variable) : new SequentialVariable(variable);
-    }
-
-    @Override
-    public void validateInput(String input) throws InvalidInputException {
-        if (input == null || input.trim().isEmpty()) {
+    public InputArray parseToArray(String input) throws InvalidInputException {
+        if (input == null || input.isBlank()) {
             throw new InvalidInputException("Input cannot be null or empty");
         }
 
-        // Remove all whitespaces for validation
-        String cleanInput = input.replaceAll("\\s+", "");
+        // Step 1: string -> tree (also validates the input)
+        TermReader reader = new TermReader(input);
+        ParsedNode root = reader.parseTerm();
+        reader.expectEnd();
 
-        // Check for invalid characters
-        if (!cleanInput.matches("[a-zA-Z(),]*")) {
-            throw new InvalidInputException("Input contains invalid characters. Only letters, parentheses, and commas are allowed.");
-        }
-
-        // Check for uppercase letters followed by parentheses (invalid)
-        Pattern upperCaseWithParens = Pattern.compile("[A-Z]\\s*\\(");
-        if (upperCaseWithParens.matcher(input).find()) {
-            throw new InvalidInputException("Variables ( uppercase letters) cannot have parameters. Found uppercase letter followed by parentheses.");
-        }
-
-        // Check for mismatched parentheses
-        validateParentheses(cleanInput);
-
-        // Check for empty parameter lists
-        Pattern emptyParams = Pattern.compile("\\(\\s*\\)");
-        if (emptyParams.matcher(input).find()) {
-            throw new InvalidInputException("Functions cannot have empty parameter lists.");
-        }
-
-        // Check for consecutive commas
-        Pattern consecutiveCommas = Pattern.compile(",\\s*,");
-        if (consecutiveCommas.matcher(input).find()) {
-            throw new InvalidInputException("Consecutive commas are not allowed.");
-        }
-
-        // Check for leading or trailing commas in parameter lists
-        Pattern invalidCommas = Pattern.compile("\\(\\s*,|,\\s*\\)");
-        if (invalidCommas.matcher(input).find()) {
-            throw new InvalidInputException("Parameter lists cannot start or end with commas.");
-        }
-
-        // Check for invalid function/constant patterns
-        validateExpressionStructure(cleanInput);
+        // Step 2: tree -> breadth-first array
+        return new InputArray(toBreadthFirstArray(root), reader.variables);
     }
+    /** Intermediate tree, only used inside this class. variable is null for functions and constants. */
+    private record ParsedNode(char symbol, Variable variable, List<ParsedNode> children) {}
 
-    @Override
-    public void validateParentheses(String input) throws InvalidInputException {
-        int count = 0;
-        for (char c : input.toCharArray()) {
-            if (c == '(') {
-                count++;
-            } else if (c == ')') {
-                count--;
-                if (count < 0) {
-                    throw new InvalidInputException("Mismatched parentheses: closing parenthesis without opening.");
-                }
+    /**
+     * Holds the state of a single parse run (input, current position, collected variables).
+     */
+    private static final class TermReader {
+
+        private static final int END = -1;
+
+        private final String input;
+        private final List<Variable> variables = new ArrayList<>();
+        private int pos = 0;
+
+        TermReader(String input) {
+            this.input = input;
+        }
+
+        /** term := VARIABLE | CONSTANT | FUNCTION "(" term ("," term)* ")" */
+        ParsedNode parseTerm() throws InvalidInputException {
+            int c = peek();
+
+            if (c == END) {
+                throw error("Unexpected end of input, expected a letter");
             }
-        }
-        if (count != 0) {
-            throw new InvalidInputException("Mismatched parentheses: " + count + " unclosed opening parentheses.");
-        }
-    }
 
-    @Override
-    public void validateExpressionStructure(String input) throws InvalidInputException {
-        // For nested expressions, we need to validate recursively
-        if (!isValidExpression(input)) {
-            throw new InvalidInputException("Invalid expression structure: " + input);
-        }
-    }
+            char symbol = (char) c;
 
-    @Override
-    public boolean isValidExpression(String expr) {
-        if (expr.isEmpty()) return false;
-
-        // Single character (variable or constant)
-        if (expr.length() == 1) {
-            return Character.isLetter(expr.charAt(0));
-        }
-
-        // Must start with a letter
-        if (!Character.isLetter(expr.charAt(0))) {
-            return false;
-        }
-
-        // Must be a function with parameters
-        if (expr.charAt(1) != '(') {
-            return false;
-        }
-
-        if (!expr.endsWith(")")) {
-            return false;
-        }
-
-        // Extract parameter list and validate
-        String paramList = expr.substring(2, expr.length() - 1);
-        return validateParameterListStructure(paramList);
-    }
-
-    public boolean validateParameterListStructure(String paramList) {
-        if (paramList.isEmpty()) return false;
-
-        List<String> params = splitParameters(paramList);
-        for (String param : params) {
-            if (!isValidExpression(param.trim())) {
-                return false;
+            if (isUpper(symbol)) {
+                pos++;
+                return parseVariable(symbol);
+            } else if (isLower(symbol)) {
+                pos++;
+                return (peek() == '(') ? parseFunction(symbol) : constant(symbol);
             }
+
+            throw error("Expected a letter but found '" + symbol + "'");
         }
-        return true;
-    }
 
-    @Override
-    public List<String> splitParameters(String paramList) {
-        List<String> params = new ArrayList<>();
-        int level = 0;
-        StringBuilder current = new StringBuilder();
+        /** VARIABLE: an uppercase letter that must not be followed by "(". */
+        private ParsedNode parseVariable(char symbol) throws InvalidInputException {
+            if (peek() == '(') {
+                throw error("Variable '" + symbol + "' cannot have arguments");
+            }
+            Variable variable = createVariable(String.valueOf(symbol));
+            variables.add(variable);
+            return new ParsedNode(symbol, variable, List.of());
+        }
 
-        for (char c : paramList.toCharArray()) {
-            if (c == '(') {
-                level++;
-                current.append(c);
-            } else if (c == ')') {
-                level--;
-                current.append(c);
-            } else if (c == ',' && level == 0) {
-                params.add(current.toString());
-                current = new StringBuilder();
-            } else {
-                current.append(c);
+        /** CONSTANT: a lowercase letter without arguments. */
+        private ParsedNode constant(char symbol) {
+            return new ParsedNode(symbol, null, List.of());
+        }
+
+        /** FUNCTION "(" term ("," term)* ")" — called when the next character is "(". */
+        private ParsedNode parseFunction(char symbol) throws InvalidInputException {
+            pos++; // consume '('
+
+            if (peek() == ')') {
+                throw error("Function '" + symbol + "' cannot have an empty argument list");
+            }
+
+            List<ParsedNode> arguments = new ArrayList<>();
+            arguments.add(parseTerm());
+
+            while (peek() == ',') {
+                pos++; // consume ','
+                arguments.add(parseTerm());
+            }
+
+            int c = peek();
+            if (c == END) {
+                throw error("Missing closing parenthesis for '" + symbol + "('");
+            }
+            if (c != ')') {
+                throw error("Expected ',' or ')' but found '" + (char) c + "'");
+            }
+            pos++; // consume ')'
+
+            return new ParsedNode(symbol, null, arguments);
+        }
+
+        /** Ensures nothing but whitespace follows the parsed term. */
+        void expectEnd() throws InvalidInputException {
+            int c = peek();
+            if (c != END) {
+                throw error("Unexpected '" + (char) c + "' after the end of the expression");
             }
         }
 
-        if (!current.isEmpty()) {
-            params.add(current.toString());
+        /** Skips whitespace and returns the next character without consuming it, or END. */
+        private int peek() {
+            while (pos < input.length() && Character.isWhitespace(input.charAt(pos))) {
+                pos++;
+            }
+            return pos < input.length() ? input.charAt(pos) : END;
         }
 
-        return params;
+        /** Builds an error message that points at the current position. */
+        private InvalidInputException error(String message) {
+            return new InvalidInputException(message + " at position " + (pos + 1) + ":\n"
+                    + "  " + input + "\n"
+                    + "  " + " ".repeat(pos) + "^");
+        }
+
+        private static boolean isUpper(char c) { return c >= 'A' && c <= 'Z'; }
+        private static boolean isLower(char c) { return c >= 'a' && c <= 'z'; }
     }
 
+    private static TreeNode[] toBreadthFirstArray(ParsedNode root) {
+        record Pending(ParsedNode node, int fatherIndex, int edgeLabel) {}
 
-    @Override
-    public ParseResult parseExpression(String input, int startIndex, List<NodeDto> nodeList,
-                                       List<Variable> variableList, int parentIndex, int edgeLabel) throws InvalidInputException {
-        if (startIndex >= input.length()) {
-            throw new InvalidInputException("Unexpected end of input");
-        }
-
-        char currentChar = input.charAt(startIndex);
-
-        // Check if it's a variable (uppercase)
-        if (Character.isUpperCase(currentChar)) {
-            String currentCharString = String.valueOf(currentChar);
-            Variable variable = createVariable(currentCharString);
-            NodeDto node = new NodeDto(currentCharString, variable, edgeLabel, parentIndex, 0);
-            nodeList.add(node);
-            variableList.add(variable);
-            return new ParseResult(node, startIndex + 1);
-        }
-
-        // Check if it's a function or constant (lowercase)
-        if (Character.isLowerCase(currentChar)) {
-            String functionName = String.valueOf(currentChar);
-            int nextIndex = startIndex + 1;
-
-            // Check if it has parameters
-            if (nextIndex < input.length() && input.charAt(nextIndex) == '(') {
-                // It's a function with parameters
-                nextIndex++; // Skip '('
-
-                // First, create and add the function node to get its correct index
-                NodeDto functionNode = new NodeDto(functionName, null, edgeLabel, parentIndex, 0);
-                int functionNodeIndex = nodeList.size();
-                nodeList.add(functionNode);
-
-                int parameterIndex = 0;
-                int childCount = 0;
-
-                // Parse parameters with correct parent index
-                while (nextIndex < input.length() && input.charAt(nextIndex) != ')') {
-                    if (input.charAt(nextIndex) == ',') {
-                        nextIndex++; // Skip comma
-                        continue;
-                    }
-
-                    ParseResult childResult = parseExpression(input, nextIndex, nodeList, variableList, functionNodeIndex, parameterIndex);
-                    nextIndex = childResult.nextIndex();
-                    parameterIndex++;
-                    childCount++;
-                }
-
-                if (nextIndex >= input.length() || input.charAt(nextIndex) != ')') {
-                    throw new InvalidInputException("Missing closing parenthesis");
-                }
-                nextIndex++; // Skip ')'
-
-                // Update the function node with correct outDegree
-                NodeDto updatedFunctionNode = new NodeDto(functionName, null, edgeLabel, parentIndex, childCount);
-                nodeList.set(functionNodeIndex, updatedFunctionNode);
-
-                return new ParseResult(updatedFunctionNode, nextIndex);
-            } else {
-                // It's a constant (no parameters)
-                NodeDto constantNode = new NodeDto(functionName, null, edgeLabel, parentIndex, 0);
-                nodeList.add(constantNode);
-                return new ParseResult(constantNode, nextIndex);
-            }
-        }
-
-        throw new InvalidInputException("Invalid character: " + currentChar);
-    }
-
-    @Override
-    public TreeNode[] convertToBfs(List<NodeDto> nodeList) {
-        if (nodeList.isEmpty()) {
-            return new TreeNode[0];
-        }
-
-        // Find the root
-        int rootIndex = -1;
-        for (int i = 0; i < nodeList.size(); i++) {
-            if (nodeList.get(i).father() == -1) {
-                rootIndex = i;
-                break;
-            }
-        }
-
-        if (rootIndex == -1) {
-            throw new IllegalArgumentException("No root node found");
-        }
-
-        // BFS traversal with immediate parent index correction
         List<TreeNode> result = new ArrayList<>();
-        Queue<Integer> queue = new LinkedList<>();
-        Map<Integer, Integer> indexMapping = new HashMap<>();
-
-        // Add root
-        queue.offer(rootIndex);
+        Queue<Pending> queue = new ArrayDeque<>();
+        queue.add(new Pending(root, -1, 0));
 
         while (!queue.isEmpty()) {
-            int currentOldIndex = queue.poll();
-            NodeDto currentNode = nodeList.get(currentOldIndex);
+            Pending current = queue.poll();
+            int currentIndex = result.size();
+            result.add(toTreeNode(current.node(), current.fatherIndex(), current.edgeLabel()));
 
-            // Determine new parent index
-            int newParentIndex = -1;
-            if (currentNode.father() != -1) {
-                newParentIndex = indexMapping.get(currentNode.father());
+            List<ParsedNode> children = current.node().children();
+            for (int i = 0; i < children.size(); i++) {
+                queue.add(new Pending(children.get(i), currentIndex, i));
             }
-
-            SubNode[] tour = IntStream.rangeClosed(0, currentNode.outdegree()).mapToObj(i -> new SubNode()).toArray(SubNode[]::new);
-
-            // Create new node with correct parent index
-            TreeNode newNode = new TreeNode.Builder(currentNode.name())
-                    .variable(currentNode.variable())
-                    .father(newParentIndex)
-                    .edgeLabel(currentNode.edgeLabel())
-                    .outDegree(currentNode.outdegree())
-                    .tour(tour)
-                    .build();
-
-            // Record index mapping and add to result
-            indexMapping.put(currentOldIndex, result.size());
-            result.add(newNode);
-
-            // Find and sort children
-            List<Integer> children = new ArrayList<>();
-            for (int i = 0; i < nodeList.size(); i++) {
-                if (nodeList.get(i).father() == currentOldIndex) {
-                    children.add(i);
-                }
-            }
-
-            queue.addAll(children);
         }
-
         return result.toArray(new TreeNode[0]);
     }
 
+    private static TreeNode toTreeNode(ParsedNode node, int fatherIndex, int edgeLabel) {
+        int outDegree = node.children().size();
 
+        SubNode[] tour = new SubNode[outDegree + 1];
+        Arrays.setAll(tour, _ -> new SubNode());
+
+        return new TreeNode.Builder(String.valueOf(node.symbol()))
+                .variable(node.variable())
+                .father(fatherIndex)
+                .edgeLabel(edgeLabel)
+                .outDegree(outDegree)
+                .tour(tour)
+                .build();
+    }
 }

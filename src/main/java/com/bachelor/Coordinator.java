@@ -13,9 +13,6 @@ public class Coordinator {
 
     public static void main(@SuppressWarnings("unused") String[] args) {
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
-            System.out.println(Config.getActiveProfile());
-            System.out.println(Config.getMatchingAlgorithm());
-
             DataLoader dataLoader = DataLoaderFactory.create();
 
             InputArray subjectTree = dataLoader.loadSubjectTree();
