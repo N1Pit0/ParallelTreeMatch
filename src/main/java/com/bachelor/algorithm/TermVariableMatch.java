@@ -1,10 +1,13 @@
 package com.bachelor.algorithm;
 
-import com.bachelor.datastructure.*;
-import com.bachelor.preprocess.*;
+import com.bachelor.datastructure.MatchInterval;
+import com.bachelor.datastructure.MatchRegistry;
+import com.bachelor.datastructure.VariableReplacement;
+import com.bachelor.preprocess.SubNode;
 import com.bachelor.utils.TreeProcessingUtils;
 
-import static com.bachelor.preprocess.NodeType.*;
+import static com.bachelor.preprocess.NodeType.FIRST;
+import static com.bachelor.preprocess.NodeType.LEAF;
 
 class TermVariableMatch extends VariableMatch {
 
@@ -27,55 +30,47 @@ class TermVariableMatch extends VariableMatch {
 
     //This matching works for term variable
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    @Override
     public boolean extendMatch() {
+        MatchRegistry currentRegistry = mTablesContainer.readPermutationsFromTable(tableIdx, subjPos);
+        if (currentRegistry == null || currentRegistry.getMatchIntervals().isEmpty()) {
+            return false;
+        }
 
-        PermutationNode currentPermutations = mTablesContainer
-                .readPermutationsFromTable(tableIdx,subjPos);
-
-        // TODO: Need to look into it. Why are we taking first?
-        // Answer: TermVariable match could only have a single permutation per MTable entry
-        Permutation currentPermutation = currentPermutations.getPermutations().getFirst();
-        int matchEnd = currentPermutation.matchEnd;
-
-        int nextPosInSubject = matchEnd + 1;
+        MatchInterval currentMatchInterval = currentRegistry.getMatchIntervals().getFirst();
+        int nextPosInSubject = currentMatchInterval.matchEnd + 1;
 
         if (nextPosInSubject >= subject.getChainSize()) {
             return false;
         }
 
         SubNode nodeAtNextPos = subjectChain[nextPosInSubject];
-
         if (nodeAtNextPos.getType() != FIRST && nodeAtNextPos.getType() != LEAF) {
             return false;
         }
 
         int subtreeIdx = nodeAtNextPos.getSubtree() + 1;
-
         if (subtreeIdx >= subject.getChainSize()) {
             return false;
         }
 
-        PermutationNode nextTablePermutationNode =  mTablesContainer
-                .readPermutationsFromTable(nextTableIdx, subtreeIdx);
-        if (nextTablePermutationNode == null) {
+        MatchRegistry nextRegistry = mTablesContainer.readPermutationsFromTable(nextTableIdx, subtreeIdx);
+        if (nextRegistry == null || nextRegistry.getMatchIntervals().isEmpty()) {
             return false;
         }
 
-        Permutation nextTablePermutation = nextTablePermutationNode.getPermutations().getFirst();
+        MatchInterval nextMatchInterval = nextRegistry.getMatchIntervals().getFirst();
 
-        //Find and replace variable
-        int variableMatchStart = currentPermutation.matchEnd + 1;
-        int variableMatchEnd = nextTablePermutation.matchStart;
+        // Find and replace variable
+        int variableMatchStart = currentMatchInterval.matchEnd + 1;
+        int variableMatchEnd = nextRegistry.matchStart;
         String newReplacement = TreeProcessingUtils.getReplacementForVar(subject, variableMatchStart, variableMatchEnd);
 
-        Variable variableOrder = pattern.getInputArray().getVariableWithIndex(nextTableIdx-1);
-        VariableReplacement variableReplacement = new VariableReplacement(variableOrder, newReplacement);
-        currentPermutations.addToVariableReplacements(variableReplacement);
+        currentMatchInterval.addToVariableReplacements(new VariableReplacement(variableToBeReplaced, newReplacement));
+        currentMatchInterval.addAllToVariableReplacements(nextMatchInterval.getVariableReplacements());
+        currentMatchInterval.matchEnd = nextMatchInterval.matchEnd;
 
-        currentPermutation.matchEnd = nextTablePermutation.matchEnd;
-
-        //I am not sure if clearing this entry does any good.
-        //Idea is that I am freeing up the memory.
+        // Frees memory. Only safe if no other task reads this entry concurrently.
         mTablesContainer.clearTableEntry(nextTableIdx, subtreeIdx);
 
         return true;

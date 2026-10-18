@@ -2,6 +2,7 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.EulerChain;
 import com.bachelor.preprocess.SubNode;
+import com.bachelor.preprocess.Variable;
 
 public abstract class VariableMatch implements Runnable {
     protected final MTablesContainer mTablesContainer;
@@ -11,6 +12,7 @@ public abstract class VariableMatch implements Runnable {
     protected final SubNode[] subjectChain;
     protected final EulerChain subject;
     protected final EulerChain pattern;
+    protected final Variable variableToBeReplaced;
 
     VariableMatch(Builder<?> builder) {
         this.mTablesContainer = builder.mTablesContainer;
@@ -20,6 +22,7 @@ public abstract class VariableMatch implements Runnable {
         this.subject = builder.subject;
         this.subjectChain = subject.getChain();
         this.pattern = builder.pattern;
+        this.variableToBeReplaced = pattern.getInputArray().getVariableWithIndex(nextTableIdx-1);
     }
 
     abstract static class Builder<T extends Builder<T>>{
