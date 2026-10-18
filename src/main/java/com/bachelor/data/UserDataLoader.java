@@ -4,14 +4,9 @@ import com.bachelor.InputParser;
 import com.bachelor.exceptions.InvalidInputException;
 import com.bachelor.parser.InputParserImpl;
 import com.bachelor.preprocess.InputArray;
+import com.bachelor.preprocess.InputArrayFactory;
 
 import java.util.Scanner;
-
-// Leave this here for easy copy-paste
-// String subjectString = "f(f(a,b), f(f(a,a),a))";
-// String patternString = "f(f(a,A), B)";
-//    String subjectString = "f(a,f(a,b,c),f(a,f(a,b,c),e),f)";
-//    String patternString = "f(A,f(a,B,C),D)";
 
 public class UserDataLoader implements DataLoader {
     private final static InputParser parser = new InputParserImpl();
@@ -22,7 +17,7 @@ public class UserDataLoader implements DataLoader {
         do {
             try {
                 System.out.println(prompt);
-                result = parser.parseToArray(scanner.nextLine());
+                result = InputArrayFactory.create(parser.parse(scanner.nextLine()));
             } catch (InvalidInputException e) {
                 System.out.println("Invalid input: " + e.getLocalizedMessage());
                 System.out.println("Please try again.");

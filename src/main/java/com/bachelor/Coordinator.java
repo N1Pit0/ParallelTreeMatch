@@ -3,6 +3,7 @@ package com.bachelor;
 import com.bachelor.algorithm.TreeMatch;
 import com.bachelor.config.Config;
 import com.bachelor.data.*;
+import com.bachelor.exceptions.InvalidInputException;
 import com.bachelor.preprocess.*;
 
 import java.util.concurrent.*;
@@ -11,7 +12,7 @@ import static com.bachelor.preprocess.GenTour.buildAndPreprocess;
 
 public class Coordinator {
 
-    public static void main(@SuppressWarnings("unused") String[] args) {
+    public static void main(@SuppressWarnings("unused") String[] args) throws InvalidInputException {
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
             DataLoader dataLoader = DataLoaderFactory.create();
 

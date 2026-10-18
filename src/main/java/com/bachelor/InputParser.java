@@ -1,8 +1,8 @@
 package com.bachelor;
 
 import com.bachelor.exceptions.InvalidInputException;
-import com.bachelor.preprocess.*;
+import com.bachelor.parser.Term;
 
 public interface InputParser {
-    InputArray parseToArray(String input) throws InvalidInputException;
+    Term parse(String input) throws InvalidInputException;
 }
