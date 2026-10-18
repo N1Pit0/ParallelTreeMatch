@@ -5,14 +5,14 @@ import com.bachelor.preprocess.EulerChain;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-public enum AlgorithmType {
+public enum MatchingAlgorithmType {
 
     TERM(TermVariableMatch.Builder::new),
     SEQUENTIAL(SequentialVariableMatch.Builder::new);
 
     private final Supplier<VariableMatch.Builder<?>> builderSupplier;
 
-    AlgorithmType(Supplier<VariableMatch.Builder<?>> builderSupplier) {
+    MatchingAlgorithmType(Supplier<VariableMatch.Builder<?>> builderSupplier) {
         this.builderSupplier = builderSupplier;
     }
 
@@ -32,7 +32,7 @@ public enum AlgorithmType {
                 .build();
     }
 
-    public static AlgorithmType from(String value) {
+    public static MatchingAlgorithmType from(String value) {
         try {
             return valueOf(value.trim().toUpperCase());
         } catch (IllegalArgumentException e) {

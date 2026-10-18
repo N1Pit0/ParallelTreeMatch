@@ -2,12 +2,16 @@ package com.bachelor.data;
 
 import com.bachelor.InputParser;
 import com.bachelor.exceptions.InvalidInputException;
-import com.bachelor.parser.InputParserImpl;
 import com.bachelor.preprocess.*;
 import jdk.jshell.spi.ExecutionControl;
 
 public class SampleDataLoader implements DataLoader {
-    private final static InputParser parser = new InputParserImpl();
+    private final InputParser parser;
+
+    SampleDataLoader(InputParser parser) {
+        this.parser = parser;
+    }
+
     @Override
     public InputArray loadSubjectTree() throws InvalidInputException {
         return InputArrayFactory.create(parser.parse("f(f(a,b), f(f(a,a),a))"));

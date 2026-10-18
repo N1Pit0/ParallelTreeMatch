@@ -4,6 +4,7 @@ import com.bachelor.algorithm.TreeMatch;
 import com.bachelor.config.Config;
 import com.bachelor.data.*;
 import com.bachelor.exceptions.InvalidInputException;
+import com.bachelor.parser.InputParserImpl;
 import com.bachelor.preprocess.*;
 
 import java.util.concurrent.*;
@@ -14,7 +15,8 @@ public class Coordinator {
 
     public static void main(@SuppressWarnings("unused") String[] args) throws InvalidInputException {
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
-            DataLoader dataLoader = DataLoaderFactory.create();
+            InputParser parser = new InputParserImpl();
+            DataLoader dataLoader = DataLoaderFactory.create(parser);
 
             InputArray subjectTree = dataLoader.loadSubjectTree();
             InputArray patternTree = dataLoader.loadPatternTree();

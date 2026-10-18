@@ -2,21 +2,29 @@ package com.bachelor.data;
 
 import com.bachelor.InputParser;
 import com.bachelor.exceptions.InvalidInputException;
-import com.bachelor.parser.InputParserImpl;
 import com.bachelor.preprocess.InputArray;
 import com.bachelor.preprocess.InputArrayFactory;
 
 import java.util.Scanner;
 
 public class UserDataLoader implements DataLoader {
-    private final static InputParser parser = new InputParserImpl();
+    private final InputParser parser;
     private final static Scanner scanner = new Scanner(System.in);
+
+    UserDataLoader(InputParser parser) {
+        this.parser = parser;
+    }
 
     public InputArray acceptInput(String prompt) {
         InputArray result = null;
         do {
+            System.out.println(prompt);
+
+            if (!scanner.hasNextLine()) {
+                throw new IllegalStateException("No more input available (input stream was closed)");
+            }
+
             try {
-                System.out.println(prompt);
                 result = InputArrayFactory.create(parser.parse(scanner.nextLine()));
             } catch (InvalidInputException e) {
                 System.out.println("Invalid input: " + e.getLocalizedMessage());

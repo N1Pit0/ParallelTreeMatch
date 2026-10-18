@@ -1,21 +1,23 @@
 package com.bachelor.data;
 
+import com.bachelor.InputParser;
+
 import java.util.Arrays;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public enum DataSourceType {
 
     SAMPLE(SampleDataLoader::new),
     USER(UserDataLoader::new);
 
-    private final Supplier<DataLoader> creator;
+    private final Function<InputParser, DataLoader> creator;
 
-    DataSourceType(Supplier<DataLoader> creator) {
+    DataSourceType(Function<InputParser, DataLoader> creator) {
         this.creator = creator;
     }
 
-    public DataLoader createLoader() {
-        return creator.get();
+    public DataLoader createLoader(InputParser parser) {
+        return creator.apply(parser);
     }
 
     public static DataSourceType from(String value) {
