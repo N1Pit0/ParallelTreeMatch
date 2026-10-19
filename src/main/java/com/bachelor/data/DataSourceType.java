@@ -12,7 +12,7 @@ public enum DataSourceType {
     SAMPLE(SampleDataLoader::new),
     USER(UserDataLoader::new),
     FILE(parser -> new JsonFileDataLoader(parser,
-            Path.of(Config.get("com.bachelor.application.input.file"))));
+            Path.of(Config.getJsonFilePath())));
 
     private final Function<InputParser, DataLoader> creator;
 

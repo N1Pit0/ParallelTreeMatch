@@ -18,10 +18,12 @@ public final class Config {
     private static final String MATCHING_ALGORITHM_KEY = "com.bachelor.application.matchingalgorithm.type";
     private static final String ENVIRONMENT_VARIABLE_MATCHING_ALGORITHM_KEY = "APP_MATCHING_ALGORITHM";
     private static final String ALLOWED_MATCHING_ALGORITHMS = "com.bachelor.application.matchingalgorithm.types";
+    private static final String JSON_FILE_PATH_KEY = "com.bachelor.application.input.file";
 
     private static final Properties PROPS = new Properties();
     private static final String ACTIVE_PROFILE;
     private static final String MATCHING_ALGORITHM;
+    private static final String JSON_FILE_PATH;
 
     static {
         loadInto(BASE_FILE, true);
@@ -55,6 +57,8 @@ public final class Config {
         }
 
         MATCHING_ALGORITHM = algorithm;
+
+        JSON_FILE_PATH = PROPS.getProperty(JSON_FILE_PATH_KEY);
     }
 
     private Config() {}
@@ -77,6 +81,10 @@ public final class Config {
     public static boolean isProd() { return "prod".equals(ACTIVE_PROFILE); }
 
     public static String getMatchingAlgorithm() { return MATCHING_ALGORITHM; }
+
+    public static String getJsonFilePath() {
+        return JSON_FILE_PATH;
+    }
 
     private static String raw(String key) {
         String value = System.getProperty(key, PROPS.getProperty(key));
