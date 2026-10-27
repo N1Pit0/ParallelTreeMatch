@@ -1,13 +1,11 @@
 package com.bachelor.preprocess;
 
 import java.util.Arrays;
-import java.util.concurrent.CountDownLatch;
 
 public class TreeNode {
     //  an array containing n + 1 elements, where n is the outdegree of the
     //  current node in the tree. Needs initialization
     public final SubNode[] tour;
-    private final CountDownLatch[] latches;
     //contains either a function symbol or a variable associated with the
     //node
     private final String label;
@@ -16,7 +14,7 @@ public class TreeNode {
     private final int father;
     //  contains an integer specifying the node’s ordering relative to
 //  its sibling, i.e., which argument of its parent the current node is.
-    private final int edge_label;
+    private final int edgeLabel;
     //  contains the outdegree (the number of outgoing edges) of the
 //  node.
     private final int outDegree;
@@ -27,15 +25,11 @@ public class TreeNode {
         this.label = builder.label;
         this.tour = builder.tour;
         this.father = builder.father;
-        this.edge_label = builder.edgeLabel;
-        this.latches = new CountDownLatch[Step.values().length];
-        for (Step step : Step.values()) {
-            this.latches[step.ordinal()] = new CountDownLatch(this.outDegree);
-        }
+        this.edgeLabel = builder.edgeLabel;
     }
 
     public int getEdgeLabel() {
-        return this.edge_label;
+        return this.edgeLabel;
     }
 
     public int arity() {
@@ -50,10 +44,6 @@ public class TreeNode {
         return this.label;
     }
 
-    public CountDownLatch[] getLatches() {
-        return this.latches;
-    }
-
     public Variable getVariable() {
         return variable;
     }
@@ -64,7 +54,7 @@ public class TreeNode {
                 "label='" + label + '\'' +
                 ", variable=" + variable +
                 ", father=" + father +
-                ", edge_label=" + edge_label +
+                ", edge_label=" + edgeLabel +
                 ", outDegree=" + outDegree +
                 ", tour=" + Arrays.toString(tour) +
                 '}';

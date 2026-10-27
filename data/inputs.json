@@ -1,0 +1,57 @@
+[
+  { "subject": "a",                                        "pattern": "a",                       "expectedOccurrences": 1, "description": "edge case: single-node trees" },
+  { "subject": "f(a,b)",                                   "pattern": "f(a,b)",                  "expectedOccurrences": 1, "description": "exact match at root" },
+  { "subject": "f(a,b)",                                   "pattern": "f(b,a)",                  "expectedOccurrences": 0, "description": "no match: argument order matters" },
+  { "subject": "f(a,b)",                                   "pattern": "g(a,b)",                  "expectedOccurrences": 0, "description": "no match: different function symbol" },
+  { "subject": "f(a,b)",                                   "pattern": "f(a,b,c)",                "expectedOccurrences": 0, "description": "no match: pattern has more arguments" },
+  { "subject": "f(a)",                                     "pattern": "f(a,b)",                  "expectedOccurrences": 0, "description": "no match: pattern larger than subject" },
+
+  { "subject": "f(a,b)",                                   "pattern": "f(A)",                    "expectedOccurrences": 3, "description": "edge case: pattern is a single variable, matches every node" },
+  { "subject": "f(a,b)",                                   "pattern": "f(A,b)",                  "expectedOccurrences": 1, "description": "variable as first argument, A=a" },
+  { "subject": "f(a,b)",                                   "pattern": "f(a,B)",                  "expectedOccurrences": 1, "description": "variable as last argument, B=b" },
+  { "subject": "f(g(a,b),c)",                              "pattern": "f(A,c)",                  "expectedOccurrences": 1, "description": "variable matches a whole subtree, A=g(a,b)" },
+  { "subject": "f(a,b,c)",                                 "pattern": "f(a,B,c)",                "expectedOccurrences": 1, "description": "variable in the middle" },
+  { "subject": "f(a,b)",                                   "pattern": "f(A,c)",                  "expectedOccurrences": 0, "description": "no match: constant after variable differs" },
+
+  { "subject": "f(a,b)",                                   "pattern": "f(A,B)",                  "expectedOccurrences": 1, "description": "two variables" },
+  { "subject": "f(g(a),h(b,c))",                           "pattern": "f(A,B)",                  "expectedOccurrences": 1, "description": "two variables matching subtrees, A=g(a), B=h(b,c)" },
+  { "subject": "f(a,b,c,d)",                               "pattern": "f(A,b,C,d)",              "expectedOccurrences": 1, "description": "alternating variables and constants" },
+  { "subject": "f(a,b,c)",                                 "pattern": "f(A,B,C)",                "expectedOccurrences": 1, "description": "only variables as arguments" },
+  { "subject": "f(a,b,c,d)",                               "pattern": "f(A,B,c,D)",              "expectedOccurrences": 1, "description": "two consecutive variables at the start" },
+  { "subject": "f(a,b,c,d)",                               "pattern": "f(A,B,C,d)",              "expectedOccurrences": 1, "description": "three consecutive variables, constant at the end" },
+  { "subject": "f(a,b,c,d)",                               "pattern": "f(a,B,C,D)",              "expectedOccurrences": 1, "description": "constant at the start, three consecutive variables" },
+
+  { "subject": "f(f(a,b),f(a,b))",                         "pattern": "f(a,b)",                  "expectedOccurrences": 2, "description": "two occurrences in sibling subtrees" },
+  { "subject": "g(f(a,b),h(f(a,b)),f(a,b))",               "pattern": "f(a,B)",                  "expectedOccurrences": 3, "description": "three occurrences at different depths" },
+  { "subject": "f(f(f(a)))",                               "pattern": "f(f(A))",                 "expectedOccurrences": 2, "description": "overlapping occurrences: A=f(a) at root, A=a one level down" },
+  { "subject": "f(f(a,b), f(f(a,a),a))",                   "pattern": "f(f(a,A), B)",            "expectedOccurrences": 2, "description": "original example: at root and at second child of root" },
+  { "subject": "f(a,f(a,b,c),f(a,f(a,b,c),e),f)",          "pattern": "f(A,f(a,B,C),D)",         "expectedOccurrences": 1, "description": "original example: only at third child of root" },
+
+  { "subject": "f(g(a),g(b))",                             "pattern": "f(g(A),h(B))",            "expectedOccurrences": 0, "description": "no match: nested symbol differs" },
+  { "subject": "f(a,b)",                                   "pattern": "f(f(A),b)",               "expectedOccurrences": 0, "description": "no match: pattern expects a subtree where subject has a leaf" },
+
+  { "subject": "f(f,f(f),f(f,f))",                         "pattern": "f(A)",                    "expectedOccurrences": 1, "description": "same symbol with arities 0,1,2,3: only f(f) has arity 1" },
+  { "subject": "f(f,f(f),f(f,f))",                         "pattern": "f(A,B)",                  "expectedOccurrences": 1, "description": "same symbol with different arities: only f(f,f) has arity 2" },
+  { "subject": "f(f,f(f),f(f,f))",                         "pattern": "f",                       "expectedOccurrences": 4, "description": "constant f matches only the four leaves named f" },
+
+  { "subject": "f(g(h(i(j(k(a))))))",                      "pattern": "h(i(A))",                 "expectedOccurrences": 1, "description": "deep chain: A=j(k(a))" },
+  { "subject": "f(g(h(i(j(k(a))))))",                      "pattern": "j(k(a))",                 "expectedOccurrences": 1, "description": "deep chain: match near the bottom" },
+  { "subject": "f(g(h(i(j(k(a))))))",                      "pattern": "k(b)",                    "expectedOccurrences": 0, "description": "deep chain: no match at the leaf" },
+  { "subject": "f(f(f(f(f(a)))))",                         "pattern": "f(A)",                    "expectedOccurrences": 5, "description": "chain of five f nodes: matches at each" },
+  { "subject": "f(f(f(f(f(a)))))",                         "pattern": "f(f(f(f(f(f(A))))))",     "expectedOccurrences": 0, "description": "no match: pattern chain longer than subject chain" },
+
+  { "subject": "f(a,b,c,d,e,g,h,i,j,k)",                   "pattern": "f(a,B,c,D,e,G,h,I,j,K)",  "expectedOccurrences": 1, "description": "wide node: 10 arguments, alternating" },
+  { "subject": "f(a,b,c,d,e,g,h,i,j,k)",                   "pattern": "f(A,B,C,D,E,G,H,I,J,K)",  "expectedOccurrences": 1, "description": "wide node: 10 variables" },
+  { "subject": "f(a,b,c,d,e,g,h,i,j,k)",                   "pattern": "f(a,b,c,d,e,g,h,i,j,b)",  "expectedOccurrences": 0, "description": "wide node: only the last argument differs" },
+
+  { "subject": "h(f(g(a,b),c),f(g(a,b),d),f(g(b,a),c))",   "pattern": "f(g(a,B),C)",             "expectedOccurrences": 2, "description": "first two children match, third has g(b,a)" },
+  { "subject": "h(f(g(a,b),c),f(g(a,b),d),f(g(b,a),c))",   "pattern": "f(g(A,B),c)",             "expectedOccurrences": 2, "description": "first and third children match, second ends in d" },
+  { "subject": "g(f(a,b),f(f(a,b),b),f(a,f(a,b)))",        "pattern": "f(A,b)",                  "expectedOccurrences": 4, "description": "matches at top level and nested inside other matches" },
+  { "subject": "g(f(a,b),f(f(a,b),b),f(a,f(a,b)))",        "pattern": "f(f(A,B),C)",             "expectedOccurrences": 1, "description": "only f(f(a,b),b) has a function as first argument" },
+
+  { "subject": "f(f(f(a,b),f(c,d)),f(f(a,b),f(c,d)))",     "pattern": "f(f(a,b),A)",             "expectedOccurrences": 2, "description": "balanced tree: both nodes on level 1" },
+  { "subject": "f(f(f(a,b),f(c,d)),f(f(a,b),f(c,d)))",     "pattern": "f(A,f(c,d))",             "expectedOccurrences": 2, "description": "balanced tree: variable first, fixed subtree second" },
+  { "subject": "f(f(f(a,b),f(c,d)),f(f(a,b),f(c,d)))",     "pattern": "f(A,B)",                  "expectedOccurrences": 7, "description": "balanced tree: every binary node (1 + 2 + 4)" },
+  { "subject": "f(f(f(a,b),f(c,d)),f(f(a,b),f(c,d)))",     "pattern": "f(f(f(a,b),f(c,d)),f(f(a,b),f(c,d)))", "expectedOccurrences": 1, "description": "balanced tree: pattern identical to subject" },
+  { "subject": "f( a , g( b , c ) )",                      "pattern": " f ( A , g ( b , C ) ) ", "expectedOccurrences": 1, "description": "whitespace everywhere should be ignored" }
+]

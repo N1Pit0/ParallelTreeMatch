@@ -17,17 +17,13 @@ public class InitializeType implements Runnable {
     @Override
     public void run() {
 
-        try {
-            T[index].getLatches()[Step.INITIALIZE_TYPE.ordinal()].await();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
         int iFather = T[index].getFather();
 
         if (iFather >= 0) {
             int edgeLabel = T[index].getEdgeLabel();
-            T[iFather].tour[edgeLabel].setType(DUMMY);
+            if (edgeLabel > 0) {
+                T[iFather].tour[edgeLabel].setType(DUMMY);
+            }
         }
 
         int currentOutDegree = T[index].arity();
@@ -37,10 +33,5 @@ public class InitializeType implements Runnable {
             T[index].tour[0].setType(FIRST);
             T[index].tour[currentOutDegree].setType(LAST);
         }
-
-        if (iFather >= 0) {
-            T[iFather].getLatches()[Step.INITIALIZE_TYPE.ordinal()].countDown();
-        }
-
     }
 }

@@ -5,11 +5,13 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class MatchInterval {
     public int matchEnd;
+    public int matchStart;
     private final ConcurrentLinkedDeque<VariableReplacement> variableReplacements;
 
      private MatchInterval(Builder builder){
-        this.matchEnd = builder.matchEnd;
-        this.variableReplacements = new ConcurrentLinkedDeque<>();
+         this.matchStart = builder.matchStart;
+         this.matchEnd = builder.matchEnd;
+         this.variableReplacements = new ConcurrentLinkedDeque<>();
     }
 
     public void addToVariableReplacements(VariableReplacement variableReplacement){
@@ -45,9 +47,6 @@ public class MatchInterval {
 
     @Override
     public String toString() {
-        return "MatchInterval{" +
-                ", matchEnd=" + matchEnd +
-                ", variableReplacements="+ variableReplacements +
-                '}';
+        return "matchStart= " + matchStart + " matchEnd= " + matchEnd + ", variableReplacements="+ variableReplacements;
     }
 }

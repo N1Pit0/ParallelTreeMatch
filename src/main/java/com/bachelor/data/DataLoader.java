@@ -1,11 +1,8 @@
 package com.bachelor.data;
 
-import com.bachelor.exceptions.InvalidInputException;
-import com.bachelor.preprocess.InputArray;
-import jdk.jshell.spi.ExecutionControl;
+import com.bachelor.data.json.LoadResult;
+import com.bachelor.exceptions.DataLoadException;
 
 public interface DataLoader {
-    InputArray loadSubjectTree() throws InvalidInputException;
-    InputArray loadPatternTree() throws InvalidInputException;
-    InputArray acceptInput(String prompt) throws ExecutionControl.NotImplementedException;
+    LoadResult load() throws DataLoadException;
 }

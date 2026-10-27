@@ -2,7 +2,6 @@ package com.bachelor.preprocess;
 
 import com.bachelor.exceptions.InvalidInputException;
 import com.bachelor.parser.Term;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;

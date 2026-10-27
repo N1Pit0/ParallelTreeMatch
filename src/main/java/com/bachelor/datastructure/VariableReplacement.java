@@ -13,9 +13,6 @@ public class VariableReplacement {
 
     @Override
     public String toString() {
-        return "VariableReplacement{" +
-                "variable=" + variable.getName() +
-                ", variableReplacement=" + variableReplacement +
-                '}';
+        return variable.getName() + " -> " + variableReplacement;
     }
 }

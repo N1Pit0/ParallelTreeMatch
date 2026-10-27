@@ -3,22 +3,22 @@ package com.bachelor.utils;
 import com.bachelor.exceptions.InvalidInputException;
 import com.bachelor.preprocess.*;
 
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 public class TreeProcessingUtils {
 
-    public static int getMatchStartNodeIndex(EulerChain eulerChain, int startIndexInEulerChian){
-        return eulerChain.getChain()[startIndexInEulerChian].getNodeInfo();
-    }
-
     public static String getReplacementForVar(EulerChain eulerChain, int start, int end){
-        SubNode[] chain = eulerChain.getChain();
+        SubNode[] E = eulerChain.getChain();
         TreeNode[] T = eulerChain.getT();
+        StringBuilder sb = new StringBuilder();
 
-        return IntStream.range(start, end)
-                .mapToObj(i -> T[chain[i].getNodeInfo()].getLabel())
-                .collect(Collectors.joining());
+        for (int i = start; i < end; i++) {
+            switch (E[i].getType()) {
+                case FIRST -> sb.append(T[E[i].getNodeInfo()].getLabel()).append('(');
+                case LEAF  -> sb.append(T[E[i].getNodeInfo()].getLabel());
+                case DUMMY -> sb.append(',');
+                case LAST  -> sb.append(')');
+            }
+        }
+        return sb.toString();
     }
 
     /*
@@ -27,6 +27,7 @@ public class TreeProcessingUtils {
      */
     public static Variable createVariable(String variable) throws InvalidInputException {
         if (variable.length() != 1) throw new InvalidInputException("Variable name length should only be 1");
-        return (variable.charAt(0) <= 'M') ? new TermVariable(variable) : new SequentialVariable(variable);
+//        return (variable.charAt(0) <= 'M') ? new TermVariable(variable) : new SequentialVariable(variable);
+        return new TermVariable(variable);
     }
 }

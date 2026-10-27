@@ -4,11 +4,11 @@ import com.bachelor.config.Config;
 import com.bachelor.preprocess.EulerChain;
 
 public final class MatchingAlgorithmFactory {
-    private static final AlgorithmType TYPE = AlgorithmType.from(Config.getMatchingAlgorithm());
+    private static final MatchingAlgorithmType TYPE = MatchingAlgorithmType.from(Config.getMatchingAlgorithm());
 
     private MatchingAlgorithmFactory() {}
 
-    public static AlgorithmType getType() {
+    public static MatchingAlgorithmType getType() {
         return TYPE;
     }
 

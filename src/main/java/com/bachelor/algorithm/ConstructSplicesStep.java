@@ -2,49 +2,36 @@ package com.bachelor.algorithm;
 
 import com.bachelor.preprocess.*;
 
-class ConstructSplicesStep implements Runnable{
+/**
+ * For the variable at this chain position, sets the boundaries of the surrounding parts:
+ *   the part before the variable ends right before it,
+ *   the part after the variable starts right after it.
+ * An empty part is represented as end = start - 1 (only happens for the pattern "A").
+ * Each boundary is written by exactly one variable, so no synchronization is needed.
+ */
+class ConstructSplicesStep implements Runnable {
     private final EulerChain eulerChain;
     private final TreeNode[] T;
     private final int[][] splices;
-    private final Object[] locks;
     private final int index;
 
-    ConstructSplicesStep(EulerChain eulerChain, int[][] splices, Object[] locks, int index) {
+    ConstructSplicesStep(EulerChain eulerChain, int[][] splices, int index) {
         this.eulerChain = eulerChain;
         this.T = eulerChain.getT();
         this.splices = splices;
-        this.locks = locks;
         this.index = index;
     }
 
     @Override
     public void run() {
-        SubNode currentSubNode = eulerChain.getFromIndex(index);
-
-        if (T[currentSubNode.getNodeInfo()].getVariable() != null) {
-            int previousCost = currentSubNode.getCost() - 1, currentCost = currentSubNode.getCost();
-
-            if (checkRangeExclusive(previousCost,splices.length)) {
-                synchronized (locks[previousCost]) {
-                    int currentEnd = splices[eulerChain.getFromIndex(index).getCost() - 1][1];
-                    splices[eulerChain.getFromIndex(index).getCost() - 1][1] = Math.max(currentEnd, index - 1);
-                }
-            }
-            if (checkRangeExclusive(currentCost, splices.length)) {
-                synchronized (locks[currentCost]) {
-                    int currentStart = splices[eulerChain.getFromIndex(index).getCost()][0];
-                    splices[eulerChain.getFromIndex(index).getCost()][0] = Math.max(currentStart, index + 1);
-                }
-            }
+        SubNode current = eulerChain.getFromIndex(index);
+        if (T[current.getNodeInfo()].getVariable() == null) {
+            return;
         }
-    }
 
-    @SuppressWarnings("SameParameterValue")
-    private static boolean checkRangeExclusive(int index, int from, int to) {
-        return from <= index && index < to;
-    }
+        int variableNumber = current.getCost();
 
-    private static boolean checkRangeExclusive(int index, int to) {
-        return checkRangeExclusive(index, 0, to);
+        splices[variableNumber - 1][1] = index - 1;   // end of the part before
+        splices[variableNumber][0] = index + 1;       // start of the part after
     }
 }

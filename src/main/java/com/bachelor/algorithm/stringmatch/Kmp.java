@@ -23,45 +23,48 @@ public class Kmp implements StringMatch<MatchRegistry> {
 
         ConcurrentHashMap<Integer, MatchRegistry> matches = new ConcurrentHashMap<>();
 
-        // Validate slice bounds
-        if (patEnd < patStart || patStart < 0 || patEnd >= pattern.getChainSize()) {
+        // Empty part (only for the single-variable pattern "A"):
+        // the empty string matches at every position p, including p = n, as the empty interval [p, p-1].
+        // This check must come before the range check: an empty part may start at pattern.getChainSize().
+        if (patEnd < patStart) {
+            for (int p = 0; p <= subjectChainSize; p++) {
+                matches.put(p, createMatch(p, p - 1));
+            }
+            return matches;
+        }
+
+        // Invalid range
+        if (patStart < 0 || patEnd >= pattern.getChainSize()) {
             return matches;
         }
 
         // Pattern slice length (inclusive range)
         int patternLength = patEnd - patStart + 1;
         int currentSubjectPosIndex = 0;
-        int currentPatternPosIndex = 0;  // j tracks position within the pattern slice, starting from 0
+        int currentPatternPosIndex = 0;  // tracks position within the pattern slice, starting from 0
 
         // Build failure function for the pattern slice
         int[] failureFunction = kmpFailureHelper(pattern, patStart, patEnd);
 
         while (currentSubjectPosIndex < subjectChainSize) {
-            if (currentPatternPosIndex >= 0 && isNodeLabelMatch(subject, pattern, currentSubjectPosIndex, patStart + currentPatternPosIndex)) {
+            if (currentPatternPosIndex >= 0
+                    && isNodeLabelMatch(subject, pattern, currentSubjectPosIndex, patStart + currentPatternPosIndex)) {
                 currentPatternPosIndex++;
                 currentSubjectPosIndex++;
             }
 
             if (currentPatternPosIndex == patternLength) {
-                // Match found: record start and end indices
+                // Match found: record start and end indices (end inclusive)
                 int matchStart = currentSubjectPosIndex - patternLength;
                 int matchEnd = currentSubjectPosIndex - 1;
                 if (matchStart >= 0 && matchStart < subjectChainSize) {
-                    MatchInterval matchInterval = new MatchInterval.Builder()
-                            .matchStart(matchStart)
-                            .matchEnd(matchEnd)
-                            .build();
-
-                    MatchRegistry matchRegistry = new MatchRegistry();
-                    matchRegistry.matchStart = matchStart;
-                    matchRegistry.addMatchIntervalToCurrentNode(matchInterval);
-
-                    matches.put(matchStart, matchRegistry);
+                    matches.put(matchStart, createMatch(matchStart, matchEnd));
                 }
                 // Continue searching for overlapping matches
                 currentPatternPosIndex = failureFunction[currentPatternPosIndex - 1];
 
-            } else if (currentSubjectPosIndex < subjectChainSize && !isNodeLabelMatch(subject, pattern, currentSubjectPosIndex, patStart + currentPatternPosIndex)) {
+            } else if (currentSubjectPosIndex < subjectChainSize
+                    && !isNodeLabelMatch(subject, pattern, currentSubjectPosIndex, patStart + currentPatternPosIndex)) {
                 if (currentPatternPosIndex > 0) {
                     currentPatternPosIndex = failureFunction[currentPatternPosIndex - 1];
                 } else {
@@ -71,6 +74,18 @@ public class Kmp implements StringMatch<MatchRegistry> {
         }
 
         return matches;
+    }
+
+    private static MatchRegistry createMatch(int matchStart, int matchEnd) {
+        MatchInterval matchInterval = new MatchInterval.Builder()
+                .matchStart(matchStart)
+                .matchEnd(matchEnd)
+                .build();
+
+        MatchRegistry matchRegistry = new MatchRegistry();
+        matchRegistry.matchStart = matchStart;
+        matchRegistry.addMatchIntervalToCurrentNode(matchInterval);
+        return matchRegistry;
     }
 
     // For each index suffixStartPos compute the longest match between the proper
@@ -102,16 +117,12 @@ public class Kmp implements StringMatch<MatchRegistry> {
         TreeNode[] subjectT = aChain.getT();
         TreeNode[] patternT = chainComparedAgainst.getT();
 
-        try {
-            SubNode subjectNode = subjectChain[aChainPosIndex];
-            SubNode patternNode = patternChain[chainComparedAgainstPosIndex];
-            return Objects.equals(subjectT[subjectNode.getNodeInfo()].getLabel(),
-                    patternT[patternNode.getNodeInfo()].getLabel());
-        } catch (NullPointerException e) {
-            System.out.printf("aChainPostIndex: %d\n", aChainPosIndex);
-            System.out.printf("chainComparedAgainstPosIndex: %d\n", chainComparedAgainstPosIndex);
-            throw new RuntimeException(e);
-        }
-    }
+        //TODO: CHECK IF WE NEED TO HAVE TYPES CHECKED AS WELL
+        SubNode subjectNode = subjectChain[aChainPosIndex];
+        SubNode patternNode = patternChain[chainComparedAgainstPosIndex];
+        return Objects.equals(subjectT[subjectNode.getNodeInfo()].getLabel(),
+                patternT[patternNode.getNodeInfo()].getLabel())
+                && subjectNode.getType().equals(patternNode.getType());
 
+    }
 }

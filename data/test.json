@@ -1,0 +1,26 @@
+[
+  {
+    "subject": "f(g(h(i(j(k(a))))))",
+    "pattern": "h(i(A))",
+    "expectedOccurrences": 1,
+    "description": "deep chain: A=j(k(a))"
+  },
+  {
+    "subject": "f(a,b)",
+    "pattern": "f(A)"
+  },
+  {
+    "subject": "f(a,b)",
+    "pattern": "A"
+  },
+  {
+    "subject": "f(a,b)",
+    "pattern": "a"
+  },
+  {
+    "subject": "f(f(f(a,b),f(c,d)),f(f(a,b),f(c,d)))",
+    "pattern": "f(A,B)",
+    "expectedOccurrences": 7,
+    "description": "balanced tree: every binary node (1 + 2 + 4)"
+  }
+]
