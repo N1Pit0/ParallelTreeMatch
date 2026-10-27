@@ -1,6 +1,5 @@
 package com.bachelor.config;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,11 +18,13 @@ public final class Config {
     private static final String ENVIRONMENT_VARIABLE_MATCHING_ALGORITHM_KEY = "APP_MATCHING_ALGORITHM";
     private static final String ALLOWED_MATCHING_ALGORITHMS = "com.bachelor.application.matchingalgorithm.types";
     private static final String JSON_FILE_PATH_KEY = "com.bachelor.application.input.file";
+    private static final String THREAD_TIMEOUT_KEY = "com.bachelor.coordinator.thread.timeout";
 
     private static final Properties PROPS = new Properties();
     private static final String ACTIVE_PROFILE;
     private static final String MATCHING_ALGORITHM;
     private static final String JSON_FILE_PATH;
+    private static final int THREAD_TIMEOUT;
 
     static {
         loadInto(BASE_FILE, true);
@@ -31,10 +32,10 @@ public final class Config {
         //Check order: System values -> Env values -> properties file values
         String profile = System.getProperty(PROFILE_KEY);
         if (profile == null) profile = System.getenv(ENVIRONMENT_VARIABLE_PROFILE_KEY);
-        if (profile == null) profile = PROPS.getProperty(PROFILE_KEY, "dev");
+        if (profile == null) profile = get(PROFILE_KEY, "dev");
         profile = profile.trim();
 
-        List<String> allowedProfiles = split(PROPS.getProperty(ALLOWED_PROFILES_KEY, "dev,test,prod"));
+        List<String> allowedProfiles = split(get(ALLOWED_PROFILES_KEY, "dev,test,prod"));
         if (!allowedProfiles.contains(profile)) {
             throw new IllegalStateException(
                     "Unknown profile '" + profile + "'. Allowed: " + allowedProfiles);
@@ -47,10 +48,10 @@ public final class Config {
         //Check order: System values -> Env values -> properties file values
         String algorithm = System.getProperty(MATCHING_ALGORITHM_KEY);
         if (algorithm == null) algorithm = System.getenv(ENVIRONMENT_VARIABLE_MATCHING_ALGORITHM_KEY);
-        if (algorithm == null) algorithm = PROPS.getProperty(MATCHING_ALGORITHM_KEY, "term");
+        if (algorithm == null) algorithm =get(MATCHING_ALGORITHM_KEY, "term");
         algorithm = algorithm.trim();
 
-        List<String> allowedMatchingAlgorithms = split(PROPS.getProperty(ALLOWED_MATCHING_ALGORITHMS, "term,sequential"));
+        List<String> allowedMatchingAlgorithms = split(get(ALLOWED_MATCHING_ALGORITHMS, "term,sequential"));
         if (!allowedMatchingAlgorithms.contains(algorithm)) {
             throw new IllegalStateException(
                     "Unknown algorithm '" + algorithm + "'. Allowed: " + allowedMatchingAlgorithms);
@@ -58,7 +59,8 @@ public final class Config {
 
         MATCHING_ALGORITHM = algorithm;
 
-        JSON_FILE_PATH = PROPS.getProperty(JSON_FILE_PATH_KEY);
+        JSON_FILE_PATH = get(JSON_FILE_PATH_KEY);
+        THREAD_TIMEOUT = getInt(THREAD_TIMEOUT_KEY);
     }
 
     private Config() {}
@@ -84,6 +86,10 @@ public final class Config {
 
     public static String getJsonFilePath() {
         return JSON_FILE_PATH;
+    }
+
+    public static int getThreadTimeout() {
+        return THREAD_TIMEOUT;
     }
 
     private static String raw(String key) {

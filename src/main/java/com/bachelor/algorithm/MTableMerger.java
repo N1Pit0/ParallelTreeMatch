@@ -8,7 +8,6 @@ import com.bachelor.utils.TreePrintUtils;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 class MTableMerger {
@@ -33,69 +32,28 @@ class MTableMerger {
     }
 
     private void mergeTables() {
+        int tableCount = mTablesContainer.getLength();
 
-        int mTablesLength = mTablesContainer.getLength();
-        final int[] currentSize = {mTablesLength};
-        final int[] depth = {1};
+        // Round with offset 2^(l-1): table i absorbs table i + offset, for i = 0, 2·offset, 4·offset, ...
+        for (int offset = 1; offset < tableCount; offset *= 2) {
+            List<VariableMatch> tasks = new LinkedList<>();
 
-        while (currentSize[0] > 1) {
-            List<Runnable> depthIterationTasks = new LinkedList<>();
-
-            depthIterationTasks.add(() -> {
-                int offset = 1 << (depth[0] - 1);
-                int jumpSize = offset * 2;
-
-                List<Runnable> tablePairTasks = new LinkedList<>();
-
-                for (int i = 0; i < mTablesLength; i += jumpSize) {
-                    final int tableIdx = i;
-                    tablePairTasks.add(() -> {
-                        List<Runnable> positionTasks = new LinkedList<>();
-
-                        for (int subjPos = 0; subjPos < subject.getChainSize(); subjPos++) {
-                            MatchRegistry currentPermutations = mTablesContainer
-                                    .readPermutationsFromTable(tableIdx,subjPos);
-
-                            if (currentPermutations != null) {
-                                int nextTableIdx = tableIdx + offset; // i + 2^l
-
-                                if (nextTableIdx >= mTablesContainer.getLength()) {
-                                    return;
-                                }
-                                VariableMatch variableMatch = MatchingAlgorithmFactory.create(
-                                        mTablesContainer,
-                                        subject,
-                                        pattern,
-                                        tableIdx,
-                                        nextTableIdx,
-                                        subjPos);
-
-                                positionTasks.add(variableMatch);
-                            }
-                        }
-                        ExecutorBarrierUtils.invokeAll(executor, positionTasks);
-                    });
+            for (int tableIdx = 0; tableIdx + offset < tableCount; tableIdx += 2 * offset) {
+                int nextTableIdx = tableIdx + offset;
+                for (int subjPos : mTablesContainer.entryPositions(tableIdx)) {
+                    tasks.add(MatchingAlgorithmFactory.create(mTablesContainer, subject, pattern, tableIdx, nextTableIdx, subjPos));
                 }
+            }
 
-                ExecutorBarrierUtils.invokeAll(executor, tablePairTasks);
-
-                currentSize[0] = (currentSize[0] + 1) / 2;
-                depth[0]++;
-            });
-
-            ExecutorBarrierUtils.invokeAll(executor, depthIterationTasks);
+            // All tasks of a round are independent (different tables, or different entries of the same table)
+            ExecutorBarrierUtils.forEachIndex(executor, tasks.size(), i -> tasks.get(i).run());
         }
     }
 
     private void validateFinalResults() {
-        Map<Integer, MatchRegistry> finalTable = mTablesContainer.getFirstTable();
         SubNode[] subjectChain = subject.getChain();
 
-        List<Runnable> entryValidationTasks = new LinkedList<>();
-
-        for (int i = 0; i < finalTable.size(); i++) {
-            entryValidationTasks.add(new ValidateResultMtableStep(mTablesContainer, subjectChain, i));
-        }
-        ExecutorBarrierUtils.invokeAll(executor, entryValidationTasks);
+        ExecutorBarrierUtils.forEachIndex(executor, subjectChain.length,
+                index -> new ValidateResultMtableStep(mTablesContainer, subjectChain, index).run());
     }
 }

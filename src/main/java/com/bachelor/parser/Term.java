@@ -24,7 +24,7 @@ public record Term(char symbol, List<Term> arguments) {
     public boolean isConstant() { return !isVariable() && !isFunction(); }
     public int arity()          { return arguments.size(); }
 
-    /** Normalized form without spaces, e.g. "f(a,B)". Handy for debugging and tests. */
+    /** Normalized form without spaces, e.g. "f(a,B)". */
     @Override
     public String toString() {
         if (arguments.isEmpty()) return String.valueOf(symbol);

@@ -22,11 +22,8 @@ public class InitializeTourInfo implements Runnable {
             SubNode next = T[iFather].tour[T[index].getEdgeLabel() + 1];
             T[index].tour[T[index].arity()].setTourInfo(next);
             T[index].tour[T[index].arity()].setNext(next);
-        }
-
-        if (index == 0) {
+        } else {
             T[index].tour[T[index].arity()].setCost(0);
         }
-
     }
 }

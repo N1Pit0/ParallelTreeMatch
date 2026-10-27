@@ -5,6 +5,8 @@ import com.bachelor.datastructure.*;
 import com.bachelor.preprocess.EulerChain;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class MTablesContainer {
@@ -59,6 +61,11 @@ public class MTablesContainer {
 
     void clearTableEntry(int tableIdx, int subjPos) {
         mTables.get(tableIdx).remove(subjPos);
+    }
+
+    List<Integer> entryPositions(int tableIdx) {
+        Map<Integer, MatchRegistry> table = mTables.get(tableIdx);
+        return table == null ? List.of() : new LinkedList<>(table.keySet());
     }
 
     void clearTable(int tableIdx){

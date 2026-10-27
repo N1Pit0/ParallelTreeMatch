@@ -30,10 +30,7 @@ public class MatchRegistry {
 
     @Override
     public String toString() {
-        return "MatchRegistry{" +
-                "matchStart="+ matchStart +
-                " with matchIntervals=" + matchIntervals +
-                '}';
+        return " matchIntervals=" + matchIntervals;
     }
 
     public boolean isEmpty() {

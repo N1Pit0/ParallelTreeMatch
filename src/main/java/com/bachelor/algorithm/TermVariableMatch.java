@@ -50,7 +50,7 @@ class TermVariableMatch extends VariableMatch {
         }
 
         int subtreeIdx = nodeAtNextPos.getSubtree() + 1;
-        if (subtreeIdx >= subject.getChainSize()) {
+        if (subtreeIdx > subject.getChainSize()) {
             return false;
         }
 

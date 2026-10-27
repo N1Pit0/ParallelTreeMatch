@@ -1,7 +1,5 @@
 package com.bachelor.preprocess;
 
-import java.util.Arrays;
-
 public class EulerChain {
 
     private final SubNode[] CHAIN;
@@ -20,7 +18,12 @@ public class EulerChain {
 
     @Override
     public String toString() {
-        return Arrays.toString(CHAIN);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\"");
+        for (SubNode node : CHAIN) {
+            stringBuilder.append(T[node.getNodeInfo()].getLabel());
+        }
+        return stringBuilder.append("\"").toString();
     }
 
     public void setAtIndex(int index, SubNode subNode) {
